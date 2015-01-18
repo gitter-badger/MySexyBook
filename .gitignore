@@ -1,3 +1,12 @@
+# ====== Project specific files
+# SSL key & certificate
+config/keys/*
+*.sublime-workspace
+
+
+
+# ====== Node.js related files
+
 # Logs
 logs
 *.log
