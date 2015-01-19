@@ -1,0 +1,18 @@
+{
+	"build_systems":
+	[
+		{
+			"name": "Start Node App",
+			"shell": true,
+			"working_dir": "${project_path:${folder}}",
+			"shell_cmd": "killall node ; killall mongod ; npm install ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; node app.js"
+		}
+	],
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "."
+		}
+	]
+}
