@@ -1,7 +1,10 @@
 # ====== Project specific files
 # SSL key & certificate
 config/keys/*
+public/css/*.min.css
+public/js/*.min.js
 *.sublime-workspace
+mongod.log*
 
 
 

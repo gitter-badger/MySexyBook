@@ -1,0 +1,11 @@
+<main id="page">
+	<div class="container">
+		<h1>Erreur 404</h1>
+
+		{{? it.error && it.error.message }}
+			<p>{{= it.error.message }}</p>
+		{{??}}
+			<p>Page introuvable</p>
+		{{?}}
+	</div>
+</main>

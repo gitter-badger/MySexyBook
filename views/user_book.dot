@@ -1,0 +1,15 @@
+<main id="page">
+	<div class="container">
+		<h1>Bienvenue sur le book de {{= it.user.name }}</h1>
+		
+		{{? it.books.length }}
+			<ul>
+			{{~ it.books :book }}
+				<li>{{= book.title }}</li>
+			{{~}}
+			</ul>
+		{{??}}
+			<p><em>{{= it.user.name }}</em> n'a pas ajouté encore de photos</p>
+		{{?}}
+	</div>
+</main>

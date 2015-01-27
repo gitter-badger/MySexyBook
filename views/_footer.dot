@@ -1,0 +1,7 @@
+	<footer id="footer">
+		<div class="container">
+			<p>&copy; {{= it.strftime('%Y') }}</p>
+		</div>
+	</footer>
+</body>
+</html>

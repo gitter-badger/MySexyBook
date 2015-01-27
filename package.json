@@ -1,0 +1,26 @@
+{
+	"name": "mysexybook",
+	"description": "Site de publications de photos de charme et de mis en relations entre photographes et modèles",
+	"version": "0.0.0",
+	"main": "app.js",
+	"author": "Corentin Hatte <contact@corentin-hatte.eu>",
+	"dependencies": {
+		"promise": "6.1.*",
+		"promised-mongo": "0.11.*",
+		"markdown": "0.5.*",
+		"express": "4.11.*",
+		"dot": "1.0.*",
+		"strftime": "0.8.*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/viki53/MySexyBook"
+	},
+	"scripts": {
+		"test": "",
+		"start": "node app.js",
+		"predeploy": "npm install && mongod --dbpath ~/data/db",
+		"postdeploy": "echo 'App deployed'",
+		"prepublish": "lessc -x public/css/mysexybook.less public/css/mysexybook.min.css"
+	}
+}

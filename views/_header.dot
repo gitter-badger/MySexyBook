@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8" />
+	<title>{{= it.app.title }}</title>
+
+	<meta name="viewport" content="width=device-width, user-scalable=no" />
+	<link rel="stylesheet" href="{{= it.app.url }}/assets/css/mysexybook.min.css" />
+</head>
+<body>
+	<header id="header">
+		<div class="container">
+			<a href="{{= it.app.url }}/" id="logo"><span id="logo-text">{{= it.app.title }}</span></a>
+		</div>
+	</header>

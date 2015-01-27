@@ -1,0 +1,22 @@
+<main id="page">
+	<div class="container">
+		<h1>Recherche{{? it.search_term }} : {{= it.search_term }}{{?}}</h1>
+
+		<form action="{{= it.app.url }}/search/" onsubmit="window.location.href = this.action + this['user_name'].value; return false;">
+			<label for="user-search-name">Pseudo</label>
+			<input type="search" name="user_name" id="user-search-name" size="12" />
+		</form>
+
+		{{? it.search_results && it.search_results.length }}
+		<h2>{{= it.search_results.length }} {{? it.search_results.length > 1 }}utilisateurs trouvés{{??}}utilisateur trouvé{{?}}</h2>
+		<ul id="last-registered-users">
+			{{~ it.search_results :user }}
+			<li><a href="{{= it.app.url }}/book/{{= user.name }}">{{= user.name }}</a></li>
+			{{~}}
+		</ul>
+		{{??}}
+		<h2>Aucun résultat</h2>
+		<p>Votre recherche ne correspond à aucun profil présent dans notre base de données. Essayez de modifier vos critères &nbsp;: vous aurez sans doute plus de chance.</p>
+		{{?}}
+	</div>
+</main>
