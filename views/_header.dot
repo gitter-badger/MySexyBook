@@ -11,5 +11,17 @@
 	<header id="header">
 		<div class="container">
 			<a href="{{= it.app.url }}/" id="logo"><span id="logo-text">{{= it.app.title }}</span></a>
+			
+			{{? !it.current_user }}
+			<nav id="header-menu">
+				<a href="{{= it.app.url }}/inscription">Inscription</a>
+				<a href="{{= it.app.url }}/connexion">Connexion</a>
+			</nav>
+			{{??}}
+			<nav id="header-menu">
+				<a href="{{= it.app.url }}/book/{{= it.current_user.pseudo }}">Mon profil</a>
+				<a href="{{= it.app.url }}/deconnexion">Déconnexion</a>
+			</nav>
+			{{?}}
 		</div>
 	</header>

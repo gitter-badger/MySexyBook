@@ -1,11 +1,13 @@
 <main id="page">
 	<div class="container">
 		<h1>Bienvenue sur le book de {{= it.user.pseudo }}</h1>
+
+		<p>Date d'inscription : {{= it.strftime("%d %B %Y", it.user.register_date) }}</p>
 		
 		{{? it.books.length }}
 			<ul>
 			{{~ it.books :book }}
-				<li>{{= book.title }}</li>
+				<li><a href="{{= it.app.url}}/book/{{= it.user.pseudo}}/{{= book._id}}">{{= book.title }}</a></li>
 			{{~}}
 			</ul>
 		{{??}}

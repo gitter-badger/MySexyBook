@@ -29,3 +29,11 @@ String.prototype.toSlug = function () {
 				.replace(/[^a-z0-9-]/g, '')
 				.replace(/\-{2,}/g,'-');
 };
+
+
+
+Object.prototype.extend = function(obj) {
+	for (var i in obj) {
+		this[i] = obj[i];
+	}
+};

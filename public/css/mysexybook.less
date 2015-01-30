@@ -19,6 +19,10 @@ a{
 	color: inherit;
 }
 
+.clearfix{
+	display: block;
+	clear: both;
+}
 .container{
 	max-width: @container-width;
 	margin-right: auto;
@@ -28,6 +32,11 @@ a{
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
+
+	&:after{
+		content: '';
+		&:extend(.clearfix);
+	}
 }
 @media screen and (max-width: @container-width) {
 	.container{
@@ -50,37 +59,50 @@ a{
 
 #header{
 	background-color: @background-secondary;
+
+	a{
+		float: left;
+		padding: 1em;
+		text-align: center;
+		background-color: @background-secondary;
+		color: @color-secondary;
+		text-decoration: none;
+
+		&:hover{
+			background-color: @background-secondary-accent;
+		}
+	}
 }
 #logo{
-	display: inline-block;
-	// width: 7em;
-	padding: .5em;
-	line-height: 2em;
-	text-align: center;
-	background-color: @background-secondary;
-	color: @color-secondary;
-	text-decoration: none;
-
-	&:hover{
-		background-color: @background-secondary-accent;
-	}
+	width: 7em;
 }
 #logo-text{
 	// &:extend(.sr-only);
+}
+#header-menu{
+	float: right;
 }
 
 
 #page{
 	&>.container{
-		padding-right: .5em;
-		padding-left: .5em;
+		padding-right: 1em;
+		padding-bottom: 1em;
+		padding-left: 1em;
 		background-color: @background-primary;
+	}
+}
+form{
+	fieldset{
+		&>div{
+			&:extend(p);
+		}
 	}
 }
 
 #footer{
 	&>.container{
-		padding-right: .5em;
-		padding-left: .5em;
+		padding-right: 1em;
+		padding-left: 1em;
 	}
 }

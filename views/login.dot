@@ -1,0 +1,26 @@
+<main id="page">
+	<div class="container">
+		<h1>Connexion</h1>
+
+		<form action="{{= it.app.url }}/connexion" method="post">
+			{{? it.form_error }}
+				<p class="alert-error">{{= it.form_error }}</p>
+			{{?}}
+			<fieldset>
+				<div>
+					<label for="login-user-email">Adresse e-mail</label>
+					<input type="email" name="user[email]" id="login-user-email" size="12" />
+				</div>
+
+				<div>
+					<label for="login-user-password">Mot de passe</label>
+					<input type="password" name="user[password]" id="login-user-password" size="12" pattern="(.*){8,}" />
+				</div>
+			</fieldset>
+			
+			<button type="submit">Connexion</button>
+		</form>
+
+		<p><a href="{{= it.app.url }}/mot-de-passe-perdu">Mot de passe perdu ?</a></p>
+	</div>
+</main>

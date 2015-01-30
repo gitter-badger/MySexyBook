@@ -1,10 +1,21 @@
 var Promise = require('promise');
 var fs = require('fs');
+var crypto = require('crypto');
 var http = require('http');
 var https = require('https');
 var pmongo = require('promised-mongo');
 var express = require('express');
-var strftime = require('strftime');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var multer = require('multer');
+var validator = require('validator');
+var strftime = require('strftime').localizedStrftime({
+	days: [ 'dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi' ],
+	shortDays: [ 'dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam' ],
+	months: [ 'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre' ],
+	shortMonths: [ 'jan', 'fev', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc' ]
+});
 require('./public/js/prototypes.js');
 var dots = require('dot').process({ path: __dirname + '/views'});
 var render = require('./render');
@@ -12,10 +23,12 @@ var render = require('./render');
 var app = express();
 
 app.locals.url = 'http://127.0.0.1:8080';
+app.locals.domain = '127.0.0.1';
 app.locals.title = 'My Sexy Book';
-app.locals.strftime = require('strftime');
+app.locals.strftime = strftime;
 app.locals.root_url = '//mysexybook.photo';
 app.locals.contact_email = 'contact@mysexybook.photo';
+app.locals.isSecure = false;
 
 var ACCOUNTS_TYPES = {
 	banned: 1<<0,
@@ -35,6 +48,9 @@ var ACCOUNTS_RIGHTS = {
 
 var db = pmongo('mysexybook', ['users']);
 
+db.collection('users').ensureIndex({ email: 1 }, { unique: true, dropDups: true });
+db.collection('users').ensureIndex({ pseudo: 1 }, { unique: true, dropDups: true });
+
 try{
 	http.createServer(app).listen(8080);
 
@@ -46,6 +62,8 @@ try{
 	// };
 	//
 	// https.createServer(https_options, app).listen(443);
+
+	app.locals.isSecure = true;
 	
 	console.log('Node server started listening');
 }
@@ -53,50 +71,283 @@ catch(e) {
 	console.error(e);
 }
 
+function getView (req, view_name, data) {
+	if (!dots[view_name]) {
+		throw 'View not found';
+	}
+
+	var view_data = {
+		app: app.locals,
+		strftime: strftime
+	};
+
+	if (data) {
+		view_data.extend(data);
+	}
+
+	view_data.req = req;
+
+	if (req.session && req.session.current_user) {
+		view_data.current_user = req.session.current_user;
+	}
+	return dots._header(view_data) + 
+			dots[view_name](view_data) + 
+			dots._footer(view_data);
+}
+
+function hashPassword (pwd) {
+	var salt_start = 'tO2fzydPnJp2D131Mdg3cHZuJ107PXvl8RDYj0jKsuRUYCVaeXQB9lddkDjQP71MFJOAfoibt5RbxL7iU3LFZDS5JS9BeCEvwGVZ';
+	var salt_end = 'fzCePky09hmAP8le8lAhQ2Mf1eiXSg3y2GKOHLEOwYnOdvi1wakeC4hEueAbEyhEFFEL4gfyzi0ifARGCcVAwhH5h8HR4QTrdgau';
+	return crypto.createHash('sha512').update(salt_start + pwd + salt_end).digest('hex');
+}
+
+app.use(cookieParser());
+app.use(session({
+	secret: 'WYbOleljxIs84Yog9lL1hF3bP5WFOrNXLHQAcU8GHw8aXEau7z6QKk6XYn8V',
+	resave: false,
+	saveUninitialized: true
+}));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(multer());
 
 app.use('/assets', express.static(__dirname + '/public'));
 
 app.use(function (req, res, next) {
 	res.setHeader('Content-Type', 'text/html; charset=utf-8');
 	res.setHeader('Content-language', 'fr_FR');
-	next();
+
+	if (req.cookies && req.cookies.user_id) {
+		db.collection('users').findOne({ pseudo: req.cookies.user_id }).then(function (user) {
+			if (!user) {
+				res.clearCookie('user_id');
+				next();
+				return;
+			}
+
+			req.session.current_user = user;
+			next();
+		});
+	}
+	else {
+		next();
+	}
 });
 
 app.route('/').get(function (req, res) {
-	db.collection('users').find({  })/*.sort({ registered: 1 })*/.limit(10).toArray().then(function (last_users) {
-		res.write(dots._header({ app: app.locals }));
-		res.write(dots.index({ app: app.locals, last_users: last_users }));
-		res.write(dots._footer({ app: app.locals, strftime: strftime }));
+	db.collection('users').find({  }).sort({ register_date: 1 }).limit(10).toArray().then(function (last_users) {
+		res.write(getView(req, 'index', { last_users: last_users }));
 		res.end();
 	});
 });
 
 app.route('/book/:userid').get(function (req, res, next) {
-	db.collection('users').findOne({ name: req.params.userid }).then(function (user) {
+	db.collection('users').findOne({ pseudo: req.params.userid }).then(function (user) {
 		if (!user) {
-			res.write(dots._header({ app: app.locals }));
-			res.write(dots.error404({ app: app.locals, error: { message: 'Profil introuvable' } }));
-			res.write(dots._footer({ app: app.locals, strftime: strftime }));
-			res.end();
+			next();
 			return;
 		}
 
 		db.collection('books').find({ creator: user._id }).toArray().then(function (books) {
-			res.write(dots._header({ app: app.locals }));
-			res.write(dots.user_book({ app: app.locals, user: user, books: books }));
-			res.write(dots._footer({ app: app.locals, strftime: strftime }));
+			res.write(getView(req, 'user_profile', { user: user, books: books }));
 			res.end();
 		});
 	});
 });
 
-app.route('/search/:searchstr').get(function (req, res, next) {
-	db.collection('users').find({ name: new RegExp(req.params.searchstr, 'i') }).toArray().then(function (search_results) {
-		res.write(dots._header({ app: app.locals }));
-		res.write(dots.search({ app: app.locals, search_term: req.params.searchstr, search_results: search_results }));
-		res.write(dots._footer({ app: app.locals, strftime: strftime }));
+app.route('/book/:userid/:bookid').get(function (req, res, next) {
+	if (validator.isMongoId(req.params.bookid)) {
+		next();
+		return;
+	}
+	db.collection('users').findOne({ pseudo: req.params.userid }).then(function (user) {
+		if (!user) {
+			next();
+			return;
+		}
+
+		db.collection('books').findOne({ _id: pmongo.ObjectId(req.params.bookid) }).then(function (book) {
+			res.write(getView(req, 'user_book', { user: user, book: book }));
+			res.end();
+		});
+	});
+});
+
+app.route('/recherche').get(function (req, res, next) {
+	db.collection('users').find({ pseudo: new RegExp(req.query.user.pseudo, 'i') }).limit(50).toArray().then(function (search_results) {
+		res.write(getView(req, 'search', { search_term: req.query.user.pseudo, search_results: search_results }));
 		res.end();
 	});
+});
+
+app.route('/inscription').all(function (req, res, next) {
+	if (req.session.current_user) {
+		res.redirect(app.locals.url + '/');
+		res.end();
+		return;
+	}
+	next();
+}).post(function (req, res, next) {
+	if (!req.body.user) {
+		var form_error = 'Formulaire invalide';
+	}
+	else if (!req.body.user.email || !validator.isEmail(req.body.user.email)) {
+		var form_error = 'Adresse e-mail invalide';
+	}
+	else if (!req.body.user.password || !validator.isLength(req.body.user.password, 8)) {
+		var form_error = 'Mot de passe invalide';
+	}
+	else if (!req.body.user.pseudo || !validator.isAlphanumeric(req.body.user.pseudo) || !validator.isLength(req.body.user.pseudo, 4, 30)){
+		var form_error = 'Pseudo invalide';
+	}
+	// if (!req.body.user.area) {
+	// 	var form_error = 'Département invalide';
+	// }
+
+	if (form_error) {
+		res.write(getView(req, 'register', { form_error: form_error }));
+		res.end();
+		return;
+	}
+
+	db.collection('users').findOne({
+		pseudo: req.body.user.pseudo
+	}).then(function (profile_pseudo) {
+		if (profile_pseudo) {
+			res.write(getView(req, 'register', { form_error: 'Ce pseudo est déjà utilisé' }));
+			res.end();
+			return;
+		}
+
+		db.collection('users').findOne({
+			email: req.body.user.email
+		}).then(function (profile_email) {
+			if (profile_email) {
+				res.write(getView(req, 'register', { form_error: 'Cette adresse e-mail a déjà un compte : avez-vous <a href="' + app.locals.url + '/mot-de-passe-perdu" title="Cliquez pour récupérer votre compte">perdu votre mot de passe</a> ?' }));
+				res.end();
+				return;
+			}
+
+			db.collection('users').insert({
+				email: req.body.user.email,
+				password: hashPassword(req.body.user.password),
+				pseudo: req.body.user.pseudo,
+				register_date: new Date()
+			}).then(function (user) {
+				if (!user) {
+					res.write(getView(req, 'register', { form_error: 'Erreur lors de l\'enregistrement du profil' }));
+					res.end();
+					return;
+				}
+
+				req.session.current_user = user;
+				res.cookie('user_id', user._id);
+				res.redirect(app.locals.url + '/');
+				res.end();
+			});
+		});
+	});
+}).get(function (req, res, next) {
+	res.write(getView(req, 'register'));
+	res.end();
+});
+
+app.route('/mot-de-passe-perdu').all(function (req, res, next) {
+	if (req.session.current_user) {
+		res.redirect(app.locals.url + '/');
+		res.end();
+		return;
+	}
+	next();
+}).post(function (req, res, next) {
+	if (!req.body.user) {
+		var form_error = 'Formulaire invalide';
+	}
+	else if (!req.body.user.email || !validator.isEmail(req.body.user.email)) {
+		var form_error = 'Adresse e-mail invalide';
+	}
+
+	if (form_error) {
+		res.write(getView(req, 'password', { form_error: form_error }));
+		res.end();
+		return;
+	}
+
+	db.collection('users').findOne({
+		email: req.body.user.email
+	}).then(function (user) {
+		if (!user) {
+			res.write(getView(req, 'password', { form_error: 'Aucun compte existe avec cette adresse e-mail' }));
+			res.end();
+			return;
+		}
+
+		res.redirect(app.locals.url + '/connexion');
+		res.end();
+	});
+}).get(function (req, res, next) {
+	res.write(getView(req, 'password'));
+	res.end();
+});
+
+app.route('/connexion').all(function (req, res, next) {
+	if (req.session.current_user) {
+		res.redirect(app.locals.url + '/');
+		res.end();
+		return;
+	}
+	next();
+}).post(function (req, res, next) {
+	if (!req.body.user) {
+		var form_error = 'Formulaire invalide';
+	}
+	else if (!req.body.user.email || !validator.isEmail(req.body.user.email)) {
+		var form_error = 'Adresse e-mail invalide';
+	}
+	else if (!req.body.user.password || !validator.isLength(req.body.user.password, 8)) {
+		var form_error = 'Mot de passe invalide';
+	}
+
+	if (form_error) {
+		res.write(getView(req, 'login', { form_error: form_error }));
+		res.end();
+		return;
+	}
+
+	db.collection('users').findOne({
+		email: req.body.user.email,
+		password: hashPassword(req.body.user.password)
+	}).then(function (user) {
+		if (!user) {
+			res.write(getView(req, 'login', { form_error: 'Ces identifiants sont incorrects' }));
+			res.end();
+			return;
+		}
+
+		req.session.current_user = user;
+		res.cookie('user_id', user._id);
+		res.redirect(app.locals.url + '/');
+		res.end();
+	});
+}).get(function (req, res, next) {
+	res.write(getView(req, 'login'));
+	res.end();
+});
+
+app.route('/deconnexion').get(function (req, res, next) {
+	req.session.current_user = null;
+	res.clearCookie('user_id');
+	res.redirect(app.locals.url + '/');
+	res.end();
+});
+
+app.route('/db_reset').get(function (req, res, next) {
+	db.collection('users').remove({});
+	db.collection('books').remove({});
+	res.redirect(app.locals.url + '/');
+	res.write('Reset done');
+	res.end();
 });
 
 app.use(function (req, res, next) {
