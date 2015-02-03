@@ -1,0 +1,57 @@
+<main id="page">
+	<div class="container">
+		<h1>Bienvenue sur le book de {{= it.user.pseudo }}</h1>
+
+		<p>Date d'inscription : {{= it.strftime("%d %B %Y", it.user.register_date) }}</p>
+		
+		{{? it.albums.length }}
+			<ul>
+			{{~ it.albums :album }}
+				<li>
+					<h2><a href="{{= it.app.url}}/book/{{= it.user.pseudo}}/{{= album._id}}">{{= album.title }}</a></h2>
+					{{? album.description }}
+					<blockquote>
+						{{= album.description }}
+					</blockquote>
+					{{?}}
+					
+					{{? album.photos && album.photos.length }}
+						<h3>Aperçu de l'album :</h3>
+						<ul>
+						{{~ album.photos :photo }}
+							<li><img src="{{= it.app.url }}/assets/img/uploads/thumbs/{{= photo.src }}" alt="" /></li>
+						{{~}}
+						</ul>
+					{{??}}
+						<p><em>{{= it.user.pseudo }}</em> n'a pas ajouté encore de photos dans cet album</p>
+					{{?}}
+				</li>
+			{{~}}
+			</ul>
+		{{??}}
+			<p><em>{{= it.user.pseudo }}</em> n'a pas encore ajouté encore de photos</p>
+		{{?}}
+		
+		{{? it.current_user && it.user._id.equals(it.current_user._id) }}
+		<form action="{{= it.app.url }}/nouvel-album" method="post">
+			{{? it.form_error }}
+				<p class="alert-error">{{= it.form_error }}</p>
+			{{?}}
+			<fieldset>
+				<legend>Créer un album</legend>
+				<div>
+					<label for="new-album-title">Nom de l'album</label>
+					<input type="text" name="album[title]" id="new-album-title" required size="12" maxlength="50" value="{{? it.req.body && it.req.body.album && it.req.body.album.title }}{{= it.req.body.album.title }}{{?}}" />
+				</div>
+
+				<div>
+					<label for="new-album-description">Description <small class="field-indication">(facultative)</small></label>
+					<textarea name="album[description]" id="new-album-description" cols="50" rows="4">{{? it.req.body && it.req.body.album && it.req.body.album.description }}{{= it.req.body.album.description }}{{?}}</textarea>
+				</div>
+			</fieldset>
+			
+			<button type="submit">Créer</button>
+		</form>
+		{{?}}
+	</div>
+</main>
