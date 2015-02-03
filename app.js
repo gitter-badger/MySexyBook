@@ -46,7 +46,7 @@ var ACCOUNTS_RIGHTS = {
 	editAllBooks: 1<<3
 };
 
-var db = pmongo('mysexybook', ['users']);
+var db = pmongo('mysexybook', ['users', 'albums', 'photos']);
 
 db.collection('users').ensureIndex({ email: 1 }, { unique: true, dropDups: true });
 db.collection('users').ensureIndex({ email: 1, password: 1 });
@@ -54,6 +54,8 @@ db.collection('users').ensureIndex({ pseudo: 1 }, { unique: true, dropDups: true
 
 db.collection('albums').ensureIndex({ creator: 1 });
 db.collection('albums').ensureIndex({ creator: 1, title: 1 }, { unique: true, dropDups: true });
+
+db.collection('photos').ensureIndex({ album: 1 });
 
 try{
 	http.createServer(app).listen(8080);
@@ -66,8 +68,8 @@ try{
 	// };
 	//
 	// https.createServer(https_options, app).listen(443);
-
-	app.locals.isSecure = true;
+	// 
+	// app.locals.isSecure = true;
 	
 	console.log('Node server started listening');
 }
@@ -143,22 +145,39 @@ app.use(function (req, res, next) {
 });
 
 app.route('/').get(function (req, res) {
-	db.collection('users').find({  }).sort({ register_date: 1 }).limit(10).toArray().then(function (last_users) {
+	db.collection('users').find({}).sort({ register_date: 1 }).limit(10).toArray().then(function (last_users) {
 		res.write(getView(req, 'index', { last_users: last_users }));
 		res.end();
 	});
 });
 
 app.route('/book/:userid').get(function (req, res, next) {
-	db.collection('users').findOne({ pseudo: req.params.userid }).then(function (user) {
+	db.collection('users').findOne({
+		pseudo: req.params.userid
+	}).then(function (user) {
 		if (!user) {
 			next();
 			return;
 		}
 
 		db.collection('albums').find({ creator: user._id }).toArray().then(function (albums) {
-			res.write(getView(req, 'user_profile', { user: user, albums: albums }));
-			res.end();
+			var albums_photos_promises = [];
+
+			albums.forEach(function (album, index) {
+				var photos_promise = db.collection('photos').find({
+					album: pmongo.ObjectId(album._id)
+				}).sort({ created_at: 1}).limit(5).toArray();
+				albums_photos_promises[index] = photos_promise;
+			});
+
+			Promise.all(albums_photos_promises).then(function (results) {
+				results.forEach(function (photos, index) {
+					albums[index].photos = photos;
+				});
+
+				res.write(getView(req, 'user_profile', { user: user, albums: albums }));
+				res.end();
+			});
 		});
 	});
 });
@@ -172,53 +191,99 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 	db.collection('users').findOne({
 		pseudo: req.params.userid
 	}).then(function (user) {
-	throw 'Point 2';
 		if (!user) {
 			next('route');
 			return;
 		}
-	throw 'Point 3';
 
 		db.collection('albums').findOne({
 			_id: pmongo.ObjectId(req.params.albumid)
 		}).then(function (album) {
-	throw 'Point 4';
 			if (!album) {
 				next('route');
 				return;
 			}
-	throw 'Point 5';
 
-			res.locals.user = user;
-			res.locals.album = album;
+			db.collection('photos').find({
+				album: pmongo.ObjectId(album._id)
+			}).sort({ created_at: 1}).toArray().then(function (photos) {
+				res.locals.user = user;
+				res.locals.album = album;
+				res.locals.photos = photos;
 
-			next();
+				next();
+			});
 		});
+	}, function (e) {
+		res.write('Fail');
 	});
 }).post(function (req, res, next) {
-	if(!res.locals.user || !res.locals.album) {
+	if (!req.files) {
 		next();
 		return;
 	}
-	if (req.files) {
-		throw JSON.stringify(req.files);
+
+	var image = req.files['image[src]'];
+	if (!image) {
+		var form_error = 'Aucun fichier n\'a été spécifié';
+	}
+	else if (image.mimetype !== 'image/jpeg' && image.mimetype !== 'image/png' && image.mimetype !== 'image/bitmap') {
+		var form_error = 'Seules les images au format JPEG, PNG et BMP sont autorisées';
+	}
+
+	if (form_error) {
+		res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: form_error }));
+		res.end();
 		return;
 	}
 
-	res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album }));
-	res.end();
+	var new_photo = {
+		album: res.locals.album._id,
+		uploaded_at: new Date(),
+		src: res.locals.user._id + '_' + Date.now() + '_' + crypto.createHash('sha512').update(image.originalname).digest('hex') + '.' + image.extension
+	}
+
+	if (req.body.image && req.body.image.title) {
+		new_photo.title = req.body.image.title;
+	}
+
+	fs.readFile(image.path, function (err, data) {
+		if (err) {
+			res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible de lire la photo' }));
+			res.end();
+			return;
+		}
+
+		var newPath = __dirname + '/public/img/uploads/' + new_photo.src;
+
+		fs.writeFile(newPath, data, function (err) {
+			if (err) {
+				res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible d\'enregistrer la photo sur le serveur' }));
+				res.end();
+				return;
+			}
+
+			db.collection('photos').insert(new_photo).then(function (photo) {
+				if (!photo) {
+					res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible d\'enregistrer la photo dans la base de données' }));
+					res.end();
+					return;
+				}
+
+				res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id);
+				res.end();
+			});
+		});
+	});
 }).get(function (req, res, next) {
-	if(!res.locals.user || !res.locals.album) {
-		next();
-		return;
-	}
-
-	res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album }));
+	res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos }));
 	res.end();
 });
 
 app.route('/recherche').get(function (req, res, next) {
-	db.collection('users').find({ pseudo: new RegExp(req.query.user.pseudo, 'i') }).limit(50).toArray().then(function (search_results) {
+	db.collection('users').find({
+		pseudo: new RegExp(req.query.user.pseudo, 'i')
+	}).limit(50).toArray().then(function (search_results) {
 		res.write(getView(req, 'search', { search_term: req.query.user.pseudo, search_results: search_results }));
 		res.end();
 	});
@@ -386,14 +451,9 @@ app.route('/mes-photos').all(function (req, res, next) {
 		res.end();
 		return;
 	}
-	next();
-}).get(function (req, res, next) {
-	db.collection('albums').find({
-		creator: pmongo.ObjectId(req.session.current_user._id)
-	}).toArray().then(function (albums) {
-		res.write(getView(req, 'user_photos', { albums: albums }));
-		res.end();
-	});
+
+	res.redirect(app.locals.url + '/book/' + req.session.current_user.pseudo);
+	res.end();
 });
 
 app.route('/nouvel-album').all(function (req, res, next) {
@@ -463,9 +523,14 @@ app.route('/deconnexion').get(function (req, res, next) {
 	res.end();
 });
 
-app.route('/db_reset').get(function (req, res, next) {
-	db.collection('users').remove({});
-	db.collection('albums').remove({});
+app.route('/db_reset/:tables').get(function (req, res, next) {
+	if (req.params.tables) {
+		var tables = req.params.tables.split(',');
+
+		tables.forEach(function (table) {
+			db.collection(table).remove({});
+		});
+	}
 	res.redirect(app.locals.url + '/');
 	res.write('Reset done');
 	res.end();

@@ -1,11 +1,11 @@
 <main id="page">
 	<div class="container">
-		<h1>Album {{= it.album.title }} par {{= it.user.pseudo }}</h1>
+		<h1>Album <strong>{{= it.album.title }}</strong> par <em>{{= it.user.pseudo }}</em></h1>
 		
-		{{? it.album.photos && it.album.photos.length }}
+		{{? it.photos && it.photos.length }}
 			<ul>
-			{{~ it.album.photos :photo }}
-				<li><img src="{{= photo.src }}" alt="" /></li>
+			{{~ it.photos :photo }}
+				<li><img src="{{= it.app.url }}/assets/img/uploads/{{= photo.src }}" alt="" /></li>
 			{{~}}
 			</ul>
 		{{??}}
@@ -14,6 +14,9 @@
 
 		{{? it.current_user && it.album.creator.equals(it.current_user._id) }}
 		<form action="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}" method="post" enctype="multipart/form-data">
+			{{? it.form_error }}
+				<p class="alert-error">{{= it.form_error }}</p>
+			{{?}}
 			<fieldset>
 				<legend>Ajouter une image</legend>
 				<div>
