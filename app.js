@@ -49,7 +49,11 @@ var ACCOUNTS_RIGHTS = {
 var db = pmongo('mysexybook', ['users']);
 
 db.collection('users').ensureIndex({ email: 1 }, { unique: true, dropDups: true });
+db.collection('users').ensureIndex({ email: 1, password: 1 });
 db.collection('users').ensureIndex({ pseudo: 1 }, { unique: true, dropDups: true });
+
+db.collection('albums').ensureIndex({ creator: 1 });
+db.collection('albums').ensureIndex({ creator: 1, title: 1 }, { unique: true, dropDups: true });
 
 try{
 	http.createServer(app).listen(8080);
@@ -78,6 +82,7 @@ function getView (req, view_name, data) {
 
 	var view_data = {
 		app: app.locals,
+		req: req,
 		strftime: strftime
 	};
 
@@ -119,7 +124,9 @@ app.use(function (req, res, next) {
 	res.setHeader('Content-language', 'fr_FR');
 
 	if (req.cookies && req.cookies.user_id) {
-		db.collection('users').findOne({ pseudo: req.cookies.user_id }).then(function (user) {
+		db.collection('users').findOne({
+			_id: pmongo.ObjectId(req.cookies.user_id)
+		}).then(function (user) {
 			if (!user) {
 				res.clearCookie('user_id');
 				next();
@@ -149,29 +156,65 @@ app.route('/book/:userid').get(function (req, res, next) {
 			return;
 		}
 
-		db.collection('books').find({ creator: user._id }).toArray().then(function (books) {
-			res.write(getView(req, 'user_profile', { user: user, books: books }));
+		db.collection('albums').find({ creator: user._id }).toArray().then(function (albums) {
+			res.write(getView(req, 'user_profile', { user: user, albums: albums }));
 			res.end();
 		});
 	});
 });
 
-app.route('/book/:userid/:bookid').get(function (req, res, next) {
-	if (validator.isMongoId(req.params.bookid)) {
+app.route('/book/:userid/:albumid').all(function (req, res, next) {
+	if (!validator.isMongoId(req.params.albumid)) {
+		next('route');
+		return;
+	}
+
+	db.collection('users').findOne({
+		pseudo: req.params.userid
+	}).then(function (user) {
+	throw 'Point 2';
+		if (!user) {
+			next('route');
+			return;
+		}
+	throw 'Point 3';
+
+		db.collection('albums').findOne({
+			_id: pmongo.ObjectId(req.params.albumid)
+		}).then(function (album) {
+	throw 'Point 4';
+			if (!album) {
+				next('route');
+				return;
+			}
+	throw 'Point 5';
+
+			res.locals.user = user;
+			res.locals.album = album;
+
+			next();
+		});
+	});
+}).post(function (req, res, next) {
+	if(!res.locals.user || !res.locals.album) {
 		next();
 		return;
 	}
-	db.collection('users').findOne({ pseudo: req.params.userid }).then(function (user) {
-		if (!user) {
-			next();
-			return;
-		}
+	if (req.files) {
+		throw JSON.stringify(req.files);
+		return;
+	}
 
-		db.collection('books').findOne({ _id: pmongo.ObjectId(req.params.bookid) }).then(function (book) {
-			res.write(getView(req, 'user_book', { user: user, book: book }));
-			res.end();
-		});
-	});
+	res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album }));
+	res.end();
+}).get(function (req, res, next) {
+	if(!res.locals.user || !res.locals.album) {
+		next();
+		return;
+	}
+
+	res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album }));
+	res.end();
 });
 
 app.route('/recherche').get(function (req, res, next) {
@@ -283,6 +326,8 @@ app.route('/mot-de-passe-perdu').all(function (req, res, next) {
 			return;
 		}
 
+		// var new_password = (Math.random()*0xFFFFFF<<0).toString(16);
+
 		res.redirect(app.locals.url + '/connexion');
 		res.end();
 	});
@@ -335,6 +380,82 @@ app.route('/connexion').all(function (req, res, next) {
 	res.end();
 });
 
+app.route('/mes-photos').all(function (req, res, next) {
+	if (!req.session.current_user) {
+		res.redirect(app.locals.url + '/');
+		res.end();
+		return;
+	}
+	next();
+}).get(function (req, res, next) {
+	db.collection('albums').find({
+		creator: pmongo.ObjectId(req.session.current_user._id)
+	}).toArray().then(function (albums) {
+		res.write(getView(req, 'user_photos', { albums: albums }));
+		res.end();
+	});
+});
+
+app.route('/nouvel-album').all(function (req, res, next) {
+	if (!req.session.current_user) {
+		res.redirect(app.locals.url + '/');
+		res.end();
+		return;
+	}
+	next();
+}).post(function (req, res, next) {
+	if (!req.body.album) {
+		var form_error = 'Formulaire invalide';
+	}
+	else if (!req.body.album.title || !validator.isLength(req.body.album.title, 1, 50)) {
+		var form_error = 'Titre invalide';
+	}
+
+	if (form_error) {
+		res.write(getView(req, 'new_album', { form_error: form_error }));
+		res.end();
+		return;
+	}
+		// console.error('Fail 1');
+
+	db.collection('albums').findOne({
+		creator: pmongo.ObjectId(req.session.current_user._id),
+		title: req.body.album.title
+	}).then(function (album_title) {
+		// console.error('Fail 2');
+		if (album_title) {
+			res.write(getView(req, 'new_album', { form_error: 'Vous avez déjà un album portant ce nom' }));
+			res.end();
+			return;
+		}
+
+		var new_album = {
+			creator: pmongo.ObjectId(req.session.current_user._id),
+			title: req.body.album.title
+		};
+
+		if (req.body.album.description) {
+			new_album.description = req.body.album.description;
+		}
+
+		new_album.created_at = new Date();
+
+		db.collection('albums').insert(new_album).then(function (album) {
+			if (!album) {
+				res.write(getView(req, 'new_album', { form_error: 'Erreur lors de l\'enregistrement de l\'album' }));
+				res.end();
+				return;
+			}
+
+			res.redirect(app.locals.url + '/mes-photos');
+			res.end();
+		});
+	});
+}).get(function (req, res, next) {
+	res.write(getView(req, 'new_album'));
+	res.end();
+});
+
 app.route('/deconnexion').get(function (req, res, next) {
 	req.session.current_user = null;
 	res.clearCookie('user_id');
@@ -344,18 +465,16 @@ app.route('/deconnexion').get(function (req, res, next) {
 
 app.route('/db_reset').get(function (req, res, next) {
 	db.collection('users').remove({});
-	db.collection('books').remove({});
+	db.collection('albums').remove({});
 	res.redirect(app.locals.url + '/');
 	res.write('Reset done');
 	res.end();
 });
 
-app.use(function (req, res, next) {
+app.route('*').all(function (req, res, next) {
 	res.status(404);
 
-	res.write(dots._header({ app: app.locals }));
-	res.write(dots.error404({ app: app.locals }));
-	res.write(dots._footer({ app: app.locals, strftime: strftime }));
+	res.write(getView(req, 'error404'));
 
 	res.end();
 });

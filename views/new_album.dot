@@ -1,0 +1,25 @@
+<main id="page">
+	<div class="container">
+		<h1>Créer un album</h1>
+
+		<form action="{{= it.app.url }}/nouvel-album" method="post">
+			{{? it.form_error }}
+				<p class="alert-error">{{= it.form_error }}</p>
+			{{?}}
+			<fieldset>
+				<legend>Votre nouvel album</legend>
+				<div>
+					<label for="new-album-title">Nom de l'album</label>
+					<input type="text" name="album[title]" id="new-album-title" required size="12" maxlength="50" value="{{? it.req.body && it.req.body.album && it.req.body.album.title }}{{= it.req.body.album.title }}{{?}}" />
+				</div>
+
+				<div>
+					<label for="new-album-description">Description <small class="field-indication">(facultative)</small></label>
+					<textarea name="album[description]" id="new-album-description" cols="50" rows="4">{{? it.req.body && it.req.body.album && it.req.body.album.description }}{{= it.req.body.album.description }}{{?}}</textarea>
+				</div>
+			</fieldset>
+			
+			<button type="submit">Créer</button>
+		</form>
+	</div>
+</main>

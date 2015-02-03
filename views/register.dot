@@ -1,4 +1,4 @@
-<main id="page">
+s<main id="page">
 	<div class="container">
 		<h1>Inscription</h1>
 
@@ -11,12 +11,12 @@
 
 				<div>
 					<label for="register-user-email">Adresse e-mail</label>
-					<input type="email" name="user[email]" id="register-user-email" size="12" value="{{= (it.req.body.user && it.req.body.user.email) ? it.req.body.user.email : '' }}" />
+					<input type="email" name="user[email]" id="register-user-email" required size="12" value="{{= (it.req.body.user && it.req.body.user.email) ? it.req.body.user.email : '' }}" value="{{? it.req.body && it.req.body.user && it.req.body.user.email }}{{= it.req.body.user.email }}{{?}}" />
 				</div>
 
 				<div>
 					<label for="register-user-password">Mot de passe</label>
-					<input type="password" name="user[password]" id="register-user-password" size="12" pattern="(.*){8,}" />
+					<input type="password" name="user[password]" id="register-user-password" required size="12" pattern="(.*){8,}" />
 					<span class="field-indication">8 caractères (libres) minimum</span>
 				</div>
 			</fieldset>
@@ -26,13 +26,13 @@
 
 				<div>
 					<label for="register-user-pseudo">Pseudo</label>
-					<input type="text" name="user[pseudo]" id="register-user-pseudo" size="12" pattern="[a-zA-Z0-9]{4,30}" maxlength="30" value="{{= (it.req.body.user && it.req.body.user.pseudo) ? it.req.body.user.pseudo : '' }}" />
+					<input type="text" name="user[pseudo]" id="register-user-pseudo" required size="12" pattern="[a-zA-Z0-9]{4,30}" maxlength="30" value="{{? it.req.body && it.req.body.user && it.req.body.user.pseudo }}{{= it.req.body.user.pseudo }}{{?}}" />
 					<span class="field-indication">Caractères aplhanumériques uniquement</span>
 				</div>
 
 				<div>
 					<label for="register-user-area">Département</label>
-					<select name="user[area]" id="register-user-area" size="1">
+					<select name="user[area]" id="register-user-area" required size="1">
 					</select>
 				</div>
 			</fieldset>

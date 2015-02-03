@@ -1,0 +1,37 @@
+<main id="page">
+	<div class="container">
+		<h1>Vos photos</h1>
+		
+		{{? it.albums.length }}
+			<ul>
+			{{~ it.albums :album }}
+				<li>
+					<h2>
+						<a href="{{= it.app.url}}/album/{{= it.current_user.pseudo}}/{{= album._id}}">{{= album.title }}</a>
+					</h2>
+					{{? album.description }}
+					<blockquote>
+						{{= album.description }}
+					</blockquote>
+					{{?}}
+					<div>
+						{{? album.photos && album.photos.length }}
+						<ul>
+							{{~ album.photos :photo }}
+							<li>{{= photo._id }}</li>
+							{{~}}
+						</ul>
+						{{??}}
+						<p>Cet album est vide. <a href="{{= it.app.url}}/mes-photos/{{= album._id}}">Ajoutez une photo</a></p>
+						{{?}}
+					</div>
+				</li>
+			{{~}}
+			</ul>
+		{{??}}
+			<p>Vous n'avez pas encore ajouté encore de photos</p>
+		{{?}}
+
+		<p><a href="{{= it.app.url}}/nouvel-album">Nouvel album</a></p>
+	</div>
+</main>
