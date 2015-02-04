@@ -7,7 +7,7 @@
 				<legend>Rechercher un utilisateur</legend>
 				
 				<label for="user-search-pseudo">Pseudo</label>
-				<input type="search" name="user[pseudo]" size="12" />
+				<input type="search" name="user[pseudo]" size="12" value="{{= it.search_term || '' }}" />
 			</fieldset>
 		</form>
 
@@ -15,7 +15,7 @@
 		<h2>{{= it.search_results.length }} {{? it.search_results.length > 1 }}utilisateurs trouvés{{??}}utilisateur trouvé{{?}}</h2>
 		<ul id="last-registered-users">
 			{{~ it.search_results :user }}
-			<li><a href="{{= it.app.url }}/book/{{= user.pseudo }}">{{= user.pseudo }}</a></li>
+			<li><a href="{{= it.app.url }}/book/{{= user.pseudo }}">{{= it.sanitize(user.pseudo) }}</a></li>
 			{{~}}
 		</ul>
 		{{??}}

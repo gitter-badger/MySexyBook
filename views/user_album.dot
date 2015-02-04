@@ -1,6 +1,6 @@
 <main id="page">
 	<div class="container">
-		<h1>Album <strong>{{= it.album.title }}</strong> par <em>{{= it.user.pseudo }}</em></h1>
+		<h1>Album <strong>{{= it.sanitize(it.album.title) }}</strong> par <em>{{= it.sanitize(it.user.pseudo) }}</em></h1>
 		
 		{{? it.photos && it.photos.length }}
 			<ul>
@@ -9,7 +9,7 @@
 			{{~}}
 			</ul>
 		{{??}}
-			<p><em>{{= it.user.pseudo }}</em> n'a pas ajouté encore de photos dans cet album</p>
+			<p><em>{{= it.sanitize(it.user.pseudo) }}</em> n'a pas ajouté encore de photos dans cet album</p>
 		{{?}}
 
 		{{? it.current_user && it.album.creator.equals(it.current_user._id) }}
@@ -26,7 +26,7 @@
 
 				<div>
 					<label for="new-image-title">Titre de l'image</label>
-					<input type="text" name="image[title]" id="new-image-title" />
+					<input type="text" name="image[title]" id="new-image-title" value="{{? it.req.body && it.req.body.image && it.req.body.image.title }}{{= it.req.body.image.title }}{{?}}" />
 				</div>
 			</fieldset>
 			<div>

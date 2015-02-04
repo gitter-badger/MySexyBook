@@ -14,6 +14,7 @@
 		"body-parser": "1.10.*",
 		"multer": "0.1.*",
 		"validator": "3.28.*",
+		"sanitize-caja": "0.1.*",
 		"dot": "1.0.*",
 		"strftime": "0.8.*"
 	},

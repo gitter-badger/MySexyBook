@@ -10,6 +10,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var multer = require('multer');
 var validator = require('validator');
+var sanitize = require('sanitize-caja');
 var strftime = require('strftime').localizedStrftime({
 	days: [ 'dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi' ],
 	shortDays: [ 'dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam' ],
@@ -17,8 +18,6 @@ var strftime = require('strftime').localizedStrftime({
 	shortMonths: [ 'jan', 'fev', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'déc' ]
 });
 require('./public/js/prototypes.js');
-var dots = require('dot').process({ path: __dirname + '/views'});
-var render = require('./render');
 
 var app = express();
 
@@ -46,6 +45,7 @@ var ACCOUNTS_RIGHTS = {
 	editAllBooks: 1<<3
 };
 
+/* Database */
 var db = pmongo('mysexybook', ['users', 'albums', 'photos']);
 
 db.collection('users').ensureIndex({ email: 1 }, { unique: true, dropDups: true });
@@ -56,6 +56,23 @@ db.collection('albums').ensureIndex({ creator: 1 });
 db.collection('albums').ensureIndex({ creator: 1, title: 1 }, { unique: true, dropDups: true });
 
 db.collection('photos').ensureIndex({ album: 1 });
+
+/* Template engine */
+var util = require('util');
+var dots = require('dot').process({ path: __dirname + '/views'});
+app.engine('dot', function (view_path, data, callback) {
+	var view_name = this.name;
+
+	if (!dots[view_name]) {
+		throw 'View not found';
+	}
+
+	return callback(null, dots._header(data) + 
+			dots[view_name](data) + 
+			dots._footer(data));
+});
+app.set('views', './views');
+app.set('view engine', 'dot');
 
 try{
 	http.createServer(app).listen(8080);
@@ -75,31 +92,6 @@ try{
 }
 catch(e) {
 	console.error(e);
-}
-
-function getView (req, view_name, data) {
-	if (!dots[view_name]) {
-		throw 'View not found';
-	}
-
-	var view_data = {
-		app: app.locals,
-		req: req,
-		strftime: strftime
-	};
-
-	if (data) {
-		view_data.extend(data);
-	}
-
-	view_data.req = req;
-
-	if (req.session && req.session.current_user) {
-		view_data.current_user = req.session.current_user;
-	}
-	return dots._header(view_data) + 
-			dots[view_name](view_data) + 
-			dots._footer(view_data);
 }
 
 function hashPassword (pwd) {
@@ -125,6 +117,11 @@ app.use(function (req, res, next) {
 	res.setHeader('Content-Type', 'text/html; charset=utf-8');
 	res.setHeader('Content-language', 'fr_FR');
 
+	res.locals.app = app.locals;
+	res.locals.req = req;
+	res.locals.strftime = strftime;
+	res.locals.sanitize = sanitize;
+
 	if (req.cookies && req.cookies.user_id) {
 		db.collection('users').findOne({
 			_id: pmongo.ObjectId(req.cookies.user_id)
@@ -136,6 +133,7 @@ app.use(function (req, res, next) {
 			}
 
 			req.session.current_user = user;
+			res.locals.current_user = user;
 			next();
 		});
 	}
@@ -146,7 +144,7 @@ app.use(function (req, res, next) {
 
 app.route('/').get(function (req, res) {
 	db.collection('users').find({}).sort({ register_date: 1 }).limit(10).toArray().then(function (last_users) {
-		res.write(getView(req, 'index', { last_users: last_users }));
+		res.render('index', { last_users: last_users });
 		res.end();
 	});
 });
@@ -175,7 +173,7 @@ app.route('/book/:userid').get(function (req, res, next) {
 					albums[index].photos = photos;
 				});
 
-				res.write(getView(req, 'user_profile', { user: user, albums: albums }));
+				res.render('user_profile', { user: user, albums: albums });
 				res.end();
 			});
 		});
@@ -232,7 +230,7 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 	}
 
 	if (form_error) {
-		res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: form_error }));
+		res.render('user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: form_error });
 		res.end();
 		return;
 	}
@@ -249,7 +247,7 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 
 	fs.readFile(image.path, function (err, data) {
 		if (err) {
-			res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible de lire la photo' }));
+			res.render('user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible de lire la photo' });
 			res.end();
 			return;
 		}
@@ -258,14 +256,14 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 
 		fs.writeFile(newPath, data, function (err) {
 			if (err) {
-				res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible d\'enregistrer la photo sur le serveur' }));
+				res.render('user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible d\'enregistrer la photo sur le serveur' });
 				res.end();
 				return;
 			}
 
 			db.collection('photos').insert(new_photo).then(function (photo) {
 				if (!photo) {
-					res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible d\'enregistrer la photo dans la base de données' }));
+					res.render('user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible d\'enregistrer la photo dans la base de données' });
 					res.end();
 					return;
 				}
@@ -276,7 +274,7 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 		});
 	});
 }).get(function (req, res, next) {
-	res.write(getView(req, 'user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos }));
+	res.render('user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos });
 	res.end();
 });
 
@@ -284,7 +282,7 @@ app.route('/recherche').get(function (req, res, next) {
 	db.collection('users').find({
 		pseudo: new RegExp(req.query.user.pseudo, 'i')
 	}).limit(50).toArray().then(function (search_results) {
-		res.write(getView(req, 'search', { search_term: req.query.user.pseudo, search_results: search_results }));
+		res.render('search', { search_term: req.query.user.pseudo, search_results: search_results });
 		res.end();
 	});
 });
@@ -314,7 +312,7 @@ app.route('/inscription').all(function (req, res, next) {
 	// }
 
 	if (form_error) {
-		res.write(getView(req, 'register', { form_error: form_error }));
+		res.render('register', { form_error: form_error });
 		res.end();
 		return;
 	}
@@ -323,7 +321,7 @@ app.route('/inscription').all(function (req, res, next) {
 		pseudo: req.body.user.pseudo
 	}).then(function (profile_pseudo) {
 		if (profile_pseudo) {
-			res.write(getView(req, 'register', { form_error: 'Ce pseudo est déjà utilisé' }));
+			res.render('register', { form_error: 'Ce pseudo est déjà utilisé' });
 			res.end();
 			return;
 		}
@@ -332,7 +330,7 @@ app.route('/inscription').all(function (req, res, next) {
 			email: req.body.user.email
 		}).then(function (profile_email) {
 			if (profile_email) {
-				res.write(getView(req, 'register', { form_error: 'Cette adresse e-mail a déjà un compte : avez-vous <a href="' + app.locals.url + '/mot-de-passe-perdu" title="Cliquez pour récupérer votre compte">perdu votre mot de passe</a> ?' }));
+				res.render('register', { form_error: 'Cette adresse e-mail a déjà un compte : avez-vous <a href="' + app.locals.url + '/mot-de-passe-perdu" title="Cliquez pour récupérer votre compte">perdu votre mot de passe</a> ?' });
 				res.end();
 				return;
 			}
@@ -344,7 +342,7 @@ app.route('/inscription').all(function (req, res, next) {
 				register_date: new Date()
 			}).then(function (user) {
 				if (!user) {
-					res.write(getView(req, 'register', { form_error: 'Erreur lors de l\'enregistrement du profil' }));
+					res.render('register', { form_error: 'Erreur lors de l\'enregistrement du profil' });
 					res.end();
 					return;
 				}
@@ -357,7 +355,7 @@ app.route('/inscription').all(function (req, res, next) {
 		});
 	});
 }).get(function (req, res, next) {
-	res.write(getView(req, 'register'));
+	res.render('register');
 	res.end();
 });
 
@@ -377,7 +375,7 @@ app.route('/mot-de-passe-perdu').all(function (req, res, next) {
 	}
 
 	if (form_error) {
-		res.write(getView(req, 'password', { form_error: form_error }));
+		res.render('password', { form_error: form_error });
 		res.end();
 		return;
 	}
@@ -386,7 +384,7 @@ app.route('/mot-de-passe-perdu').all(function (req, res, next) {
 		email: req.body.user.email
 	}).then(function (user) {
 		if (!user) {
-			res.write(getView(req, 'password', { form_error: 'Aucun compte existe avec cette adresse e-mail' }));
+			res.render('password', { form_error: 'Aucun compte existe avec cette adresse e-mail' });
 			res.end();
 			return;
 		}
@@ -397,7 +395,7 @@ app.route('/mot-de-passe-perdu').all(function (req, res, next) {
 		res.end();
 	});
 }).get(function (req, res, next) {
-	res.write(getView(req, 'password'));
+	res.render('password');
 	res.end();
 });
 
@@ -420,7 +418,7 @@ app.route('/connexion').all(function (req, res, next) {
 	}
 
 	if (form_error) {
-		res.write(getView(req, 'login', { form_error: form_error }));
+		res.render('login', { form_error: form_error });
 		res.end();
 		return;
 	}
@@ -430,7 +428,7 @@ app.route('/connexion').all(function (req, res, next) {
 		password: hashPassword(req.body.user.password)
 	}).then(function (user) {
 		if (!user) {
-			res.write(getView(req, 'login', { form_error: 'Ces identifiants sont incorrects' }));
+			res.render('login', { form_error: 'Ces identifiants sont incorrects' });
 			res.end();
 			return;
 		}
@@ -441,7 +439,7 @@ app.route('/connexion').all(function (req, res, next) {
 		res.end();
 	});
 }).get(function (req, res, next) {
-	res.write(getView(req, 'login'));
+	res.render('login');
 	res.end();
 });
 
@@ -472,7 +470,7 @@ app.route('/nouvel-album').all(function (req, res, next) {
 	}
 
 	if (form_error) {
-		res.write(getView(req, 'new_album', { form_error: form_error }));
+		res.render('new_album', { form_error: form_error });
 		res.end();
 		return;
 	}
@@ -484,7 +482,7 @@ app.route('/nouvel-album').all(function (req, res, next) {
 	}).then(function (album_title) {
 		// console.error('Fail 2');
 		if (album_title) {
-			res.write(getView(req, 'new_album', { form_error: 'Vous avez déjà un album portant ce nom' }));
+			res.render('new_album', { form_error: 'Vous avez déjà un album portant ce nom' });
 			res.end();
 			return;
 		}
@@ -502,7 +500,7 @@ app.route('/nouvel-album').all(function (req, res, next) {
 
 		db.collection('albums').insert(new_album).then(function (album) {
 			if (!album) {
-				res.write(getView(req, 'new_album', { form_error: 'Erreur lors de l\'enregistrement de l\'album' }));
+				res.render('new_album', { form_error: 'Erreur lors de l\'enregistrement de l\'album' });
 				res.end();
 				return;
 			}
@@ -512,7 +510,7 @@ app.route('/nouvel-album').all(function (req, res, next) {
 		});
 	});
 }).get(function (req, res, next) {
-	res.write(getView(req, 'new_album'));
+	res.render('new_album');
 	res.end();
 });
 
@@ -539,7 +537,7 @@ app.route('/db_reset/:tables').get(function (req, res, next) {
 app.route('*').all(function (req, res, next) {
 	res.status(404);
 
-	res.write(getView(req, 'error404'));
+	res.render('error404');
 
 	res.end();
 });
