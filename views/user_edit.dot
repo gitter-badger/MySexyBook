@@ -1,0 +1,53 @@
+<main id="page">
+	<div class="container">
+		<h1>Modifier votre profil</h1>
+
+		<form action="{{= it.app.url }}/nouvel-album" method="post">
+			{{? it.form_error }}
+				<p class="alert-error">{{= it.form_error }}</p>
+			{{?}}
+			<fieldset>
+				<legend>Description</legend>
+				<div>
+					<label for="user-sex">Sexe</label>
+					<label>
+						<input type="radio" name="user[sex]" id="user-sex-male" required value="male" {{? it.req.body && it.req.body.user && it.req.body.user.sex && it.req.body.user.sex === 'male' }} checked="checked"{{?}} /> Homme
+					</label>
+					<label>
+						<input type="radio" name="user[sex]" id="user-sex-female" required value="female" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.sex && it.req.body.user.sex === 'female') ? checked="checked" : '') : '' }} /> Femme
+					</label>
+				</div>
+
+				<div>
+					<label for="user-bio">Biographie</label>
+					<textarea name="user[bio]" id="user-bio" required cols="40" rows="4">{{= (it.req.body && it.req.body.user && it.req.body.user.bio) ? it.req.body.user.bio : ((it.current_user.bio) ? it.current_user.bio : '') }}</textarea>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<legend>Style</legend>
+				<div>
+					<label for="user-photo_style">Style photographique</label>
+					<label>
+						<input type="checkbox" name="user[photo_style]" id="user-photo_style-lingerie" required value="lingerie" {{? it.req.body && it.req.body.user && it.req.body.user.photo_style && it.req.body.user.photo_style === 'lingerie' }} checked="checked"{{?}} /> Lingerie
+					</label>
+					<label>
+						<input type="checkbox" name="user[photo_style]" id="user-photo_style-erotic" required value="erotic" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_style && it.req.body.user.photo_style === 'erotic') ? checked="checked" : '') : '' }} /> Érotique
+					</label>
+					<label>
+						<input type="checkbox" name="user[photo_style]" id="user-photo_style-nude" required value="nude" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_style && it.req.body.user.photo_style === 'nude') ? checked="checked" : '') : '' }} /> Nu
+					</label>
+				</div>
+
+				<div>
+					<label for="user-photo_conditions">Vos conditions</label>
+					<textarea name="user[photo_conditions]" id="user-photo_conditions" required cols="40" rows="4">{{= (it.req.body && it.req.body.user && it.req.body.user.photo_conditions) ? it.req.body.user.photo_conditions : ((it.current_user.photo_conditions) ? it.current_user.photo_conditions : '') }}</textarea>
+					<span class="field-indication">Si vous ne souhaitez travailler qu'avec certaines personnes ou dans des conditions particulières, c'est le moment de le préciser</span>
+				</div>
+			</fieldset>
+			<div>
+				<button type="submit">Mettre à jour</button>
+			</div>
+		</form>
+	</div>
+</main>

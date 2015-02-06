@@ -14,11 +14,12 @@
 			
 			{{? !it.current_user }}
 			<nav id="header-menu">
-				<a href="{{= it.app.url }}/inscription">Inscription</a>
 				<a href="{{= it.app.url }}/connexion">Connexion</a>
+				<a href="{{= it.app.url }}/inscription">Inscription</a>
 			</nav>
 			{{??}}
 			<nav id="header-menu">
+				<a href="{{= it.app.url }}/mon-profil">Mon profil</a>
 				<a href="{{= it.app.url }}/book/{{= it.current_user.pseudo }}">Mon book</a>
 				<a href="{{= it.app.url }}/deconnexion">Déconnexion</a>
 			</nav>
