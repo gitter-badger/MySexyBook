@@ -21,11 +21,22 @@ require('./public/js/prototypes.js');
 
 var app = express();
 
-app.locals.url = 'http://127.0.0.1:8080';
-app.locals.domain = '127.0.0.1';
+switch (app.get('env')) {
+	case 'production':
+		app.locals.url = '//mysexybook.photo';
+		app.locals.domain = 'mysexybook.photo';
+	break;
+
+	case 'development':
+	case 'test':
+	default:
+		app.locals.url = 'http://127.0.0.1:6996';
+		app.locals.domain = '127.0.0.1';
+	break;
+}
+
 app.locals.title = 'My Sexy Book';
 app.locals.strftime = strftime;
-app.locals.root_url = '//mysexybook.photo';
 app.locals.contact_email = 'contact@mysexybook.photo';
 app.locals.isSecure = false;
 
@@ -75,7 +86,7 @@ app.set('views', './views');
 app.set('view engine', 'dot');
 
 try{
-	http.createServer(app).listen(8080);
+	http.createServer(app).listen(6996);
 
 	// var https_options = {
 	//	 hostname: 'mysexybook.photo',
@@ -440,6 +451,21 @@ app.route('/connexion').all(function (req, res, next) {
 	});
 }).get(function (req, res, next) {
 	res.render('login');
+	res.end();
+});
+
+app.route('/mon-profil').all(function (req, res, next) {
+	if (!req.session.current_user) {
+		res.redirect(app.locals.url + '/');
+		res.end();
+		return;
+	}
+}).post(function (req, res) {
+	res.locals.current_user = user;
+	res.render('user_edit', { user: user });
+	res.end();
+}).get(function (req, res) {
+	res.render('user_edit', { user: res.locals.current_user });
 	res.end();
 });
 

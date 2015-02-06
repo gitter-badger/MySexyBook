@@ -1,6 +1,7 @@
 # ====== Project specific files
 # SSL key & certificate
 config/keys/*
+sftp-config.json
 public/css/*.min.css
 public/js/*.min.js
 *.sublime-workspace
@@ -35,6 +36,7 @@ build/Release
 # Commenting this out is preferred by some people, see
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
 node_modules
+npm-debug.log*
 
 # Users Environment Variables
 .lock-wscript

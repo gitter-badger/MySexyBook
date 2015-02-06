@@ -2,10 +2,16 @@
 	"build_systems":
 	[
 		{
-			"name": "Start Node App",
+			"name": "Start Node App (test env)",
 			"shell": true,
 			"working_dir": "${project_path:${folder}}",
-			"shell_cmd": "killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; npm install ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; node app.js"
+			"shell_cmd": "lessc -x public/css/mysexybook.less public/css/mysexybook.min.css && npm run-script test"
+		},
+		{
+			"name": "Start Node App (prod env)",
+			"shell": true,
+			"working_dir": "${project_path:${folder}}",
+			"shell_cmd": "npm run-script start"
 		}
 	],
 	"folders":

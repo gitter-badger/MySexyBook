@@ -1,4 +1,5 @@
 {
+	"private": true,
 	"name": "mysexybook",
 	"description": "Site de publications de photos de charme et de mis en relations entre photographes et modèles",
 	"version": "0.0.0",
@@ -22,11 +23,11 @@
 		"type": "git",
 		"url": "https://github.com/viki53/MySexyBook"
 	},
+	"config" : {
+		"port" : 6996
+	},
 	"scripts": {
-		"test": "",
-		"start": "node app.js",
-		"predeploy": "npm install && mongod --dbpath ~/data/db",
-		"postdeploy": "echo 'App deployed'",
-		"prepublish": "lessc -x public/css/mysexybook.less public/css/mysexybook.min.css"
+		"test": " killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; npm install ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=test node app.js",
+		"start": " killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; npm install ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=production node app.js"
 	}
 }
