@@ -18,7 +18,9 @@
 				</div>
 			</fieldset>
 			
-			<button type="submit">Connexion</button>
+			<div>
+				<button type="submit">Connexion</button>
+			</div>
 		</form>
 
 		<p><a href="{{= it.app.url }}/mot-de-passe-perdu">Mot de passe perdu ?</a></p>

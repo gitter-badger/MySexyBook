@@ -19,7 +19,9 @@
 				</div>
 			</fieldset>
 			
-			<button type="submit">Créer</button>
+			<div>
+				<button type="submit">Créer</button>
+			</div>
 		</form>
 	</div>
 </main>

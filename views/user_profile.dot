@@ -49,8 +49,9 @@
 					<textarea name="album[description]" id="new-album-description" cols="50" rows="4">{{? it.req.body && it.req.body.album && it.req.body.album.description }}{{= it.req.body.album.description }}{{?}}</textarea>
 				</div>
 			</fieldset>
-			
-			<button type="submit">Créer</button>
+			<div>
+				<button type="submit">Créer</button>
+			</div>
 		</form>
 		{{?}}
 	</div>

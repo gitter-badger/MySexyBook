@@ -15,8 +15,10 @@
 			<fieldset>
 				<legend>Rechercher un utilisateur</legend>
 
-				<label for="user-search-pseudo">Pseudo</label>
-				<input type="search" name="user[pseudo]" size="12" />
+				<div>
+					<label for="search-user-pseudo">Pseudo</label>
+					<input type="search" name="user[pseudo]" id="search-user-pseudo" size="12" />
+				</div>
 			</fieldset>
 		</form>
 	</div>

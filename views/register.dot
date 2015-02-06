@@ -37,7 +37,9 @@ s<main id="page">
 				</div>
 			</fieldset>
 
-			<button type="submit">Valider</button>
+			<div>
+				<button type="submit">Valider</button>
+			</div>
 		</form>
 	</div>
 </main>

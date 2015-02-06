@@ -1,5 +1,5 @@
-@import url('normalize.less');
 @import url('mixins-prefixes.less');
+@import url('normalize.less');
 
 @container-width: 60em;
 
@@ -10,6 +10,8 @@
 @background-secondary: #820043;
 @background-secondary-accent: #ad2b6e;
 @color-secondary: #ffffff;
+
+
 
 html{
 	background-color: @background-primary-accent;
@@ -74,7 +76,7 @@ a{
 	}
 }
 #logo{
-	width: 7em;
+	width: 9em;
 }
 #logo-text{
 	// &:extend(.sr-only);
@@ -92,12 +94,41 @@ a{
 		background-color: @background-primary;
 	}
 }
-form{
-	fieldset{
-		&>div{
-			&:extend(p);
-		}
+fieldset{
+	padding: 0 1em;
+	margin: 1em 0;
+
+	&>div{
+		margin: 1em 0;
 	}
+
+	&+div{
+		margin-top: 1em;
+		text-align: right;
+	}
+}
+legend{
+	padding: .5em;
+}
+label, button, input, select, textarea{
+	display: inline-block;
+	margin: 0;
+	padding: .5em;
+}
+textarea{
+	resize: vertical;
+}
+label:first-child:not(:last-child){
+	width: 25%;
+
+	&+input, &+select, &+textarea{
+		width: 75%;
+	}
+}
+
+img{
+	max-width: 100%;
+	height: auto;
 }
 
 #footer{
