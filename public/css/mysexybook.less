@@ -99,13 +99,13 @@ fieldset{
 	margin: 1em 0;
 
 	&>div{
+		position: relative;
 		margin: 1em 0;
 	}
-
-	&+div{
-		margin-top: 1em;
-		text-align: right;
-	}
+}
+fieldset+div{
+	margin-top: 1em;
+	text-align: right;
 }
 legend{
 	padding: .5em;
@@ -123,6 +123,32 @@ label:first-child:not(:last-child){
 
 	&+input, &+select, &+textarea{
 		width: 75%;
+		
+		&~.field-indication{
+			position: absolute;
+			bottom: 100%;
+			bottom: ~"calc(100% + .5em)";
+			left: 25%;
+			padding: .5em;
+			font-size: .8em;
+			font-style: italic;
+			background-color: @background-secondary;
+			color: @color-secondary;
+			opacity: 0;
+			.transition(.3s);
+
+			&:after{
+				content: '';
+				position: absolute;
+				top: 100%;
+				left: 1em;
+				border: .5em solid transparent;
+				border-top-color: @background-secondary;
+			}
+		}
+		&:focus~.field-indication{
+			opacity: 1;
+		}
 	}
 }
 
