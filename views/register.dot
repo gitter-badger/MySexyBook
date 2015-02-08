@@ -31,8 +31,22 @@
 				</div>
 
 				<div>
-					<label for="register-user-area">Département</label>
-					<select name="user[area]" id="register-user-area" required size="1">
+					<label>Sexe</label>
+					<label>
+						<input type="radio" name="user[sex]" id="register-user-sex-male" required value="male" {{? it.req.body && it.req.body.user && it.req.body.user.sex && it.req.body.user.sex === 'male' }} checked="checked"{{?}} /> Homme
+					</label>
+					<label>
+						<input type="radio" name="user[sex]" id="register-user-sex-female" required value="female" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.sex && it.req.body.user.sex === 'female') ? checked="checked" : '') : '' }} /> Femme
+					</label>
+				</div>
+
+				<div>
+					<label for="register-user-geo_county">Département</label>
+					<select name="user[geo_county]" id="register-user-geo_county" required size="1">
+						<option value="">— Renseignez votre département</option>
+						{{~ it.geo_counties : county }}
+						<option value="{{= county._id }}">{{= it.sanitize(county._id + ' – ' +county.name) }}</option>
+						{{~}}
 					</select>
 				</div>
 			</fieldset>

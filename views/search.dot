@@ -8,9 +8,36 @@
 				
 				<div>
 					<label for="search-user-pseudo">Pseudo</label>
-					<input type="search" name="user[pseudo]" id="search-user-pseudo" size="12" value="{{= it.search_term || '' }}" />
+					<input type="search" name="user[pseudo]" id="search-user-pseudo" size="12" value="{{= it.search_filters.pseudo ? it.search_filters.pseudo['$regex'] : '' }}" />
+				</div>
+				
+				<div>
+					<label>Sexe</label>
+					<label>
+						<input type="radio" name="user[sex]" id="search-user-sex-male" value="male" {{= (it.search_filters.sex && it.search_filters.sex === 'female') ? ' checked="checked"' : '' }} /> Homme
+					</label>
+					<label>
+						<input type="radio" name="user[sex]" id="search-user-sex-female" value="female" {{= (it.search_filters.sex && it.search_filters.sex === 'female') ? ' checked="checked"' : '' }} /> Femme
+					</label>
+					<label>
+						<input type="radio" name="user[sex]" id="search-user-sex-any" value="any" {{= (!it.search_filters.sex || it.search_filters.sex === 'any') ? ' checked="checked"' : '' }} /> Peu importe
+					</label>
+				</div>
+				
+				<div>
+					<label for="search-user-geo_county">Département</label>
+					<select name="user[geo_county]" id="search-user-geo_county" size="1">
+						<option value="">— Limiter la recherche à un département</option>
+						{{~ it.geo_counties : county }}
+						<option value="{{= county._id }}" {{= (it.search_filters.geo_county && it.search_filters.geo_county === county._id) ? ' selected="selected"' : '' }}>{{= it.sanitize(county._id + ' – ' +county.name) }}</option>
+						{{~}}
+					</select>
 				</div>
 			</fieldset>
+
+			<div>
+				<button type="submit">Recherche</button>
+			</div>
 		</form>
 
 		{{? it.search_results && it.search_results.length }}

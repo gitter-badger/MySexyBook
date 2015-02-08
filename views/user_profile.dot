@@ -3,6 +3,14 @@
 		<h1>Bienvenue sur le book de {{= it.sanitize(it.user.pseudo) }}</h1>
 
 		<p>Date d'inscription : {{= it.strftime("%d %B %Y", it.user.register_date) }}</p>
+	
+		{{? it.user.biography }}
+		<div>{{= it.sanitize(it.user.biography) }}</div>
+		{{?}}
+	
+		{{? it.user.geo_county }}
+		<p>Département : {{= it.sanitize(it.user.geo_county) }}</p>
+		{{?}}
 		
 		{{? it.albums.length }}
 			<ul>

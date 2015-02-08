@@ -289,11 +289,31 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 	res.end();
 });
 
-app.route('/recherche').get(function (req, res, next) {
-	db.collection('users').find({
-		pseudo: new RegExp(req.query.user.pseudo, 'i')
-	}).limit(50).toArray().then(function (search_results) {
-		res.render('search', { search_term: req.query.user.pseudo, search_results: search_results });
+app.route('/recherche').all(function (req, res, next) {
+	db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
+		res.locals.geo_counties = geo_counties;
+		next();
+	});
+}).get(function (req, res, next) {
+	var search_filters = {};
+
+	if (req.query.user) {
+		if (req.query.user.pseudo) {
+			// search_filters.pseudo = new RegExp(req.query.user.pseudo, 'i');
+			search_filters.pseudo = { $regex: req.query.user.pseudo, $options: 'i' };
+		}
+		if (req.query.user.sex && ["male", "female"].indexOf(req.query.user.sex) !== -1) {
+			search_filters.sex = req.query.user.sex;
+		}
+		if (req.query.user.geo_county) {
+			search_filters.geo_county = req.query.user.geo_county;
+		}
+	}
+
+	res.locals.search_filters = search_filters;
+
+	db.collection('users').find(search_filters).sort({ register_date: -1 }).limit(50).toArray().then(function (search_results) {
+		res.render('search', { search_results: search_results });
 		res.end();
 	});
 });
@@ -304,7 +324,11 @@ app.route('/inscription').all(function (req, res, next) {
 		res.end();
 		return;
 	}
-	next();
+
+	db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
+		res.locals.geo_counties = geo_counties;
+		next();
+	});
 }).post(function (req, res, next) {
 	if (!req.body.user) {
 		var form_error = 'Formulaire invalide';
@@ -318,9 +342,12 @@ app.route('/inscription').all(function (req, res, next) {
 	else if (!req.body.user.pseudo || !validator.isAlphanumeric(req.body.user.pseudo) || !validator.isLength(req.body.user.pseudo, 4, 30)){
 		var form_error = 'Pseudo invalide';
 	}
-	// if (!req.body.user.area) {
-	// 	var form_error = 'Département invalide';
-	// }
+	else if (!req.body.user.sex || ["male", "female"].indexOf(req.body.user.sex) === -1){
+		var form_error = 'Sexe invalide';
+	}
+	if (!req.body.user.geo_county) {
+		var form_error = 'Département invalide';
+	}
 
 	if (form_error) {
 		res.render('register', { form_error: form_error });
@@ -328,43 +355,55 @@ app.route('/inscription').all(function (req, res, next) {
 		return;
 	}
 
-	db.collection('users').findOne({
-		pseudo: req.body.user.pseudo
-	}).then(function (profile_pseudo) {
-		if (profile_pseudo) {
-			res.render('register', { form_error: 'Ce pseudo est déjà utilisé' });
+	db.collection('geo_counties').findOne({
+		_id: req.body.user.geo_county
+	}).then(function (profile_county) {
+		if (!profile_county) {
+			res.render('register', { form_error: 'Département invalide' });
 			res.end();
 			return;
 		}
 
 		db.collection('users').findOne({
-			email: req.body.user.email
-		}).then(function (profile_email) {
-			if (profile_email) {
-				res.render('register', { form_error: 'Cette adresse e-mail a déjà un compte : avez-vous <a href="' + app.locals.url + '/mot-de-passe-perdu" title="Cliquez pour récupérer votre compte">perdu votre mot de passe</a> ?' });
+			pseudo: req.body.user.pseudo
+		}).then(function (profile_pseudo) {
+			if (profile_pseudo) {
+				res.render('register', { form_error: 'Ce pseudo est déjà utilisé' });
 				res.end();
 				return;
 			}
 
-			db.collection('users').insert({
-				email: req.body.user.email,
-				password: hashPassword(req.body.user.password),
-				pseudo: req.body.user.pseudo,
-				register_date: new Date()
-			}).then(function (user) {
-				if (!user) {
-					res.render('register', { form_error: 'Erreur lors de l\'enregistrement du profil' });
+			db.collection('users').findOne({
+				email: req.body.user.email
+			}).then(function (profile_email) {
+				if (profile_email) {
+					res.render('register', { form_error: 'Cette adresse e-mail a déjà un compte : avez-vous <a href="' + app.locals.url + '/mot-de-passe-perdu" title="Cliquez pour récupérer votre compte">perdu votre mot de passe</a> ?' });
 					res.end();
 					return;
 				}
 
-				req.session.current_user = user;
-				res.cookie('user_id', user._id);
-				res.redirect(app.locals.url + '/');
-				res.end();
+				db.collection('users').insert({
+					email: req.body.user.email,
+					password: hashPassword(req.body.user.password),
+					pseudo: req.body.user.pseudo,
+					sex: req.body.user.sex,
+					geo_county: req.body.user.geo_county,
+					register_date: new Date()
+				}).then(function (user) {
+					if (!user) {
+						res.render('register', { form_error: 'Erreur lors de l\'enregistrement du profil' });
+						res.end();
+						return;
+					}
+
+					req.session.current_user = user;
+					res.cookie('user_id', user._id);
+					res.redirect(app.locals.url + '/');
+					res.end();
+				});
 			});
 		});
-	});
+	})
 }).get(function (req, res, next) {
 	res.render('register');
 	res.end();
@@ -460,6 +499,11 @@ app.route('/mon-profil').all(function (req, res, next) {
 		res.end();
 		return;
 	}
+
+	db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
+		res.locals.geo_counties = geo_counties;
+		next();
+	});
 }).post(function (req, res) {
 	res.locals.current_user = user;
 	res.render('user_edit', { user: user });
@@ -547,18 +591,54 @@ app.route('/deconnexion').get(function (req, res, next) {
 	res.end();
 });
 
-app.route('/db_reset/:tables').get(function (req, res, next) {
-	if (req.params.tables) {
-		var tables = req.params.tables.split(',');
+if (app.get('env') === 'test' || app.get('env') === 'development') {
+	app.route('/db_reset/:tables').get(function (req, res, next) {
+		if (req.params.tables) {
+			var db_reset_promises = [];
 
-		tables.forEach(function (table) {
-			db.collection(table).remove({});
-		});
-	}
-	res.redirect(app.locals.url + '/');
-	res.write('Reset done');
-	res.end();
-});
+			var tables = req.params.tables.split(',');
+
+			tables.forEach(function (table) {
+				db_reset_promises.push(db.collection(table).remove({}));
+
+				if (table === 'geo_counties') {
+					var csv = require('csv');
+
+					csv.parse(fs.readFileSync('data/geo_counties_fr.csv', { encoding: 'utf8' }) || '', function(err, data){
+						if (err || !data) {
+							throw 'Erreur lors de la lecture du fichier CSV';
+						}
+						data.shift();
+
+						data.forEach(function (county_data) {
+							var county = {
+								_id: county_data[1],
+								district: parseInt(county_data[0]),
+								capital: county_data[2],
+								name: county_data[5],
+								name_type: parseInt(county_data[3])
+							};
+
+							db_reset_promises.push(db.collection(table).insert(county));
+						});
+					});
+				}
+			});
+
+			setTimeout(function () {
+				Promise.all(db_reset_promises).then(function (results) {
+					res.write('Reset done');
+					res.end();
+				});
+			}, 500);
+		}
+		else{
+			res.redirect(app.locals.url + '/');
+			res.write('No collection to reset');
+			res.end();
+		}
+	});
+}
 
 app.route('*').all(function (req, res, next) {
 	res.status(404);

@@ -19,6 +19,9 @@
 		"dot": "1.0.*",
 		"strftime": "0.8.*"
 	},
+	"devDependencies": {
+		"csv": "0.4.*"
+	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/viki53/MySexyBook"
@@ -27,7 +30,7 @@
 		"port" : 6996
 	},
 	"scripts": {
-		"test": " killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; npm install ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=test node app.js",
-		"start": " killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; npm install ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=production node app.js"
+		"test": " killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; npm install --dev ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=test node app.js",
+		"start": " killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; npm install --production ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=production node app.js"
 	}
 }

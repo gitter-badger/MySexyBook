@@ -115,6 +115,18 @@ label, button, input, select, textarea{
 	margin: 0;
 	padding: .5em;
 }
+select{
+	-webkit-appearance: menulist-button;
+	.border-radius(0);
+
+	&[size="1"], &:not([size]){
+		height: 2em;
+
+		option{
+			padding: .5em;
+		}
+	}
+}
 textarea{
 	resize: vertical;
 }
@@ -135,7 +147,8 @@ label:first-child:not(:last-child){
 			background-color: @background-secondary;
 			color: @color-secondary;
 			opacity: 0;
-			.transition(.3s);
+			visibility: hidden;
+			.transition(~"opacity .3s, visibility 0 .3s");
 
 			&:after{
 				content: '';
@@ -148,6 +161,8 @@ label:first-child:not(:last-child){
 		}
 		&:focus~.field-indication{
 			opacity: 1;
+			visibility: visible;
+			.transition(~"opacity .3s, visibility 0 0");
 		}
 	}
 }
