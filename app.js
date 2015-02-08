@@ -1,3 +1,5 @@
+var pkg = require('./package');
+
 var Promise = require('promise');
 var fs = require('fs');
 var crypto = require('crypto');
@@ -30,7 +32,7 @@ switch (app.get('env')) {
 	case 'development':
 	case 'test':
 	default:
-		app.locals.url = 'http://127.0.0.1:6996';
+		app.locals.url = 'http://127.0.0.1:' + pkg.config.port;
 		app.locals.domain = '127.0.0.1';
 	break;
 }
@@ -86,7 +88,7 @@ app.set('views', './views');
 app.set('view engine', 'dot');
 
 try{
-	http.createServer(app).listen(6996);
+	http.createServer(app).listen(pkg.config.port);
 
 	// var https_options = {
 	//	 hostname: 'mysexybook.photo',
