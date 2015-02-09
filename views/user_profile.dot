@@ -4,12 +4,57 @@
 
 		<p>Date d'inscription : {{= it.strftime("%d %B %Y", it.user.register_date) }}</p>
 	
+		{{? it.user.sex }}
+		<div>
+			Sexe : 
+			{{ switch(it.user.sex) { }}
+				{{ case 'male': }}
+					Homme
+				{{ break; }}
+				{{ case 'female': }}
+					Femme
+				{{ break; }}
+			{{ } }}
+		</div>
+		{{?}}
+	
 		{{? it.user.biography }}
 		<div>{{= it.sanitize(it.user.biography) }}</div>
 		{{?}}
 	
 		{{? it.user.geo_county }}
 		<p>Département : {{= it.sanitize(it.user.geo_county) }}</p>
+		{{?}}
+	
+		{{? it.user.photo_styles && it.user.photo_styles.length }}
+		<p>
+			Style :
+			{{ var photo_styles = []; }}
+			{{~ it.user.photo_styles :style }}
+				{{ switch(style) { }}
+					{{ case 'fashion': }}
+						{{ photo_styles.push('Mode'); }}
+					{{ break; }}
+					{{ case 'glamour': }}
+						{{ photo_styles.push('Glamour'); }}
+					{{ break; }}
+					{{ case 'lingerie': }}
+						{{ photo_styles.push('Lingerie'); }}
+					{{ break; }}
+					{{ case 'erotic': }}
+						{{ photo_styles.push('Érotique'); }}
+					{{ break; }}
+					{{ case 'nude': }}
+						{{ photo_styles.push('Nu'); }}
+					{{ break; }}
+				{{ } }}
+			{{~}}
+			{{= ' ' + photo_styles.join(', ') }}
+		</p>
+		{{?}}
+	
+		{{? it.user.photo_conditions }}
+		<p>Conditions : {{= it.sanitize(it.user.photo_conditions) }}</p>
 		{{?}}
 		
 		{{? it.albums.length }}

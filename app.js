@@ -70,6 +70,8 @@ db.collection('albums').ensureIndex({ creator: 1, title: 1 }, { unique: true, dr
 
 db.collection('photos').ensureIndex({ album: 1 });
 
+db.collection('geo_counties').ensureIndex({ name: 1 }, { unique: true });
+
 /* Template engine */
 var util = require('util');
 var dots = require('dot').process({ path: __dirname + '/views'});
@@ -347,7 +349,7 @@ app.route('/inscription').all(function (req, res, next) {
 	else if (!req.body.user.sex || ["male", "female"].indexOf(req.body.user.sex) === -1){
 		var form_error = 'Sexe invalide';
 	}
-	if (!req.body.user.geo_county) {
+	else if (!req.body.user.geo_county) {
 		var form_error = 'Département invalide';
 	}
 
@@ -502,16 +504,112 @@ app.route('/mon-profil').all(function (req, res, next) {
 		return;
 	}
 
+	res.locals.user = res.locals.current_user;
+
 	db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
 		res.locals.geo_counties = geo_counties;
 		next();
 	});
 }).post(function (req, res) {
-	res.locals.current_user = user;
-	res.render('user_edit', { user: user });
-	res.end();
+	var photo_styles = ["fashion", "glamour", "lingerie", "erotic", "nude"];
+	if (!req.body.user) {
+		var form_error = 'Formulaire invalide';
+	}
+	else if (!req.body.user.sex || ["male", "female"].indexOf(req.body.user.sex) === -1){
+		var form_error = 'Sexe invalide';
+	}
+	// else if (!req.body.user.biography) {
+	// 	var form_error = 'Biographie invalide';
+	// }
+	else if (!req.body.user.geo_county) {
+		var form_error = 'Département invalide';
+	}
+	// else if (!req.body.user.photo_styles || !req.body.user.photo_styles.length){
+	// 	var form_error = 'Style photographique invalide';
+	// }
+	else if (req.body.user.photo_styles && req.body.user.photo_styles.length){
+		for (var i=0, nb=req.body.user.photo_styles; i<nb; i++) {
+			if (photo_styles.indexOf(req.body.user.photo_styles[i]) === -1) {
+				var form_error = 'Style photographique invalide';
+				break;
+			}
+		}
+	}
+	// else if (!req.body.user.photo_conditions) {
+	// 	var form_error = 'Conditions invalide';
+	// }
+
+	// throw form_error;
+	if (form_error) {
+		res.render('user_edit', { form_error: form_error });
+		res.end();
+		return;
+	}
+
+	db.collection('geo_counties').findOne({
+		_id: req.body.user.geo_county
+	}).then(function (profile_county) {
+
+		if (!profile_county) {
+			res.render('user_edit', { form_error: 'Département invalide' });
+			res.end();
+			return;
+		}
+
+		var updated_user = {};
+
+		if (req.body.user.sex != res.locals.user.sex) {
+			updated_user.sex = req.body.user.sex;
+		}
+		if (req.body.user.biography != res.locals.user.biography) {
+			updated_user.biography = req.body.user.biography;
+		}
+		if (req.body.user.geo_county != res.locals.user.geo_county) {
+			updated_user.geo_county = req.body.user.geo_county;
+		}
+		if (req.body.user.photo_styles != res.locals.user.photo_styles) {
+			updated_user.photo_styles = req.body.user.photo_styles;
+		}
+		if (req.body.user.photo_conditions != res.locals.user.photo_conditions) {
+			updated_user.photo_conditions = req.body.user.photo_conditions;
+		}
+
+		if (!updated_user) {
+			res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo);
+			res.end();
+			return;
+		}
+
+		db.collection('users').findAndModify({
+			query: {
+				_id: pmongo.ObjectId(res.locals.user._id)
+			}, 
+			update: {
+				$set : updated_user
+			},
+			new: true
+		}).then(function (res) {
+			res.write(JSON.stringify(res, null, "\t"));
+			res.end();
+			return;
+
+			if (!res.result) {
+				res.render('user_edit', { form_error: 'Erreur lors de la mise à jour de la base de données' });
+				res.end();
+				return;
+			}
+
+			if (res.locals.current_user._id == res.locals.user._id) {
+				req.session.current_user = user;
+				res.locals.current_user = user;
+			}
+
+			res.redirect(app.locals.url + '/book/' + user.pseudo);
+			res.end();
+		});
+	});
 }).get(function (req, res) {
-	res.render('user_edit', { user: res.locals.current_user });
+	res.render('user_edit');
 	res.end();
 });
 

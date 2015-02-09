@@ -7,7 +7,7 @@
 	"author": "Corentin Hatte <contact@corentin-hatte.eu>",
 	"dependencies": {
 		"promise": "6.1.*",
-		"promised-mongo": "0.11.*",
+		"promised-mongo": "0.11.5",
 		"markdown": "0.5.*",
 		"express": "4.11.*",
 		"cookie-parser": "1.3.*",
@@ -30,7 +30,7 @@
 		"port" : 6996
 	},
 	"scripts": {
-		"test": " killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; npm install --dev ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=test node app.js",
-		"start": " killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; npm install --production ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=production node app.js"
+		"test": " killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete ; npm install --dev ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=test node app.js",
+		"start": " killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete ; npm install --production ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=production node app.js"
 	}
 }

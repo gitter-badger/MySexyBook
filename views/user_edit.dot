@@ -1,27 +1,29 @@
 <main id="page">
 	<div class="container">
 		<h1>Modifier votre profil</h1>
-
-		<form action="{{= it.app.url }}/nouvel-album" method="post">
+		
+		<pre>{{= JSON.stringify(it.user, null, "\t") }}</pre>
+		<form action="{{= it.app.url }}/mon-profil" method="post">
 			{{? it.form_error }}
 				<p class="alert-error">{{= it.form_error }}</p>
 			{{?}}
+
 			<fieldset>
 				<legend>Description</legend>
 
 				<div>
 					<label>Sexe</label>
 					<label>
-						<input type="radio" name="user[sex]" id="user-sex-male" required value="male" {{? it.req.body && it.req.body.user && it.req.body.user.sex && it.req.body.user.sex === 'male' }} checked="checked"{{?}} /> Homme
+						<input type="radio" name="user[sex]" id="user-sex-male" required value="male" {{= it.req.body && it.req.body.user ? (it.req.body.user.sex == 'male' ? 'checked="checked"' : '') : (it.user.sex && it.user.sex == 'male' ? 'checked="checked"' : '') }} /> Homme
 					</label>
 					<label>
-						<input type="radio" name="user[sex]" id="user-sex-female" required value="female" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.sex && it.req.body.user.sex === 'female') ? checked="checked" : '') : '' }} /> Femme
+						<input type="radio" name="user[sex]" id="user-sex-female" required value="female" {{= it.req.body && it.req.body.user ? (it.req.body.user.sex == 'female' ? 'checked="checked"' : '') : (it.user.sex && it.user.sex == 'female' ? 'checked="checked"' : '') }} /> Femme
 					</label>
 				</div>
 
 				<div>
 					<label for="user-biography">Biographie</label>
-					<textarea name="user[biography]" id="user-biography" required cols="40" rows="8">{{= (it.req.body && it.req.body.user && it.req.body.user.biography) ? it.req.body.user.biography : ((it.current_user.biography) ? it.current_user.biography : '') }}</textarea>
+					<textarea name="user[biography]" id="user-biography" cols="40" rows="8">{{= (it.req.body && it.req.body.user && it.req.body.user.biography) ? it.req.body.user.biography : ((it.current_user.biography) ? it.current_user.biography : '') }}</textarea>
 					<span class="field-indication">Présentez-vous rapidement : ce que vous faites dans la vie, ce que vous aimeriez faire…</span>
 				</div>
 			</fieldset>
@@ -34,7 +36,7 @@
 					<select name="user[geo_county]" id="user-geo_county" required size="1">
 						<option value="">— Renseignez votre département</option>
 						{{~ it.geo_counties : county }}
-						<option value="{{= county._id }}">{{= it.sanitize(county._id + ' – ' +county.name) }}</option>
+						<option value="{{= county._id }}" {{= it.req.body && it.req.body.user ? (county._id == it.req.body.user.geo_county ? 'selected="selected"' : '') : (it.user.geo_county && it.user.geo_county == county._id ? 'selected="selected"' : '') }}>{{= it.sanitize(county._id + ' – ' +county.name) }}</option>
 						{{~}}
 					</select>
 				</div>
@@ -46,22 +48,25 @@
 				<div>
 					<label>Style photographique</label>
 					<label title="Photo sexy en habit complet">
-						<input type="checkbox" name="user[photo_style]" id="user-photo_style-lingerie" required value="lingerie" {{? it.req.body && it.req.body.user && it.req.body.user.photo_style && it.req.body.user.photo_style === 'lingerie' }} checked="checked"{{?}} /> Glamour
+						<input type="checkbox" name="user[photo_styles][]" id="user-photo_styles-fashion" value="fashion" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_styles && it.req.body.user.photo_styles.indexOf('fashion') !== -1) ? 'checked="checked"' : '') : (it.user && it.user.photo_styles && it.user.photo_styles.indexOf('fashion') !== -1 ? 'checked="checked"' : '') }} /> Mode
+					</label>
+					<label title="Photo sexy en habit complet">
+						<input type="checkbox" name="user[photo_styles][]" id="user-photo_styles-glamour" value="glamour" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_styles && it.req.body.user.photo_styles.indexOf('glamour') !== -1) ? 'checked="checked"' : '') : (it.user && it.user.photo_styles && it.user.photo_styles.indexOf('glamour') !== -1 ? 'checked="checked"' : '') }} /> Glamour
 					</label>
 					<label title="Photo en lingerie et/ou maillot de bain">
-						<input type="checkbox" name="user[photo_style]" id="user-photo_style-lingerie" required value="lingerie" {{? it.req.body && it.req.body.user && it.req.body.user.photo_style && it.req.body.user.photo_style === 'lingerie' }} checked="checked"{{?}} /> Lingerie
+						<input type="checkbox" name="user[photo_styles][]" id="user-photo_styles-lingerie" value="lingerie" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_styles && it.req.body.user.photo_styles.indexOf('lingerie') !== -1) ? 'checked="checked"' : '') : (it.user && it.user.photo_styles && it.user.photo_styles.indexOf('lingerie') !== -1 ? 'checked="checked"' : '') }} /> Lingerie
 					</label>
 					<label title="Photo érotique : nudité partielle ou complète">
-						<input type="checkbox" name="user[photo_style]" id="user-photo_style-erotic" required value="erotic" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_style && it.req.body.user.photo_style === 'erotic') ? checked="checked" : '') : '' }} /> Érotique
+						<input type="checkbox" name="user[photo_styles][]" id="user-photo_styles-erotic" value="erotic" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_styles && it.req.body.user.photo_styles.indexOf('erotic') !== -1) ? 'checked="checked"' : '') : (it.user && it.user.photo_styles && it.user.photo_styles.indexOf('erotic') !== -1 ? 'checked="checked"' : '') }} /> Érotique
 					</label>
 					<label title="Photo avec nudité totale">
-						<input type="checkbox" name="user[photo_style]" id="user-photo_style-nude" required value="nude" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_style && it.req.body.user.photo_style === 'nude') ? checked="checked" : '') : '' }} /> Nu
+						<input type="checkbox" name="user[photo_styles][]" id="user-photo_styles-nude" value="nude" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_styles && it.req.body.user.photo_styles.indexOf('nude') !== -1) ? 'checked="checked"' : '') : (it.user && it.user.photo_styles && it.user.photo_styles.indexOf('nude') !== -1 ? 'checked="checked"' : '') }} /> Nu
 					</label>
 				</div>
 
 				<div>
 					<label for="user-photo_conditions">Vos conditions</label>
-					<textarea name="user[photo_conditions]" id="user-photo_conditions" required cols="40" rows="5">{{= (it.req.body && it.req.body.user && it.req.body.user.photo_conditions) ? it.req.body.user.photo_conditions : ((it.current_user.photo_conditions) ? it.current_user.photo_conditions : '') }}</textarea>
+					<textarea name="user[photo_conditions]" id="user-photo_conditions" cols="40" rows="5">{{= (it.req.body && it.req.body.user && it.req.body.user.photo_conditions) ? it.req.body.user.photo_conditions : ((it.user.photo_conditions) ? it.user.photo_conditions : '') }}</textarea>
 					<span class="field-indication">Si vous ne souhaitez travailler qu'avec certaines personnes ou dans des conditions particulières, c'est le moment de le préciser</span>
 				</div>
 			</fieldset>
