@@ -3,5 +3,7 @@
 			<p>&copy; {{= it.strftime('%Y') }}</p>
 		</div>
 	</footer>
+	<script src="{{= it.app.url }}/assets/js/prototypes.js"></script>
+	<script src="{{= it.app.url }}/assets/js/emailcompleter.js"></script>
 </body>
 </html>

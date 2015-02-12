@@ -9,7 +9,7 @@
 			<fieldset>
 				<div>
 					<label for="login-user-email">Adresse e-mail</label>
-					<input type="email" name="user[email]" id="login-user-email" required size="12" />
+					<input type="email" name="user[email]" id="login-user-email" required size="12" autocapitalize="off" autocorrect="off" data-emailcompleter value="{{= (it.req.body.user && it.req.body.user.email) ? it.req.body.user.email : '' }}" value="{{? it.req.body && it.req.body.user && it.req.body.user.email }}{{= it.req.body.user.email }}{{?}}" />
 				</div>
 
 				<div>
