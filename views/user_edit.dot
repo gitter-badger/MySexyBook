@@ -36,7 +36,7 @@
 					<select name="user[geo_county]" id="user-geo_county" required size="1">
 						<option value="">— Renseignez votre département</option>
 						{{~ it.geo_counties : county }}
-						<option value="{{= county._id }}" {{= it.req.body && it.req.body.user ? (county._id == it.req.body.user.geo_county ? 'selected="selected"' : '') : (it.user.geo_county && it.user.geo_county == county._id ? 'selected="selected"' : '') }}>{{= it.sanitize(county._id + ' – ' +county.name) }}</option>
+						<option value="{{= county._id }}" {{= it.req.body && it.req.body.user ? (county._id == it.req.body.user.geo_county ? 'selected="selected"' : '') : (it.user.geo_county_id && it.user.geo_county_id == county._id ? 'selected="selected"' : '') }}>{{= it.sanitize(county._id + ' – ' + county.name) }}</option>
 						{{~}}
 					</select>
 				</div>

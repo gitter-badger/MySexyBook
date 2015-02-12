@@ -173,23 +173,29 @@ app.route('/book/:userid').get(function (req, res, next) {
 			return;
 		}
 
-		db.collection('albums').find({ creator: user._id }).toArray().then(function (albums) {
-			var albums_photos_promises = [];
+		db.collection('geo_counties').findOne({
+			_id: user.geo_county_id
+		}).then(function (county) {
+			user.geo_county = county;
 
-			albums.forEach(function (album, index) {
-				var photos_promise = db.collection('photos').find({
-					album: pmongo.ObjectId(album._id)
-				}).sort({ created_at: 1}).limit(5).toArray();
-				albums_photos_promises[index] = photos_promise;
-			});
+			db.collection('albums').find({ creator: user._id }).toArray().then(function (albums) {
+				var albums_photos_promises = [];
 
-			Promise.all(albums_photos_promises).then(function (results) {
-				results.forEach(function (photos, index) {
-					albums[index].photos = photos;
+				albums.forEach(function (album, index) {
+					var photos_promise = db.collection('photos').find({
+						album: pmongo.ObjectId(album._id)
+					}).sort({ created_at: 1}).limit(5).toArray();
+					albums_photos_promises[index] = photos_promise;
 				});
 
-				res.render('user_profile', { user: user, albums: albums });
-				res.end();
+				Promise.all(albums_photos_promises).then(function (results) {
+					results.forEach(function (photos, index) {
+						albums[index].photos = photos;
+					});
+
+					res.render('user_profile', { user: user, albums: albums });
+					res.end();
+				});
 			});
 		});
 	});
@@ -309,8 +315,8 @@ app.route('/recherche').all(function (req, res, next) {
 		if (req.query.user.sex && ["male", "female"].indexOf(req.query.user.sex) !== -1) {
 			search_filters.sex = req.query.user.sex;
 		}
-		if (req.query.user.geo_county) {
-			search_filters.geo_county = req.query.user.geo_county;
+		if (req.query.user.geo_county_id) {
+			search_filters.geo_county_id = req.query.user.geo_county;
 		}
 	}
 
@@ -391,7 +397,7 @@ app.route('/inscription').all(function (req, res, next) {
 					password: hashPassword(req.body.user.password),
 					pseudo: req.body.user.pseudo,
 					sex: req.body.user.sex,
-					geo_county: req.body.user.geo_county,
+					geo_county_id: req.body.user.geo_county,
 					register_date: new Date()
 				}).then(function (user) {
 					if (!user) {
@@ -564,8 +570,8 @@ app.route('/mon-profil').all(function (req, res, next) {
 		if (req.body.user.biography != res.locals.user.biography) {
 			updated_user.biography = req.body.user.biography;
 		}
-		if (req.body.user.geo_county != res.locals.user.geo_county) {
-			updated_user.geo_county = req.body.user.geo_county;
+		if (req.body.user.geo_county != res.locals.user.geo_county_id) {
+			updated_user.geo_county_id = req.body.user.geo_county;
 		}
 		if (req.body.user.photo_styles != res.locals.user.photo_styles) {
 			updated_user.photo_styles = req.body.user.photo_styles;

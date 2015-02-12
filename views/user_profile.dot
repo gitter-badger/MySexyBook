@@ -23,7 +23,7 @@
 		{{?}}
 	
 		{{? it.user.geo_county }}
-		<p>Département : {{= it.sanitize(it.user.geo_county) }}</p>
+		<p>Département : {{= it.sanitize(it.user.geo_county._id + ' — '+ it.user.geo_county.name) }}</p>
 		{{?}}
 	
 		{{? it.user.photo_styles && it.user.photo_styles.length }}
@@ -76,13 +76,13 @@
 						{{~}}
 						</ul>
 					{{??}}
-						<p><em>{{= it.sanitize(it.user.pseudo) }}</em> n'a pas ajouté encore de photos dans cet album</p>
+						<p>Album vide</p>
 					{{?}}
 				</li>
 			{{~}}
 			</ul>
 		{{??}}
-			<p><em>{{= it.sanitize(it.user.pseudo) }}</em> n'a pas encore ajouté encore de photos</p>
+			<p><em>{{= it.sanitize(it.user.pseudo) }}</em> n'a pas encore ajouté encore de photos à son book</p>
 		{{?}}
 		
 		{{? it.current_user && it.user._id.equals(it.current_user._id) }}
