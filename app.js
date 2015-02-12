@@ -1,4 +1,4 @@
-var pkg = require('./package');
+var pkg = require('./package.json');
 
 var Promise = require('promise');
 var fs = require('fs');
@@ -22,6 +22,8 @@ var strftime = require('strftime').localizedStrftime({
 require('./public/js/prototypes.js');
 
 var app = express();
+
+var app_config = require('./config/app-' + app.get('env') + '.json');
 
 switch (app.get('env')) {
 	case 'production':
@@ -110,14 +112,12 @@ catch(e) {
 }
 
 function hashPassword (pwd) {
-	var salt_start = 'tO2fzydPnJp2D131Mdg3cHZuJ107PXvl8RDYj0jKsuRUYCVaeXQB9lddkDjQP71MFJOAfoibt5RbxL7iU3LFZDS5JS9BeCEvwGVZ';
-	var salt_end = 'fzCePky09hmAP8le8lAhQ2Mf1eiXSg3y2GKOHLEOwYnOdvi1wakeC4hEueAbEyhEFFEL4gfyzi0ifARGCcVAwhH5h8HR4QTrdgau';
-	return crypto.createHash('sha512').update(salt_start + pwd + salt_end).digest('hex');
+	return crypto.createHash('sha512').update(app_config.pwd_salt_start + pwd + app_config.pwd_salt_end).digest('hex');
 }
 
 app.use(cookieParser());
 app.use(session({
-	secret: 'WYbOleljxIs84Yog9lL1hF3bP5WFOrNXLHQAcU8GHw8aXEau7z6QKk6XYn8V',
+	secret: app_config.session_secret,
 	resave: false,
 	saveUninitialized: true
 }));
