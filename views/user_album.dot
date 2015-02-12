@@ -18,15 +18,16 @@
 				<p class="alert-error">{{= it.form_error }}</p>
 			{{?}}
 			<fieldset>
-				<legend>Ajouter une image</legend>
+				<legend>Ajouter une photo</legend>
 				<div>
 					<label for="new-image-src">Fichier</label>
 					<input type="file" name="image[src]" id="new-image-src" />
 				</div>
 
 				<div>
-					<label for="new-image-title">Titre de l'image</label>
-					<input type="text" name="image[title]" id="new-image-title" value="{{? it.req.body && it.req.body.image && it.req.body.image.title }}{{= it.req.body.image.title }}{{?}}" />
+					<label for="new-image-title">Description</label>
+					<input type="text" name="image[title]" id="new-image-title" maxlength="100" value="{{? it.req.body && it.req.body.image && it.req.body.image.title }}{{= it.req.body.image.title }}{{?}}" />
+					<span class="field-indication">Champ facultatif. Décrivez la photo en quelques mots</span>
 				</div>
 			</fieldset>
 			<div>
