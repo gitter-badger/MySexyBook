@@ -117,10 +117,10 @@ label, button, input, select, textarea{
 	padding: .5em;
 }
 select{
-	-webkit-appearance: menulist-button;
 	.border-radius(0);
 
-	&[size="1"], &:not([size]){
+	&[size="1"], &:not([size]), &:not([multiple]){
+		-webkit-appearance: menulist-button;
 		height: 2em;
 
 		option{
