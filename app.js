@@ -2,6 +2,8 @@ var pkg = require('./package.json');
 
 var Promise = require('promise');
 var fs = require('fs');
+var mime = require('mime-types');
+var gm = require('gm');
 var crypto = require('crypto');
 var http = require('http');
 var https = require('https');
@@ -164,6 +166,55 @@ app.route('/').get(function (req, res) {
 	});
 });
 
+app.route('/photos/:userid/:albumid/:photosrc').get(function (req, res, next) {
+	db.collection('users').findOne({
+		_id: pmongo.ObjectId(req.params.userid)
+	}).then(function (user){
+		db.collection('albums').findOne({
+			_id: pmongo.ObjectId(req.params.albumid)
+		}).then(function (album){
+			fs.readFile('public/img/uploads/' + user._id + '/' + album._id + '/' + req.params.photosrc, function (err, data) {
+				if (err) {
+					next('route');
+					return;
+				}
+
+				res.writeHead(200, {'Content-Type': mime.lookup(req.params.photosrc)});
+				res.write(data);
+				res.end();
+			});
+		});
+	});
+});
+
+app.route('/photos/:userid/:albumid/:dimensions/:photosrc').get(function (req, res, next) {
+	db.collection('users').findOne({
+		_id: pmongo.ObjectId(req.params.userid)
+	}).then(function (user){
+		db.collection('albums').findOne({
+			_id: pmongo.ObjectId(req.params.albumid)
+		}).then(function (album){
+			fs.readFile('public/img/uploads/' + user._id + '/' + album._id + '/' + req.params.photosrc, function (err, data) {
+				if (err) {
+					next('route');
+					return;
+				}
+
+				var dimensions = req.params.dimensions.split('x');
+
+				res.writeHead(200, {'Content-Type': mime.lookup(req.params.photosrc)});
+				// res.write(data);
+
+				gm(data, 'thumb-' + req.params.photosrc).resize(dimensions[0], dimensions[1]).noProfile().stream(function (err, stdout, stderr) {
+					stdout.pipe(res);
+					// res.end();
+				});
+			});
+		});
+	});
+});
+
+
 app.route('/book/:userid').get(function (req, res, next) {
 	db.collection('users').findOne({
 		pseudo: req.params.userid
@@ -237,7 +288,7 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 	}
 
 	var new_photo = {
-		_id: pmongo.ObjectId(),
+		_id: new pmongo.ObjectId(),
 		uploaded_at: new Date(),
 		src: Date.now().toString(10) + '_' + crypto.createHash('sha1').update(image.originalname).digest('hex') + '.' + image.extension
 	}

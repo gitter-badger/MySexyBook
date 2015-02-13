@@ -7,7 +7,7 @@
 			{{~ it.album.photos :photo }}
 				<li id="photo-{{= photo._id }}">
 					<figure>
-						<img src="{{= it.app.url }}/assets/img/uploads/{{= it.user._id + '/' + it.album._id + '/' + photo.src }}" alt="" />
+						<img src="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/960x960/' + photo.src }}" alt="" />
 						{{? photo.title }}
 						<figcaption>
 							{{= it.sanitize(photo.title) }}

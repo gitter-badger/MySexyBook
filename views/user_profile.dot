@@ -69,10 +69,16 @@
 					{{?}}
 					
 					{{? album.photos && album.photos.length }}
-						<h3>Aperçu de l'album :</h3>
+						<h3 class="sr-only">Aperçu de l'album :</h3>
 						<ul>
-						{{~ album.photos :photo }}
-							<li><img src="{{= it.app.url }}/assets/img/uploads/thumbs/{{= it.user._id + '/' + album._id + '/' + photo.src }}" alt="" /></li>
+						{{~ album.photos.slice(0, 5) :photo }}
+							<li>
+								<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= album._id }}#photo-{{= photo._id }}">
+									<figure>
+										<img src="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/80x80/' + photo.src }}" alt="" />
+									</figure>
+								</a>
+							</li>
 						{{~}}
 						</ul>
 					{{??}}
