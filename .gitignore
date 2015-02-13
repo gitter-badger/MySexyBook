@@ -1,6 +1,7 @@
 # ====== Project specific files
 # SSL key & certificate
 config/keys/*
+config/app-production.json
 sftp-config.json
 public/css/*.min.css
 public/js/*.min.js
