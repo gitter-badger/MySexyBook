@@ -72,7 +72,7 @@
 						<h3>Aperçu de l'album :</h3>
 						<ul>
 						{{~ album.photos :photo }}
-							<li><img src="{{= it.app.url }}/assets/img/uploads/thumbs/{{= photo.src }}" alt="" /></li>
+							<li><img src="{{= it.app.url }}/assets/img/uploads/thumbs/{{= it.user._id + '/' + album._id + '/' + photo.src }}" alt="" /></li>
 						{{~}}
 						</ul>
 					{{??}}

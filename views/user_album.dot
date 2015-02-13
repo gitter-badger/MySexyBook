@@ -2,10 +2,19 @@
 	<div class="container">
 		<h1>Album <strong>{{= it.sanitize(it.album.title) }}</strong> par <em>{{= it.sanitize(it.user.pseudo) }}</em></h1>
 		
-		{{? it.photos && it.photos.length }}
+		{{? it.album.photos && it.album.photos.length }}
 			<ul>
-			{{~ it.photos :photo }}
-				<li><img src="{{= it.app.url }}/assets/img/uploads/{{= photo.src }}" alt="" /></li>
+			{{~ it.album.photos :photo }}
+				<li id="photo-{{= photo._id }}">
+					<figure>
+						<img src="{{= it.app.url }}/assets/img/uploads/{{= it.user._id + '/' + it.album._id + '/' + photo.src }}" alt="" />
+						{{? photo.title }}
+						<figcaption>
+							{{= it.sanitize(photo.title) }}
+						</figcaption>
+						{{?}}
+					</figure>
+				</li>
 			{{~}}
 			</ul>
 		{{??}}

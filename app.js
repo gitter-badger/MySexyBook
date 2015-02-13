@@ -61,16 +61,16 @@ var ACCOUNTS_RIGHTS = {
 };
 
 /* Database */
-var db = pmongo('mysexybook', ['users', 'albums', 'photos']);
+var db = pmongo('mysexybook', ['users', 'albums', 'geo_counties']);
 
 db.collection('users').ensureIndex({ email: 1 }, { unique: true, dropDups: true });
 db.collection('users').ensureIndex({ email: 1, password: 1 });
 db.collection('users').ensureIndex({ pseudo: 1 }, { unique: true, dropDups: true });
+db.collection('users').ensureIndex({ geo_county_id: 1 });
 
 db.collection('albums').ensureIndex({ creator: 1 });
+db.collection('albums').ensureIndex({ 'photos.uploaded_at': 1 });
 db.collection('albums').ensureIndex({ creator: 1, title: 1 }, { unique: true, dropDups: true });
-
-db.collection('photos').ensureIndex({ album: 1 });
 
 db.collection('geo_counties').ensureIndex({ name: 1 }, { unique: true });
 
@@ -179,23 +179,8 @@ app.route('/book/:userid').get(function (req, res, next) {
 			user.geo_county = county;
 
 			db.collection('albums').find({ creator: user._id }).toArray().then(function (albums) {
-				var albums_photos_promises = [];
-
-				albums.forEach(function (album, index) {
-					var photos_promise = db.collection('photos').find({
-						album: pmongo.ObjectId(album._id)
-					}).sort({ created_at: 1}).limit(5).toArray();
-					albums_photos_promises[index] = photos_promise;
-				});
-
-				Promise.all(albums_photos_promises).then(function (results) {
-					results.forEach(function (photos, index) {
-						albums[index].photos = photos;
-					});
-
-					res.render('user_profile', { user: user, albums: albums });
-					res.end();
-				});
+				res.render('user_profile', { user: user, albums: albums });
+				res.end();
 			});
 		});
 	});
@@ -223,15 +208,10 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 				return;
 			}
 
-			db.collection('photos').find({
-				album: pmongo.ObjectId(album._id)
-			}).sort({ created_at: 1}).toArray().then(function (photos) {
-				res.locals.user = user;
-				res.locals.album = album;
-				res.locals.photos = photos;
+			res.locals.user = user;
+			res.locals.album = album;
 
-				next();
-			});
+			next();
 		});
 	}, function (e) {
 		res.write('Fail');
@@ -251,15 +231,15 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 	}
 
 	if (form_error) {
-		res.render('user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: form_error });
+		res.render('user_album', { form_error: form_error });
 		res.end();
 		return;
 	}
 
 	var new_photo = {
-		album: res.locals.album._id,
+		_id: pmongo.ObjectId(),
 		uploaded_at: new Date(),
-		src: res.locals.user._id + '_' + Date.now() + '_' + crypto.createHash('sha512').update(image.originalname).digest('hex') + '.' + image.extension
+		src: Date.now().toString(10) + '_' + crypto.createHash('sha1').update(image.originalname).digest('hex') + '.' + image.extension
 	}
 
 	if (req.body.image && req.body.image.title) {
@@ -268,34 +248,47 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 
 	fs.readFile(image.path, function (err, data) {
 		if (err) {
-			res.render('user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible de lire la photo' });
+			res.render('user_album', { form_error: 'Impossible de lire la photo' });
 			res.end();
 			return;
 		}
 
-		var newPath = __dirname + '/public/img/uploads/' + new_photo.src;
+		var newPath = __dirname + '/public/img/uploads/' + res.locals.user._id + '/' + res.locals.album._id + '/' + new_photo.src;
 
 		fs.writeFile(newPath, data, function (err) {
 			if (err) {
-				res.render('user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible d\'enregistrer la photo sur le serveur' });
+				res.render('user_album', { form_error: 'Impossible d\'enregistrer la photo sur le serveur' });
 				res.end();
 				return;
 			}
 
-			db.collection('photos').insert(new_photo).then(function (photo) {
-				if (!photo) {
-					res.render('user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos, form_error: 'Impossible d\'enregistrer la photo dans la base de données' });
+			// res.locals.album.photos.push(new_photo);
+
+			db.collection('albums').findAndModify({
+				query: {
+					_id: pmongo.ObjectId(res.locals.album._id)
+				}, 
+				update: {
+					$push: { photos: new_photo }
+				},
+				new: true
+			}).then(function (album) {
+				// res.write(JSON.stringify(album, null, '\t'));
+				// res.end();
+				// return;
+				if (!album) {
+					res.render('user_album', { form_error: 'Impossible d\'enregistrer la photo dans la base de données' });
 					res.end();
 					return;
 				}
 
-				res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id);
+				res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id + '#photo-' + new_photo._id);
 				res.end();
 			});
 		});
 	});
 }).get(function (req, res, next) {
-	res.render('user_album', { user: res.locals.user, album: res.locals.album, photos: res.locals.photos });
+	res.render('user_album', {  });
 	res.end();
 });
 
@@ -406,10 +399,26 @@ app.route('/inscription').all(function (req, res, next) {
 						return;
 					}
 
-					req.session.current_user = user;
-					res.cookie('user_id', user._id);
-					res.redirect(app.locals.url + '/');
-					res.end();
+					fs.mkdir('public/img/uploads/' + user._id, 0775, function (err) {
+						if (err) {
+							res.render('register', { form_error: 'Erreur lors de la création du dossier personnel' });
+							res.end();
+							return;
+						}
+
+						fs.mkdir('public/img/uploads/thumbs/' + user._id, 0775, function (err) {
+							if (err) {
+								res.render('register', { form_error: 'Erreur lors de la création du dossier personnel de miniatures' });
+								res.end();
+								return;
+							}
+
+							req.session.current_user = user;
+							res.cookie('user_id', user._id);
+							res.redirect(app.locals.url + '/');
+							res.end();
+						});
+					});
 				});
 			});
 		});
@@ -594,18 +603,18 @@ app.route('/mon-profil').all(function (req, res, next) {
 				$set : updated_user
 			},
 			new: true
-		}).then(function (res) {
+		}).then(function (user) {
 			res.write(JSON.stringify(res, null, "\t"));
 			res.end();
 			return;
 
-			if (!res.result) {
+			if (!user) {
 				res.render('user_edit', { form_error: 'Erreur lors de la mise à jour de la base de données' });
 				res.end();
 				return;
 			}
 
-			if (res.locals.current_user._id == res.locals.user._id) {
+			if (res.locals.current_user._id == user._id) {
 				req.session.current_user = user;
 				res.locals.current_user = user;
 			}
@@ -681,8 +690,16 @@ app.route('/nouvel-album').all(function (req, res, next) {
 				return;
 			}
 
-			res.redirect(app.locals.url + '/mes-photos');
-			res.end();
+			fs.mkdir('public/img/uploads/' + req.session.current_user._id + '/' + album._id, function (err) {
+				if (err) {
+					res.render('new_album', { form_error: 'Erreur lors de la création du dossier de l\'album' });
+					res.end();
+					return;
+				}
+
+				res.redirect(app.locals.url + '/mes-photos');
+				res.end();
+			});
 		});
 	});
 }).get(function (req, res, next) {
@@ -707,6 +724,11 @@ if (app.get('env') === 'test' || app.get('env') === 'development') {
 			tables.forEach(function (table) {
 				db_reset_promises.push(db.collection(table).remove({}));
 
+				if (table === 'users') {
+					if (req.session.current_user) {
+						delete req.session.current_user;
+					}
+				}
 				if (table === 'geo_counties') {
 					var csv = require('csv');
 
