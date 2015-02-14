@@ -96,16 +96,20 @@ app.set('view engine', 'dot');
 try{
 	http.createServer(app).listen(pkg.config.port);
 
-	// var https_options = {
-	//	 hostname: 'mysexybook.photo',
-	//	 port: 443,
-	//	 key: fs.readFileSync('config/keys/mysexybook.photo.key.pem'),
-	//	 cert: fs.readFileSync('config/keys/mysexybook.photo.csr.pem')
-	// };
-	//
-	// https.createServer(https_options, app).listen(443);
-	// 
-	// app.locals.isSecure = true;
+	// if (app.get('env') === 'production') {
+	// 	var https_options = {
+	// 		hostname: 'mysexybook.photo',
+	// 		port: 443,
+	// 		key: fs.readFileSync('config/keys/mysexybook.photo.key.pem'),
+	// 		cert: fs.readFileSync('config/keys/mysexybook.photo.csr.pem')
+	// 	};
+		
+	// 	https.createServer(https_options, app).listen(443);
+		
+	// 	app.locals.isSecure = true;
+
+	// 	app.locals.url = app.locals.url.replace(/^\/\//, 'https://');
+	// }
 	
 	console.log('Node server started listening');
 }
@@ -132,6 +136,7 @@ app.use('/assets', express.static(__dirname + '/public'));
 
 app.use(function (req, res, next) {
 	res.setHeader('Content-Type', 'text/html; charset=utf-8');
+	res.header('Cache-Control', 'no-cache');
 	res.setHeader('Content-language', 'fr_FR');
 
 	res.locals.app = app.locals;
@@ -173,13 +178,13 @@ app.route('/photos/:userid/:albumid/:photosrc').get(function (req, res, next) {
 		db.collection('albums').findOne({
 			_id: pmongo.ObjectId(req.params.albumid)
 		}).then(function (album){
-			fs.readFile('public/img/uploads/' + user._id + '/' + album._id + '/' + req.params.photosrc, function (err, data) {
+			fs.readFile('public/img/uploads/originals/' + user._id + '/' + album._id + '/' + req.params.photosrc, function (err, data) {
 				if (err) {
 					next('route');
 					return;
 				}
 
-				res.writeHead(200, {'Content-Type': mime.lookup(req.params.photosrc)});
+				res.writeHead(200, { 'Content-Type': mime.lookup(req.params.photosrc), 'Cache-Control': 'public' });
 				res.write(data);
 				res.end();
 			});
@@ -194,21 +199,60 @@ app.route('/photos/:userid/:albumid/:dimensions/:photosrc').get(function (req, r
 		db.collection('albums').findOne({
 			_id: pmongo.ObjectId(req.params.albumid)
 		}).then(function (album){
-			fs.readFile('public/img/uploads/' + user._id + '/' + album._id + '/' + req.params.photosrc, function (err, data) {
-				if (err) {
-					next('route');
+			var dimensions = req.params.dimensions.split('x');
+
+			if (!dimensions[1]) {
+				dimensions[1] = dimensions[0];
+			}
+
+			var original_path = 'public/img/uploads/originals/' + user._id + '/' + album._id + '/' + req.params.photosrc;
+			var thumb_path = 'public/img/uploads/thumbs/' + user._id + '/' + album._id + '/' + dimensions[0] + 'x' +dimensions[1] + '_' + req.params.photosrc;
+
+			fs.exists(thumb_path, function (exists) {
+				if (exists) {
+					var stat = fs.statSync(thumb_path);
+					
+					res.writeHead(200, { 'Content-Type': mime.lookup(thumb_path), 'Content-Length': stat.size, 'Cache-Control': 'public' });
+
+					fs.createReadStream(thumb_path).pipe(res);
 					return;
 				}
+				else {
+					fs.readFile(original_path, function (err, data) {
+						if (err && !data) {
+							next('route');
+							return;
+						}
 
-				var dimensions = req.params.dimensions.split('x');
+						var original_img = gm(data, thumb_path);
 
-				res.writeHead(200, {'Content-Type': mime.lookup(req.params.photosrc)});
-				// res.write(data);
+						var original_info = {};
 
-				gm(data, 'thumb-' + req.params.photosrc).resize(dimensions[0], dimensions[1]).noProfile().stream(function (err, stdout, stderr) {
-					stdout.pipe(res);
-					// res.end();
-				});
+						original_img.size(function (err, info) {
+							if (err && !info) {
+								return;
+							}
+
+							original_info = info;
+
+							var thumb_img = original_img.resize(dimensions[0], dimensions[1]);
+
+							thumb_img.write(thumb_path, function (err) {
+								if (err) {
+									console.error(err);
+									return;
+								}
+
+								var stat = fs.statSync(thumb_path);
+
+								res.writeHead(200, { 'Content-Type': mime.lookup(thumb_path), 'Content-Length': stat.size, 'Cache-Control': 'public' });
+
+								fs.createReadStream(thumb_path).pipe(res);
+							});
+						});
+					});
+					return;
+				}
 			});
 		});
 	});
@@ -304,7 +348,7 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 			return;
 		}
 
-		var newPath = __dirname + '/public/img/uploads/' + res.locals.user._id + '/' + res.locals.album._id + '/' + new_photo.src;
+		var newPath = __dirname + '/public/img/uploads/originals/' + res.locals.user._id + '/' + res.locals.album._id + '/' + new_photo.src;
 
 		fs.writeFile(newPath, data, function (err) {
 			if (err) {
@@ -450,7 +494,7 @@ app.route('/inscription').all(function (req, res, next) {
 						return;
 					}
 
-					fs.mkdir('public/img/uploads/' + user._id, 0775, function (err) {
+					fs.mkdir('public/img/uploads/originals/' + user._id, 0775, function (err) {
 						if (err) {
 							res.render('register', { form_error: 'Erreur lors de la création du dossier personnel' });
 							res.end();
@@ -655,9 +699,9 @@ app.route('/mon-profil').all(function (req, res, next) {
 			},
 			new: true
 		}).then(function (user) {
-			res.write(JSON.stringify(res, null, "\t"));
-			res.end();
-			return;
+			// res.write(JSON.stringify(res, null, "\t"));
+			// res.end();
+			// return;
 
 			if (!user) {
 				res.render('user_edit', { form_error: 'Erreur lors de la mise à jour de la base de données' });
@@ -741,15 +785,23 @@ app.route('/nouvel-album').all(function (req, res, next) {
 				return;
 			}
 
-			fs.mkdir('public/img/uploads/' + req.session.current_user._id + '/' + album._id, function (err) {
+			fs.mkdir('public/img/uploads/originals/' + req.session.current_user._id + '/' + album._id, function (err) {
 				if (err) {
 					res.render('new_album', { form_error: 'Erreur lors de la création du dossier de l\'album' });
 					res.end();
 					return;
 				}
 
-				res.redirect(app.locals.url + '/mes-photos');
-				res.end();
+				fs.mkdir('public/img/uploads/thumbs/' + req.session.current_user._id + '/' + album._id, function (err) {
+					if (err) {
+						res.render('new_album', { form_error: 'Erreur lors de la création du dossier de miniatures de l\'album' });
+						res.end();
+						return;
+					}
+
+					res.redirect(app.locals.url + '/mes-photos');
+					res.end();
+				});
 			});
 		});
 	});
@@ -765,7 +817,7 @@ app.route('/deconnexion').get(function (req, res, next) {
 	res.end();
 });
 
-if (app.get('env') === 'test' || app.get('env') === 'development') {
+// if (app.get('env') === 'test' || app.get('env') === 'development') {
 	app.route('/db_reset/:tables').get(function (req, res, next) {
 		if (req.params.tables) {
 			var db_reset_promises = [];
@@ -817,7 +869,7 @@ if (app.get('env') === 'test' || app.get('env') === 'development') {
 			res.end();
 		}
 	});
-}
+// }
 
 app.route('*').all(function (req, res, next) {
 	res.status(404);
