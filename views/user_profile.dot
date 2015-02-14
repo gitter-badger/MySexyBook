@@ -58,25 +58,24 @@
 		{{?}}
 		
 		{{? it.albums.length }}
-			<ul>
+			<h2>Albums</h2>
+			<ul class="albums-list">
 			{{~ it.albums :album }}
-				<li>
-					<h2><a href="{{= it.app.url}}/book/{{= it.user.pseudo}}/{{= album._id}}">{{= it.sanitize(album.title) }}</a></h2>
+				<li class="album">
+					<h3 class="album-title"><a href="{{= it.app.url}}/book/{{= it.user.pseudo}}/{{= album._id}}">{{= it.sanitize(album.title) }}</a></h3>
 					{{? album.description }}
-					<blockquote>
+					<blockquote class="album-description">
 						{{= it.sanitize(album.description) }}
 					</blockquote>
 					{{?}}
 					
 					{{? album.photos && album.photos.length }}
 						<h3 class="sr-only">Aperçu de l'album :</h3>
-						<ul>
+						<ul class="album-preview">
 						{{~ album.photos.slice(0, 5) :photo }}
 							<li>
 								<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= album._id }}#photo-{{= photo._id }}">
-									<figure>
-										<img src="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/80x80/' + photo.src }}" alt="" />
-									</figure>
+									<img src="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/176x176/' + photo.src }}" alt="" />
 								</a>
 							</li>
 						{{~}}

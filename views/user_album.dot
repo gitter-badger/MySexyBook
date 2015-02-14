@@ -1,15 +1,25 @@
 <main id="page">
 	<div class="container">
-		<h1>Album <strong>{{= it.sanitize(it.album.title) }}</strong> par <em>{{= it.sanitize(it.user.pseudo) }}</em></h1>
+		<h1 class="album-title">Album <strong>{{= it.sanitize(it.album.title) }}</strong> par <em>{{= it.sanitize(it.user.pseudo) }}</em></h1>
 		
+		{{? it.album.description }}
+			<blockquote class="album-description">
+				{{= it.sanitize(it.album.description) }}
+			</blockquote>
+		{{?}}
 		{{? it.album.photos && it.album.photos.length }}
-			<ul>
+			<ul class="album-photos">
 			{{~ it.album.photos :photo }}
 				<li id="photo-{{= photo._id }}">
-					<figure>
-						<img src="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/960x960/' + photo.src }}" alt="" />
+					<figure class="photo">
+						<picture>
+							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/1920x1080/' + photo.src }}" media="(max-width: 1920px)" />
+							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/1280x720/' + photo.src }}" media="(max-width: 1280px)" />
+							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/1024x576/' + photo.src }}" media="(max-width: 1024px)" />
+							<img srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/960x540/' + photo.src }}" alt="" />
+						</picture>
 						{{? photo.title }}
-						<figcaption>
+						<figcaption class="photo-caption">
 							{{= it.sanitize(photo.title) }}
 						</figcaption>
 						{{?}}
@@ -30,7 +40,7 @@
 				<legend>Ajouter une photo</legend>
 				<div>
 					<label for="new-image-src">Fichier</label>
-					<input type="file" name="image[src]" id="new-image-src" />
+					<input type="file" name="image[src]" id="new-image-src" required data-drag-drop-area />
 				</div>
 
 				<div>
