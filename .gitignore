@@ -5,7 +5,7 @@ config/app-production.json
 sftp-config.json
 public/css/*.min.css
 public/js/*.min.js
-public/img/uploads/*
+uploads/*
 *.sublime-workspace
 mongod.log*
 
