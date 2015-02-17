@@ -29,7 +29,7 @@ var app_config = require('./config/app-' + app.get('env') + '.json');
 
 switch (app.get('env')) {
 	case 'production':
-		app.locals.url = '//mysexybook.photo';
+		app.locals.url = 'http://mysexybook.photo';
 		app.locals.domain = 'mysexybook.photo';
 	break;
 
@@ -86,9 +86,7 @@ app.engine('dot', function (view_path, data, callback) {
 		throw 'View not found';
 	}
 
-	return callback(null, dots._header(data) + 
-			dots[view_name](data) + 
-			dots._footer(data));
+	return callback(null, dots[view_name](data));
 });
 app.set('views', './views');
 app.set('view engine', 'dot');
@@ -139,6 +137,7 @@ app.use(function (req, res, next) {
 	res.header('Cache-Control', 'no-cache');
 	res.header('Content-language', 'fr_FR');
 
+	res.locals.dots = dots;
 	res.locals.app = app.locals;
 	res.locals.req = req;
 	res.locals.strftime = strftime;
@@ -162,13 +161,6 @@ app.use(function (req, res, next) {
 	else {
 		next();
 	}
-});
-
-app.route('/').get(function (req, res) {
-	db.collection('users').find({}).sort({ register_date: 1 }).limit(10).toArray().then(function (last_users) {
-		res.render('index', { last_users: last_users });
-		res.end();
-	});
 });
 
 app.route('/photos/:userid/:albumid/:dimensions/:photosrc').get(function (req, res, next) {
@@ -838,59 +830,72 @@ app.route('/deconnexion').get(function (req, res, next) {
 	res.end();
 });
 
-// if (app.get('env') === 'test' || app.get('env') === 'development') {
-	app.route('/db_reset/:tables').get(function (req, res, next) {
-		if (req.params.tables) {
-			var db_reset_promises = [];
 
-			var tables = req.params.tables.split(',');
+app.route('/db_reset/:tables').get(function (req, res, next) {
+	if (req.params.tables) {
+		var db_reset_promises = [];
 
-			tables.forEach(function (table) {
-				db_reset_promises.push(db.collection(table).remove({}));
+		var tables = req.params.tables.split(',');
 
-				if (table === 'users') {
-					if (req.session.current_user) {
-						delete req.session.current_user;
+		tables.forEach(function (table) {
+			db_reset_promises.push(db.collection(table).remove({}));
+
+			if (table === 'users') {
+				if (req.session.current_user) {
+					delete req.session.current_user;
+				}
+			}
+			if (table === 'geo_counties') {
+				var csv = require('csv');
+
+				csv.parse(fs.readFileSync('data/geo_counties_fr.csv', { encoding: 'utf8' }) || '', function(err, data){
+					if (err || !data) {
+						throw 'Erreur lors de la lecture du fichier CSV';
 					}
-				}
-				if (table === 'geo_counties') {
-					var csv = require('csv');
+					data.shift();
 
-					csv.parse(fs.readFileSync('data/geo_counties_fr.csv', { encoding: 'utf8' }) || '', function(err, data){
-						if (err || !data) {
-							throw 'Erreur lors de la lecture du fichier CSV';
-						}
-						data.shift();
+					data.forEach(function (county_data) {
+						var county = {
+							_id: county_data[1],
+							district: parseInt(county_data[0]),
+							capital: county_data[2],
+							name: county_data[5],
+							name_type: parseInt(county_data[3])
+						};
 
-						data.forEach(function (county_data) {
-							var county = {
-								_id: county_data[1],
-								district: parseInt(county_data[0]),
-								capital: county_data[2],
-								name: county_data[5],
-								name_type: parseInt(county_data[3])
-							};
-
-							db_reset_promises.push(db.collection(table).insert(county));
-						});
+						db_reset_promises.push(db.collection(table).insert(county));
 					});
-				}
-			});
-
-			setTimeout(function () {
-				Promise.all(db_reset_promises).then(function (results) {
-					res.write('Reset done');
-					res.end();
 				});
-			}, 500);
-		}
-		else{
-			res.redirect(app.locals.url + '/');
-			res.write('No collection to reset');
-			res.end();
-		}
-	});
-// }
+			}
+		});
+
+		setTimeout(function () {
+			Promise.all(db_reset_promises).then(function (results) {
+				res.write('Reset done');
+				res.end();
+			});
+		}, 500);
+	}
+	else{
+		res.redirect(app.locals.url + '/');
+		res.write('No collection to reset');
+		res.end();
+	}
+});
+
+app.route('/').get(function (req, res) {
+	// if (app.get('env') === 'production') {
+		res.render('opening');
+		res.end();
+		return;
+	// }
+	// else {
+	// 	db.collection('users').find({}).sort({ register_date: 1 }).limit(10).toArray().then(function (last_users) {
+	// 		res.render('index', { last_users: last_users });
+	// 		res.end();
+	// 	});
+	// }
+});
 
 app.route('*').all(function (req, res, next) {
 	res.status(404);

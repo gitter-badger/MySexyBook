@@ -1,3 +1,4 @@
+{{= it.dots._header(it) }}
 <main id="page">
 	<div class="container">
 		<h1>Connexion</h1>
@@ -26,3 +27,4 @@
 		<p><a href="{{= it.app.url }}/mot-de-passe-perdu">Mot de passe perdu ?</a></p>
 	</div>
 </main>
+{{= it.dots._footer(it) }}

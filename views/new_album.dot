@@ -1,3 +1,4 @@
+{{= it.dots._header(it) }}
 <main id="page">
 	<div class="container">
 		<h1>Créer un album</h1>
@@ -25,3 +26,4 @@
 		</form>
 	</div>
 </main>
+{{= it.dots._footer(it) }}

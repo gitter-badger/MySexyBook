@@ -1,3 +1,4 @@
+{{= it.dots._header(it) }}
 <main id="page">
 	<div class="container">
 		<h1>Bienvenue sur le book de {{= it.sanitize(it.user.pseudo) }}</h1>
@@ -114,3 +115,4 @@
 		{{?}}
 	</div>
 </main>
+{{= it.dots._footer(it) }}

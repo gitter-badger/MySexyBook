@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html id="opening-page" lang="fr">
+<head>
+	<meta charset="UTF-8" />
+	<title>{{= it.app.title }} — Ouverture bientôt</title>
+	
+	<meta name="robots" content="index,nofollow" />
+	<meta name="viewport" content="width=device-width, user-scalable=no" />
+	<link rel="stylesheet" href="{{= it.app.url }}/assets/css/mysexybook.min.css" />
+
+	<meta property="og:url" content="{{= it.app.url }}" />
+	<meta property="og:title" content="{{= it.app.title }}" />
+	<meta property="og:image" content="{{= it.app.url }}/assets/img/opening-bg.jpg" />
+
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@My_Sexy_Book" />
+	<meta name="twitter:url" content="{{= it.app.url }}" />
+	<meta name="twitter:title" content="{{= it.app.title }}" />
+	<meta name="twitter:description" content="Ouverture bientôt…" />
+	<meta name="twitter:image" content="{{= it.app.url }}/assets/img/opening-bg.jpg" />
+</head>
+<body>
+	<main id="opening-content">
+		<h1>{{= it.app.title }}</h1>
+
+		<p id="opening-info">Ouverture bientôt — <a href="mailto:contact@mysexybook.photo">Contactez-nous</a></p>
+	</main>
+</body>
+</html>
