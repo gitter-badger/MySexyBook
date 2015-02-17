@@ -884,17 +884,17 @@ app.route('/db_reset/:tables').get(function (req, res, next) {
 });
 
 app.route('/').get(function (req, res) {
-	// if (app.get('env') === 'production') {
+	if (app.get('env') === 'production') {
 		res.render('opening');
 		res.end();
 		return;
-	// }
-	// else {
-	// 	db.collection('users').find({}).sort({ register_date: 1 }).limit(10).toArray().then(function (last_users) {
-	// 		res.render('index', { last_users: last_users });
-	// 		res.end();
-	// 	});
-	// }
+	}
+	else {
+		db.collection('users').find({}).sort({ register_date: 1 }).limit(10).toArray().then(function (last_users) {
+			res.render('index', { last_users: last_users });
+			res.end();
+		});
+	}
 });
 
 app.route('*').all(function (req, res, next) {
