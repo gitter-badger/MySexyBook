@@ -18,6 +18,89 @@ html{
 	background-color: @background-primary-accent;
 	color: @color-primary;
 }
+body{
+	min-height: 100%;
+}
+html#opening-page{
+	background-image: url('../img/opening-bg.jpg');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	&>body{
+		&::before, &::after{
+			content: '';
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			z-index: 0;
+		}
+		&::before{
+			background-image: url('../img/opening-bg.jpg');
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			-webkit-filter: blur(.75vmin);
+			filter: blur(.75vmin);
+		}
+		&::after{
+			background-color: fade(#000, 10%);
+		}
+	}
+
+	main#opening-content{
+		position: fixed;
+		top: 50%;
+		left: 0;
+		right: 0;
+		text-align: center;
+		color: #fff;
+		z-index: 5;
+
+		&>h1{
+			position: relative;
+			display: inline-block;
+			font-size: 3em;
+			padding: .5em;
+			margin: -2em auto;
+			max-width: 9em;
+			line-height: 1em;
+			white-space: nowrap;
+			text-transform: uppercase;
+			.text-shadow(0 0 2px #000);
+
+			&::before, &::after{
+				content: '';
+				display: block;
+				position: absolute;
+				right: 0;
+				left: 0;
+				width: auto;
+				height: .125em;
+				background-color: #fff;
+				.box-shadow(0 0 2px #000);
+				.transition(all .2s linear);
+			}
+			&::before{
+				top: 0;
+			}
+			&::after{
+				bottom: 0;
+			}
+		}
+
+		&>#opening-info{
+			position: fixed;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			padding: 1em;
+		}
+	}
+}
+
 a{
 	color: inherit;
 }
@@ -95,6 +178,7 @@ a{
 		background-color: @background-primary;
 	}
 }
+
 fieldset{
 	padding: 0 1em;
 	margin: 1em 0;
