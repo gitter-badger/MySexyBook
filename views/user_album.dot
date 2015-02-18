@@ -19,15 +19,12 @@
 							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/1024x1024/' + photo.src }}" media="(max-width: 1024px)" />
 							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/960x960/' + photo.src }}" media="(max-width: 960px)" />
 							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/540x540/' + photo.src }}" media="(max-width: 540px)" />
-							<img srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/960x960/' + photo.src }}" alt="" />
+							<img set="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/960x960/' + photo.src }}" alt="" />
 						</picture>
-						{{? photo.title || photo.file_info }}
+						{{? photo.title }}
 						<figcaption class="photo-caption">
 							{{? photo.title }}
 								<h2>{{= it.sanitize(photo.title) }}</h2>
-							{{?}}
-							{{? photo.file_info }}
-								<div class="photo-info">{{= JSON.stringify(photo.file_info, null, '\t') }}</div>
 							{{?}}
 						</figcaption>
 						{{?}}
@@ -48,7 +45,7 @@
 				<legend>Ajouter une photo</legend>
 				<div>
 					<label for="new-image-src">Fichier</label>
-					<input type="file" name="image[src]" id="new-image-src" required data-drag-drop-area />
+					<input type="file" name="image[src]" id="new-image-src" required accept="image/jpeg,image/png" data-drag-drop-area />
 				</div>
 
 				<div>

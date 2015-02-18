@@ -43,8 +43,12 @@ html#opening-page{
 			background-position: center;
 			background-repeat: no-repeat;
 			background-size: cover;
-			-webkit-filter: blur(.75vmin);
-			filter: blur(.75vmin);
+			filter: url('../img/filters.svg#blur');
+			-webkit-filter: blur(.75em);
+			-webkit-filter: blur(1vmin);
+			filter: blur(.75em);
+			filter: blur(1vmin);
+			filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='12');
 		}
 		&::after{
 			background-color: fade(#000, 10%);
@@ -267,8 +271,11 @@ img{
 	list-style: none;
 
 	&>.album{
+		padding: 1em;
+		background-color: @background-primary-accent;
+
 		&>.album-preview{
-			margin: 0;
+			margin: 0 -.5em;
 			padding: 0;
 			list-style: none;
 			overflow: hidden;
@@ -281,22 +288,32 @@ img{
 			&>li{
 				display: inline-block;
 				vertical-align: middle;
+				padding: .5em;
+				width: 20%;
 
 				&>a{
-					display: inline-block;
+					position: relative;
+					display: block;
 					vertical-align: middle;
-					width: 11em;
-					height: 11em;
+					padding-top: 100%;
 
 					&>img{
-						display: block;
-						min-width: 100%;
-						min-height: 100%;
+						position: absolute;
+						top: 0;
+						right: 0;
+						bottom: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
 						object-fit: cover;
 					}
 				}
 			}
 		}
+	}
+
+	&>.album+.album{
+		margin-top: 1em;
 	}
 }
 .album-photos{
@@ -332,6 +349,10 @@ img{
 			background-color: fade(@background-secondary, 30%);
 			color: fade(@color-secondary, 60%);
 			transition: .3s;
+
+			&>h2{
+				margin: 0;
+			}
 		}
 		&:hover>.photo-caption{
 			background-color: fade(@background-secondary, 80%);

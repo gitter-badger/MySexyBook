@@ -76,7 +76,7 @@
 						{{~ album.photos.slice(0, 5) :photo }}
 							<li>
 								<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= album._id }}#photo-{{= photo._id }}">
-									<img src="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/176x176/' + photo.src }}" alt="" />
+									<img src="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/166x166x1/' + photo.src }}" alt="" />
 								</a>
 							</li>
 						{{~}}
