@@ -82,7 +82,7 @@
 						{{~}}
 						</ul>
 					{{??}}
-						<p>Album vide</p>
+						<p><em>Album vide</em></p>
 					{{?}}
 				</li>
 			{{~}}
