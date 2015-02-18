@@ -176,8 +176,15 @@ app.route('/photos/:userid/:albumid/:dimensions/:photosrc').get(function (req, r
 				dimensions[1] = dimensions[0];
 			}
 
+			if (!dimensions[2]){
+				var crop_thumb = false;
+			}
+			else{
+				var crop_thumb = true;
+			}
+
 			var original_path = 'uploads/originals/' + user._id + '/' + album._id + '/' + req.params.photosrc;
-			var thumb_path = 'uploads/thumbs/' + user._id + '/' + album._id + '/' + dimensions[0] + 'x' +dimensions[1] + '_' + req.params.photosrc;
+			var thumb_path = 'uploads/thumbs/' + user._id + '/' + album._id + '/' + dimensions[0] + 'x' + dimensions[1] + 'x' + (crop_thumb ? '1' : '0') + '_' + req.params.photosrc;
 
 			fs.exists(thumb_path, function (exists) {
 				if (exists) {
@@ -206,6 +213,9 @@ app.route('/photos/:userid/:albumid/:dimensions/:photosrc').get(function (req, r
 								return;
 							}
 
+							if (!info.ratio && (info.width && info.height)) {
+								info.ratio = info.width / info.height;
+							}
 							if (!info.orientation && (info.width && info.height)) {
 								if (info.width > info.height) {
 									info.orientation = 'landscape';
@@ -222,7 +232,37 @@ app.route('/photos/:userid/:albumid/:dimensions/:photosrc').get(function (req, r
 
 							original_info = info;
 
-							var thumb_img = original_img.resize(dimensions[0], dimensions[1]);
+							if (crop_thumb) {
+								var crop_ratio = dimensions[0]/dimensions[1];
+								if (crop_ratio > original_info.ratio) {
+									// Coupe haut et bas
+									var crop_dimensions = {
+										w: original_info.width,
+										h: parseInt(original_info.width * crop_ratio),
+										x: 0,
+										y: 0
+									};
+									crop_dimensions.y = parseInt((original_info.height / 2) - (crop_dimensions.h / 2));
+								}
+								else if (crop_ratio < original_info.ratio) {
+									// Coupe les côtés
+									var crop_dimensions = {
+										w: parseInt(original_info.height * crop_ratio),
+										h: original_info.height,
+										x: 0,
+										y: 0
+									};
+									crop_dimensions.x = parseInt((original_info.width / 2) - (crop_dimensions.w / 2));
+								}
+
+								if (crop_dimensions) {
+									var thumb_img = original_img.crop(crop_dimensions.w, crop_dimensions.h, crop_dimensions.x, crop_dimensions.y).resize(dimensions[0], dimensions[1]);
+								}
+							}
+
+							if (!thumb_img) {
+								var thumb_img = original_img.resize(dimensions[0], dimensions[1]);
+							}
 
 							thumb_img.write(thumb_path, function (err) {
 								if (err) {
@@ -310,8 +350,8 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 	if (!image) {
 		var form_error = 'Aucun fichier n\'a été spécifié';
 	}
-	else if (image.mimetype !== 'image/jpeg' && image.mimetype !== 'image/png' && image.mimetype !== 'image/bitmap') {
-		var form_error = 'Seules les images au format JPEG, PNG et BMP sont autorisées';
+	else if (image.mimetype !== 'image/jpeg' && image.mimetype !== 'image/png') {
+		var form_error = 'Seules les images au format JPEG et PNG sont autorisées';
 	}
 
 	if (form_error) {
@@ -348,6 +388,9 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 				return;
 			}
 
+			if (!info.ratio && (info.width && info.height)) {
+				info.ratio = info.width / info.height;
+			}
 			if (!info.orientation && (info.width && info.height)) {
 				if (info.width > info.height) {
 					info.orientation = 'landscape';
@@ -369,20 +412,18 @@ app.route('/book/:userid/:albumid').all(function (req, res, next) {
 					return;
 				}
 
-				// res.locals.album.photos.push(new_photo);
-
 				db.collection('albums').findAndModify({
 					query: {
 						_id: pmongo.ObjectId(res.locals.album._id)
-					}, 
+					},
+					sort: {
+						_id: 1
+					},
 					update: {
 						$push: { photos: new_photo }
 					},
 					new: true
 				}).then(function (album) {
-					// res.write(JSON.stringify(album, null, '\t'));
-					// res.end();
-					// return;
 					if (!album) {
 						res.render('user_album', { form_error: 'Impossible d\'enregistrer la photo dans la base de données' });
 						res.end();
@@ -706,28 +747,27 @@ app.route('/mon-profil').all(function (req, res, next) {
 		db.collection('users').findAndModify({
 			query: {
 				_id: pmongo.ObjectId(res.locals.user._id)
-			}, 
+			},
+			sort: {
+				_id: 1
+			},
 			update: {
 				$set : updated_user
 			},
 			new: true
 		}).then(function (user) {
-			// res.write(JSON.stringify(res, null, "\t"));
-			// res.end();
-			// return;
-
-			if (!user) {
+			if (!user[0]) {
 				res.render('user_edit', { form_error: 'Erreur lors de la mise à jour de la base de données' });
 				res.end();
 				return;
 			}
 
-			if (res.locals.current_user._id == user._id) {
-				req.session.current_user = user;
-				res.locals.current_user = user;
+			if (res.locals.current_user._id == user[0]._id) {
+				req.session.current_user = user[0];
+				res.locals.current_user = user[0];
 			}
 
-			res.redirect(app.locals.url + '/book/' + user.pseudo);
+			res.redirect(app.locals.url + '/book/' + user[0].pseudo);
 			res.end();
 		});
 	});
