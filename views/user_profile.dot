@@ -3,11 +3,11 @@
 	<div class="container">
 		<h1>Bienvenue sur le book de {{= it.sanitize(it.user.pseudo) }}</h1>
 
-		<p>Date d'inscription : {{= it.strftime("%d %B %Y", it.user.register_date) }}</p>
+		<p>Date d'inscription&nbsp;: {{= it.strftime("%d %B %Y", it.user.register_date) }}</p>
 	
 		{{? it.user.sex }}
 		<div>
-			Sexe : 
+			Sexe&nbsp;: 
 			{{ switch(it.user.sex) { }}
 				{{ case 'male': }}
 					Homme
@@ -24,12 +24,11 @@
 		{{?}}
 	
 		{{? it.user.geo_county }}
-		<p>Département : {{= it.sanitize(it.user.geo_county._id + ' — '+ it.user.geo_county.name) }}</p>
+		<p>Département&nbsp;: {{= it.sanitize(it.user.geo_county._id + ' — '+ it.user.geo_county.name) }}</p>
 		{{?}}
 	
 		{{? it.user.photo_styles && it.user.photo_styles.length }}
 		<p>
-			Style :
 			{{ var photo_styles = []; }}
 			{{~ it.user.photo_styles :style }}
 				{{ switch(style) { }}
@@ -50,6 +49,7 @@
 					{{ break; }}
 				{{ } }}
 			{{~}}
+			{{= photo_styles.length > 1 ? 'Styles préféré' : 'Style préféré' }}&nbsp;:
 			{{= ' ' + photo_styles.join(', ') }}
 		</p>
 		{{?}}
@@ -75,7 +75,7 @@
 							<aside class="album-preview" role="presentation">
 								<h3 class="sr-only">Aperçu de l'album :</h3>
 								{{~ album.photos.slice(0, 5) :photo }}
-								<span>
+								<span class="album-preview-thumb">
 									<picture class="thumb">
 										<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/74x74x1/' + photo.src }}" media="(max-width: 32em)" />
 										<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/99x99x1/' + photo.src }}" media="(max-width: 40em)" />
