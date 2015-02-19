@@ -63,27 +63,34 @@
 			<ul class="albums-list">
 			{{~ it.albums :album }}
 				<li class="album">
-					<h3 class="album-title"><a href="{{= it.app.url}}/book/{{= it.user.pseudo}}/{{= album._id}}">{{= it.sanitize(album.title) }}</a></h3>
-					{{? album.description }}
-					<blockquote class="album-description">
-						{{= it.sanitize(album.description) }}
-					</blockquote>
-					{{?}}
-					
-					{{? album.photos && album.photos.length }}
-						<h3 class="sr-only">Aperçu de l'album :</h3>
-						<ul class="album-preview">
-						{{~ album.photos.slice(0, 5) :photo }}
-							<li>
-								<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= album._id }}#photo-{{= photo._id }}">
-									<img src="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/166x166x1/' + photo.src }}" alt="" />
-								</a>
-							</li>
-						{{~}}
-						</ul>
-					{{??}}
-						<p><em>Album vide</em></p>
-					{{?}}
+					<a href="{{= it.app.url}}/book/{{= it.user.pseudo}}/{{= album._id}}">
+						<h3 class="album-title">{{= it.sanitize(album.title) }}</h3>
+						{{? album.description }}
+						<blockquote class="album-description">
+							{{= it.sanitize(album.description) }}
+						</blockquote>
+						{{?}}
+						
+						{{? album.photos && album.photos.length }}
+							<aside class="album-preview" role="presentation">
+								<h3 class="sr-only">Aperçu de l'album :</h3>
+								{{~ album.photos.slice(0, 5) :photo }}
+								<span>
+									<picture class="thumb">
+										<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/74x74x1/' + photo.src }}" media="(max-width: 32em)" />
+										<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/99x99x1/' + photo.src }}" media="(max-width: 40em)" />
+										<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/102x102x1/' + photo.src }}" media="(max-width: 50em)" />
+										<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/134x134x1/' + photo.src }}" media="(max-width: 60em)" />
+										<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/166x166x1/' + photo.src }}" media="(max-width: 80em)" />
+										<img srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/230x230x1/' + photo.src }}" alt="" />
+									</picture>
+								</span>
+								{{~}}
+							</aside>
+						{{??}}
+							<p><em>Album vide</em></p>
+						{{?}}
+					</a>
 				</li>
 			{{~}}
 			</ul>

@@ -12,6 +12,13 @@
 @color-secondary: #ffffff;
 
 
+@breakpoint-xs: 25em;
+@breakpoint-s: 32em;
+@breakpoint-m: 40em;
+@breakpoint-l: 50em;
+@breakpoint-xl: 60em;
+@breakpoint-xxl: 80em;
+
 
 html{
 	min-height: 100%;
@@ -115,9 +122,8 @@ a{
 	clear: both;
 }
 .container{
-	max-width: @container-width;
-	margin-right: auto;
-	margin-left: auto;
+	margin-right: .5em;
+	margin-left: .5em;
 	position: relative;
 	overflow: hidden;
 	-webkit-box-sizing: border-box;
@@ -129,11 +135,26 @@ a{
 		&:extend(.clearfix);
 	}
 }
-@media screen and (max-width: @container-width) {
+@media screen and (min-width: @breakpoint-m) {
 	.container{
-		max-width: auto;
-		margin-right: .5em;
-		margin-left: .5em;
+		width: @breakpoint-m;
+		margin-right: auto;
+		margin-left: auto;
+	}
+}
+@media screen and (min-width: @breakpoint-l) {
+	.container{
+		width: @breakpoint-l;
+	}
+}
+@media screen and (min-width: @breakpoint-xl) {
+	.container{
+		width: @breakpoint-xl;
+	}
+}
+@media screen and (min-width: @breakpoint-xxl) {
+	.container{
+		width: @breakpoint-xxl;
 	}
 }
 
@@ -271,41 +292,48 @@ img{
 	list-style: none;
 
 	&>.album{
-		padding: 1em;
-		background-color: @background-primary-accent;
+		&>a{
+			display: block;
+			padding: 1em;
+			text-decoration: none;
+			background-color: @background-primary-accent;
 
-		&>.album-preview{
-			margin: 0 -.5em;
-			padding: 0;
-			list-style: none;
-			overflow: hidden;
-
-			&:after{
-				content: '';
-				&:extend(.clearfix);
+			&:hover, &:focus{
+				background-color: DARKEN(@background-primary-accent, 10%);
 			}
 
-			&>li{
-				display: inline-block;
-				vertical-align: middle;
-				padding: .5em;
-				width: 20%;
+			&>.album-preview{
+				margin: 0 -.5em;
+				padding: 0;
+				list-style: none;
+				overflow: hidden;
 
-				&>a{
-					position: relative;
-					display: block;
+				&:after{
+					content: '';
+					&:extend(.clearfix);
+				}
+
+				&>span{
+					display: inline-block;
 					vertical-align: middle;
-					padding-top: 100%;
+					padding: .5em;
+					width: 20%;
 
-					&>img{
-						position: absolute;
-						top: 0;
-						right: 0;
-						bottom: 0;
-						left: 0;
-						width: 100%;
-						height: 100%;
-						object-fit: cover;
+					&>picture.thumb{
+						position: relative;
+						display: block;
+						vertical-align: middle;
+						padding-top: 100%;
+
+						&>source, &>img{
+							position: absolute;
+							top: 0;
+							right: 0;
+							bottom: 0;
+							left: 0;
+							width: 100%;
+							height: 100%;
+						}
 					}
 				}
 			}
