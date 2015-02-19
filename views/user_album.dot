@@ -12,7 +12,7 @@
 			<ul class="album-photos">
 			{{~ it.album.photos :photo }}
 				<li id="photo-{{= photo._id }}">
-					<figure class="photo">
+					<figure class="photo" tabindex="0">
 						<picture>
 							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/512x512/' + photo.src }}" media="(max-width: 32em)" />
 							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/640x640/' + photo.src }}" media="(max-width: 40em)" />
