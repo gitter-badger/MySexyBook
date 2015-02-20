@@ -592,11 +592,14 @@ app.route('/recherche').all(function (req, res, next) {
 			// search_filters.pseudo = new RegExp(req.query.user.pseudo, 'i');
 			search_filters.pseudo = { $regex: req.query.user.pseudo, $options: 'i' };
 		}
-		if (req.query.user.sex && ["male", "female"].indexOf(req.query.user.sex) !== -1) {
+		if (req.query.user.sex && ['male', 'female'].indexOf(req.query.user.sex) !== -1) {
 			search_filters.sex = req.query.user.sex;
 		}
 		if (req.query.user.geo_county) {
 			search_filters.geo_county_id = req.query.user.geo_county;
+		}
+		if (req.query.user.camera_side && ['photographer', 'model'].indexOf(req.query.user.camera_side) !== -1) {
+			search_filters.camera_side = req.query.user.camera_side;
 		}
 	}
 

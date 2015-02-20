@@ -15,11 +15,11 @@
 					<label for="user-sex">Sexe</label>
 					<label>
 						<input type="radio" name="user[sex]" id="user-sex-male" required value="male" {{= it.req.body && it.req.body.user ? (it.req.body.user.sex == 'male' ? 'checked="checked"' : '') : (it.user.sex && it.user.sex == 'male' ? 'checked="checked"' : '') }} />
-						<span class="checkbox-label">Homme</span>
+						<span class="radio-label">Homme</span>
 					</label>
 					<label>
 						<input type="radio" name="user[sex]" id="user-sex-female" required value="female" {{= it.req.body && it.req.body.user ? (it.req.body.user.sex == 'female' ? 'checked="checked"' : '') : (it.user.sex && it.user.sex == 'female' ? 'checked="checked"' : '') }} />
-						<span class="checkbox-label">Femme</span>
+						<span class="radio-label">Femme</span>
 					</label>
 				</div>
 
@@ -51,11 +51,11 @@
 					<label for="user-camera_side">Côté de la caméra préféré</label>
 					<label>
 						<input type="radio" name="user[camera_side]" id="user-camera_side-photographer" required value="photographer" {{= it.req.body && it.req.body.user ? (it.req.body.user.camera_side == 'photographer' ? 'checked="checked"' : '') : (it.user.camera_side && it.user.camera_side == 'photographer' ? 'checked="checked"' : '') }} />
-						<span class="checkbox-label">Photographe</span>
+						<span class="radio-label">Photographe</span>
 					</label>
 					<label>
 						<input type="radio" name="user[camera_side]" id="user-camera_side-model" required value="model" {{= it.req.body && it.req.body.user ? (it.req.body.user.camera_side == 'model' ? 'checked="checked"' : '') : (it.user.camera_side && it.user.camera_side == 'model' ? 'checked="checked"' : '') }} />
-						<span class="checkbox-label">Modèle</span>
+						<span class="radio-label">Modèle</span>
 					</label>
 				</div>
 

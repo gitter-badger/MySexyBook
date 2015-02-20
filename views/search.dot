@@ -13,15 +13,18 @@
 				</div>
 				
 				<div>
-					<label>Sexe</label>
+					<label for="user-sex">Sexe</label>
 					<label>
-						<input type="radio" name="user[sex]" id="search-user-sex-male" value="male" {{= (it.search_filters.sex && it.search_filters.sex === 'male') ? ' checked="checked"' : '' }} /> Homme
+						<input type="radio" name="user[sex]" id="search-user-sex-male" value="male" {{= (it.search_filters.sex && it.search_filters.sex === 'male') ? ' checked="checked"' : '' }} />
+						<span class="radio-label">Homme</span>
 					</label>
 					<label>
-						<input type="radio" name="user[sex]" id="search-user-sex-female" value="female" {{= (it.search_filters.sex && it.search_filters.sex === 'female') ? ' checked="checked"' : '' }} /> Femme
+						<input type="radio" name="user[sex]" id="search-user-sex-female" value="female" {{= (it.search_filters.sex && it.search_filters.sex === 'female') ? ' checked="checked"' : '' }} />
+						<span class="radio-label">Femme</span>
 					</label>
 					<label>
-						<input type="radio" name="user[sex]" id="search-user-sex-any" value="any" {{= (!it.search_filters.sex || it.search_filters.sex === 'any') ? ' checked="checked"' : '' }} /> Peu importe
+						<input type="radio" name="user[sex]" id="search-user-sex-any" value="any" {{= (!it.search_filters.sex || it.search_filters.sex === 'any') ? ' checked="checked"' : '' }} />
+						<span class="radio-label">Peu importe</span>
 					</label>
 				</div>
 				
@@ -33,6 +36,22 @@
 						<option value="{{= county._id }}" {{= (it.search_filters.geo_county_id && it.search_filters.geo_county_id === county._id) ? ' selected="selected"' : '' }}>{{= it.sanitize(county._id + ' – ' +county.name) }}</option>
 						{{~}}
 					</select>
+				</div>
+				
+				<div>
+					<label for="user-camera_side">Côté de la caméra</label>
+					<label>
+						<input type="radio" name="user[camera_side]" id="search-user-camera_side-photographer" value="photographer" {{= (it.search_filters.camera_side && it.search_filters.camera_side === 'photographer') ? ' checked="checked"' : '' }} />
+						<span class="radio-label">Photographe</span>
+					</label>
+					<label>
+						<input type="radio" name="user[camera_side]" id="search-user-camera_side-model" value="model" {{= (it.search_filters.camera_side && it.search_filters.camera_side === 'model') ? ' checked="checked"' : '' }} />
+						<span class="radio-label">Modèle</span>
+					</label>
+					<label>
+						<input type="radio" name="user[camera_side]" id="search-user-camera_side-any" value="any" {{= (!it.search_filters.camera_side || it.search_filters.camera_side === 'any') ? ' checked="checked"' : '' }} />
+						<span class="radio-label">Peu Importe</span>
+					</label>
 				</div>
 			</fieldset>
 
