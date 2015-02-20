@@ -1085,8 +1085,10 @@ app.route('/').get(function (req, res) {
 	}
 	else {
 		db.collection('users').find({}).sort({ register_date: 1 }).limit(5).toArray().then(function (last_users) {
-			res.render('index', { last_users: last_users });
-			res.end();
+			db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
+				res.render('index', { last_users: last_users, geo_counties: geo_counties });
+				res.end();
+			});
 		});
 	}
 });

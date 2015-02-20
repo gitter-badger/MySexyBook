@@ -24,6 +24,7 @@
 					</label>
 				</div>
 				
+				{{? it.geo_counties }}
 				<div>
 					<label for="search-user-geo_county">Département</label>
 					<select name="user[geo_county]" id="search-user-geo_county" size="1">
@@ -33,6 +34,7 @@
 						{{~}}
 					</select>
 				</div>
+				{{?}}
 				
 				<div>
 					<label for="user-camera_side">Côté de la caméra</label>
