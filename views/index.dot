@@ -24,16 +24,7 @@
 		</ul>
 		{{?}}
 
-		<form action="{{= it.app.url }}/recherche">
-			<fieldset>
-				<legend>Rechercher un utilisateur</legend>
-
-				<div>
-					<label for="search-user-pseudo">Pseudo</label>
-					<input type="search" name="user[pseudo]" id="search-user-pseudo" size="12" />
-				</div>
-			</fieldset>
-		</form>
+		{{= it.dots.search_form(it) }}
 	</div>
 </main>
 {{= it.dots._footer(it) }}
