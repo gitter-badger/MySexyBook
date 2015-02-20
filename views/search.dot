@@ -15,7 +15,7 @@
 				<div>
 					<label>Sexe</label>
 					<label>
-						<input type="radio" name="user[sex]" id="search-user-sex-male" value="male" {{= (it.search_filters.sex && it.search_filters.sex === 'female') ? ' checked="checked"' : '' }} /> Homme
+						<input type="radio" name="user[sex]" id="search-user-sex-male" value="male" {{= (it.search_filters.sex && it.search_filters.sex === 'male') ? ' checked="checked"' : '' }} /> Homme
 					</label>
 					<label>
 						<input type="radio" name="user[sex]" id="search-user-sex-female" value="female" {{= (it.search_filters.sex && it.search_filters.sex === 'female') ? ' checked="checked"' : '' }} /> Femme
@@ -30,7 +30,7 @@
 					<select name="user[geo_county]" id="search-user-geo_county" size="1">
 						<option value="">— Limiter la recherche à un département</option>
 						{{~ it.geo_counties : county }}
-						<option value="{{= county._id }}" {{= (it.search_filters.geo_county && it.search_filters.geo_county === county._id) ? ' selected="selected"' : '' }}>{{= it.sanitize(county._id + ' – ' +county.name) }}</option>
+						<option value="{{= county._id }}" {{= (it.search_filters.geo_county_id && it.search_filters.geo_county_id === county._id) ? ' selected="selected"' : '' }}>{{= it.sanitize(county._id + ' – ' +county.name) }}</option>
 						{{~}}
 					</select>
 				</div>

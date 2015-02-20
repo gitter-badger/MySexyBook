@@ -469,7 +469,7 @@ app.route('/recherche').all(function (req, res, next) {
 		if (req.query.user.sex && ["male", "female"].indexOf(req.query.user.sex) !== -1) {
 			search_filters.sex = req.query.user.sex;
 		}
-		if (req.query.user.geo_county_id) {
+		if (req.query.user.geo_county) {
 			search_filters.geo_county_id = req.query.user.geo_county;
 		}
 	}
