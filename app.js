@@ -167,6 +167,9 @@ app.use(function (req, res, next) {
 			next();
 		});
 	}
+	else if(req.session && req.session.current_user) {
+		res.local.current_user = req.session.current_user;
+	}
 	else {
 		next();
 	}
@@ -661,7 +664,11 @@ app.route('/connexion').all(function (req, res, next) {
 		}
 
 		req.session.current_user = user;
-		res.cookie('user_id', user._id);
+
+		if (req.body.stay_online) {
+			res.cookie('user_id', user._id);
+		}
+
 		res.redirect(app.locals.url + '/');
 		res.end();
 	});
@@ -874,6 +881,7 @@ app.route('/nouvel-album').all(function (req, res, next) {
 
 app.route('/deconnexion').get(function (req, res, next) {
 	req.session.current_user = null;
+	delete req.session.current_user;
 	res.clearCookie('user_id');
 	res.redirect(app.locals.url + '/');
 	res.end();
