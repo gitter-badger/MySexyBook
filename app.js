@@ -66,15 +66,18 @@ var ACCOUNTS_RIGHTS = {
 /* Database */
 var db = pmongo('mysexybook', ['users', 'albums', 'geo_counties']);
 
+db.collection('users').dropIndexes();
 db.collection('users').ensureIndex({ email: 1 }, { unique: true, dropDups: true });
 db.collection('users').ensureIndex({ email: 1, password: 1 });
 db.collection('users').ensureIndex({ pseudo: 1 }, { unique: true, dropDups: true });
 db.collection('users').ensureIndex({ geo_county_id: 1 });
 
+db.collection('albums').dropIndexes();
 db.collection('albums').ensureIndex({ creator: 1 });
 db.collection('albums').ensureIndex({ 'photos.uploaded_at': 1 });
 db.collection('albums').ensureIndex({ creator: 1, title: 1 }, { unique: true, dropDups: true });
 
+db.collection('geo_counties').dropIndexes();
 db.collection('geo_counties').ensureIndex({ name: 1 }, { unique: true });
 
 /* Template engine */
