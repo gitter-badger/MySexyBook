@@ -16,6 +16,7 @@ var MongoStore = require('connect-mongo')(session);
 var multer = require('multer');
 var validator = require('validator');
 var sanitize = require('sanitize-caja');
+var MarkDown = require('markdown-it');
 var strftime = require('strftime').localizedStrftime({
 	days: [ 'dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi' ],
 	shortDays: [ 'dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam' ],
@@ -43,6 +44,9 @@ switch (app.get('env')) {
 }
 
 app.locals.title = 'My Sexy Book';
+app.locals.sanitize = sanitize;
+app.locals.markdown = new MarkDown();
+app.locals.markdown_inline = new MarkDown('zero', { breaks: true }).enable([ 'newline', 'emphasis' ]);
 app.locals.strftime = strftime;
 app.locals.contact_email = 'contact@mysexybook.photo';
 app.locals.isSecure = false;
@@ -74,6 +78,7 @@ db.collection('users').ensureIndex({ geo_county_id: 1 });
 
 db.collection('albums').dropIndexes();
 db.collection('albums').ensureIndex({ creator: 1 });
+db.collection('albums').ensureIndex({ created_at: 1 });
 db.collection('albums').ensureIndex({ 'photos.uploaded_at': 1 });
 db.collection('albums').ensureIndex({ creator: 1, title: 1 }, { unique: true, dropDups: true });
 
@@ -149,8 +154,6 @@ app.use(function (req, res, next) {
 	res.locals.dots = dots;
 	res.locals.app = app.locals;
 	res.locals.req = req;
-	res.locals.strftime = strftime;
-	res.locals.sanitize = sanitize;
 
 	if (req.cookies && req.cookies.user_id) {
 		db.collection('users').findOne({
@@ -423,9 +426,9 @@ app.route('/photos/:userid/:albumid/:dimensions/:photosrc').get(function (req, r
 });
 
 
-app.route('/book/:userid').get(function (req, res, next) {
+app.route('/book/:userpseudo').get(function (req, res, next) {
 	db.collection('users').findOne({
-		pseudo: req.params.userid
+		pseudo: req.params.userpseudo
 	}).then(function (user) {
 		if (!user) {
 			next();
@@ -445,14 +448,14 @@ app.route('/book/:userid').get(function (req, res, next) {
 	});
 });
 
-app.route('/book/:userid/:albumid').all(function (req, res, next) {
+app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 	if (!validator.isMongoId(req.params.albumid)) {
 		next('route');
 		return;
 	}
 
 	db.collection('users').findOne({
-		pseudo: req.params.userid
+		pseudo: req.params.userpseudo
 	}).then(function (user) {
 		if (!user) {
 			next('route');

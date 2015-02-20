@@ -6,7 +6,7 @@
 		<p>Date d'inscription&nbsp;: {{= it.strftime("%d %B %Y", it.user.register_date) }}</p>
 	
 		{{? it.user.sex }}
-		<div>
+		<p>
 			Sexe&nbsp;: 
 			{{ switch(it.user.sex) { }}
 				{{ case 'male': }}
@@ -34,7 +34,10 @@
 		{{?}}
 	
 		{{? it.user.biography }}
-		<div>{{= it.sanitize(it.user.biography) }}</div>
+		<blockquote>
+			<h2>Biographie</h2>
+			{{= it.sanitize(it.markdown_inline.render(it.user.biography)) }}
+		</blockquote>
 		{{?}}
 	
 		{{? it.user.geo_county }}
@@ -69,7 +72,10 @@
 		{{?}}
 	
 		{{? it.user.photo_conditions }}
-		<p>Conditions : {{= it.sanitize(it.user.photo_conditions) }}</p>
+		<blockquote>
+			<h2>Conditions</h2>
+			{{= it.sanitize(it.markdown_inline.render(it.user.photo_conditions)) }}
+		</blockquote>
 		{{?}}
 		
 		{{? it.albums.length }}

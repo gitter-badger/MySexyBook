@@ -12,12 +12,14 @@
 				<legend>Description</legend>
 
 				<div>
-					<label>Sexe</label>
+					<label for="user-sex">Sexe</label>
 					<label>
-						<input type="radio" name="user[sex]" id="user-sex-male" required value="male" {{= it.req.body && it.req.body.user ? (it.req.body.user.sex == 'male' ? 'checked="checked"' : '') : (it.user.sex && it.user.sex == 'male' ? 'checked="checked"' : '') }} /> Homme
+						<input type="radio" name="user[sex]" id="user-sex-male" required value="male" {{= it.req.body && it.req.body.user ? (it.req.body.user.sex == 'male' ? 'checked="checked"' : '') : (it.user.sex && it.user.sex == 'male' ? 'checked="checked"' : '') }} />
+						<span class="checkbox-label">Homme</span>
 					</label>
 					<label>
-						<input type="radio" name="user[sex]" id="user-sex-female" required value="female" {{= it.req.body && it.req.body.user ? (it.req.body.user.sex == 'female' ? 'checked="checked"' : '') : (it.user.sex && it.user.sex == 'female' ? 'checked="checked"' : '') }} /> Femme
+						<input type="radio" name="user[sex]" id="user-sex-female" required value="female" {{= it.req.body && it.req.body.user ? (it.req.body.user.sex == 'female' ? 'checked="checked"' : '') : (it.user.sex && it.user.sex == 'female' ? 'checked="checked"' : '') }} />
+						<span class="checkbox-label">Femme</span>
 					</label>
 				</div>
 
@@ -60,7 +62,8 @@
 				<div>
 					<label for="user-photo_styles">Style(s) préféré(s)</label>
 					<label title="Photo sexy en habit complet">
-						<input type="checkbox" name="user[photo_styles][]" id="user-photo_styles-fashion" value="fashion" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_styles && it.req.body.user.photo_styles.indexOf('fashion') !== -1) ? 'checked="checked"' : '') : (it.user && it.user.photo_styles && it.user.photo_styles.indexOf('fashion') !== -1 ? 'checked="checked"' : '') }} /> <span class="checkbox-label">Mode</span>
+						<input type="checkbox" name="user[photo_styles][]" id="user-photo_styles-fashion" value="fashion" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_styles && it.req.body.user.photo_styles.indexOf('fashion') !== -1) ? 'checked="checked"' : '') : (it.user && it.user.photo_styles && it.user.photo_styles.indexOf('fashion') !== -1 ? 'checked="checked"' : '') }} />
+						<span class="checkbox-label">Mode</span>
 					</label>
 					<label title="Photo sexy en habit complet">
 						<input type="checkbox" name="user[photo_styles][]" id="user-photo_styles-glamour" value="glamour" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_styles && it.req.body.user.photo_styles.indexOf('glamour') !== -1) ? 'checked="checked"' : '') : (it.user && it.user.photo_styles && it.user.photo_styles.indexOf('glamour') !== -1 ? 'checked="checked"' : '') }} /> <span class="checkbox-label">Glamour</span>
