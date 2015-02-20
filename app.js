@@ -175,6 +175,129 @@ app.use(function (req, res, next) {
 	}
 });
 
+app.route('/avatar/:dimensions/:userid').get(function (req, res, next) {
+	var dimensions = req.params.dimensions.split('x');
+
+	if (!dimensions[1]) {
+		dimensions[1] = dimensions[0];
+	}
+
+	if (!dimensions[2]){
+		var crop_thumb = false;
+	}
+	else{
+		var crop_thumb = true;
+	}
+
+	db.collection('users').findOne({
+		_id: pmongo.ObjectId(req.params.userid)
+	}).then(function (user){
+		if (!user || !user.avatar || !user.avatar.file_src) {
+			var original_path = 'uploads/originals/default_avatar.png';
+			var thumb_path = 'uploads/thumbs/' + dimensions[0] + 'x' + dimensions[1] + 'x' + (crop_thumb ? '1' : '0') + '_default_avatar.png';
+		}
+		else {
+			var original_path = 'uploads/originals/' + user._id + '/' + user.avatar.file_src;
+			var thumb_path = 'uploads/thumbs/' + user._id + '/' + dimensions[0] + 'x' + dimensions[1] + 'x' + (crop_thumb ? '1' : '0') + '_' + user.avatar.file_src;
+		}
+
+		fs.exists(thumb_path, function (exists) {
+			if (exists) {
+				var stat = fs.statSync(thumb_path);
+
+				res.header('Content-Type', mime.lookup(thumb_path));
+				res.header('Content-Length', stat.size);
+				res.header('Cache-Control', 'public');
+
+				fs.createReadStream(thumb_path).pipe(res);
+				return;
+			}
+			else {
+				fs.readFile(original_path, function (err, data) {
+					if (err && !data) {
+						next('route');
+						return;
+					}
+
+					var original_img = gm(data, thumb_path);
+
+					var original_info = {};
+
+					original_img.size(function (err, info) {
+						if (err && !info) {
+							return;
+						}
+
+						if (!info.ratio && (info.width && info.height)) {
+							info.ratio = info.width / info.height;
+						}
+						if (!info.orientation && (info.width && info.height)) {
+							if (info.width > info.height) {
+								info.orientation = 'landscape';
+							}
+							else if (info.width < info.height) {
+								info.orientation = 'portrait';
+							}
+							else{
+								info.orientation = 'square';
+							}
+						}
+
+						original_info = info;
+
+						if (crop_thumb) {
+							var crop_ratio = dimensions[0]/dimensions[1];
+							if (crop_ratio > original_info.ratio) {
+								// Coupe haut et bas
+								var crop_dimensions = {
+									w: original_info.width,
+									h: parseInt(original_info.width * crop_ratio),
+									x: 0,
+									y: 0
+								};
+								crop_dimensions.y = parseInt((original_info.height / 2) - (crop_dimensions.h / 2));
+							}
+							else if (crop_ratio < original_info.ratio) {
+								var crop_dimensions = {
+									w: parseInt(original_info.height * crop_ratio),
+									h: original_info.height,
+									x: 0,
+									y: 0
+								};
+								crop_dimensions.x = parseInt((original_info.width / 2) - (crop_dimensions.w / 2));
+							}
+
+							if (crop_dimensions) {
+								var thumb_img = original_img.crop(crop_dimensions.w, crop_dimensions.h, crop_dimensions.x, crop_dimensions.y).resize(dimensions[0], dimensions[1]);
+							}
+						}
+
+						if (!thumb_img) {
+							var thumb_img = original_img.resize(dimensions[0], dimensions[1]);
+						}
+
+						thumb_img.write(thumb_path, function (err) {
+							if (err) {
+								console.error(err);
+								return;
+							}
+
+							var stat = fs.statSync(thumb_path);
+
+							res.header('Content-Type', mime.lookup(thumb_path));
+							res.header('Content-Length', stat.size);
+							res.header('Cache-Control', 'public');
+
+							fs.createReadStream(thumb_path).pipe(res);
+						});
+					});
+				});
+				return;
+			}
+		});
+	});
+});
+
 app.route('/photos/:userid/:albumid/:dimensions/:photosrc').get(function (req, res, next) {
 	db.collection('users').findOne({
 		_id: pmongo.ObjectId(req.params.userid)
