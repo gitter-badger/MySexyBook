@@ -546,14 +546,16 @@ app.route('/inscription').all(function (req, res, next) {
 					return;
 				}
 
-				db.collection('users').insert({
+				var new_user = {
 					email: req.body.user.email,
 					password: hashPassword(req.body.user.password),
 					pseudo: req.body.user.pseudo,
 					sex: req.body.user.sex,
 					geo_county_id: req.body.user.geo_county,
 					register_date: new Date()
-				}).then(function (user) {
+				};
+
+				db.collection('users').insert(new_user).then(function (user) {
 					if (!user) {
 						res.render('register', { form_error: 'Erreur lors de l\'enregistrement du profil' });
 						res.end();
@@ -947,7 +949,7 @@ app.route('/').get(function (req, res) {
 		return;
 	}
 	else {
-		db.collection('users').find({}).sort({ register_date: 1 }).limit(10).toArray().then(function (last_users) {
+		db.collection('users').find({}).sort({ register_date: 1 }).limit(5).toArray().then(function (last_users) {
 			res.render('index', { last_users: last_users });
 			res.end();
 		});
