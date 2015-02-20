@@ -12,6 +12,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var multer = require('multer');
 var validator = require('validator');
 var sanitize = require('sanitize-caja');
@@ -123,7 +124,12 @@ app.use(cookieParser());
 app.use(session({
 	secret: app_config.session_secret,
 	resave: false,
-	saveUninitialized: true
+	saveUninitialized: true,
+	// store: new MongoStore({ db: db }),
+	store: new MongoStore({ url: 'mongodb://localhost/mysexybook' }),
+	cookie: {
+		secure: app.locals.isSecure
+	}
 }));
 
 app.use(bodyParser.json());
