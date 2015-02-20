@@ -816,11 +816,11 @@ app.route('/mon-profil').all(function (req, res, next) {
 		next();
 	});
 }).post(function (req, res) {
-	var photo_styles = ["fashion", "glamour", "lingerie", "erotic", "nude"];
+	var photo_styles = ['fashion', 'glamour', 'lingerie', 'erotic', 'nude'];
 	if (!req.body.user) {
 		var form_error = 'Formulaire invalide';
 	}
-	else if (!req.body.user.sex || ["male", "female"].indexOf(req.body.user.sex) === -1){
+	else if (!req.body.user.sex || ['male', 'female'].indexOf(req.body.user.sex) === -1){
 		var form_error = 'Sexe invalide';
 	}
 	// else if (!req.body.user.biography) {
@@ -832,6 +832,9 @@ app.route('/mon-profil').all(function (req, res, next) {
 	// else if (!req.body.user.photo_styles || !req.body.user.photo_styles.length){
 	// 	var form_error = 'Style photographique invalide';
 	// }
+	else if (req.body.user.camera_side && ['photographer', 'model'].indexOf(req.body.user.camera_side) === -1) {
+		var form_error = 'Côté de la caméra préféré invalide';
+	}
 	else if (req.body.user.photo_styles && req.body.user.photo_styles.length){
 		for (var i=0, nb=req.body.user.photo_styles; i<nb; i++) {
 			if (photo_styles.indexOf(req.body.user.photo_styles[i]) === -1) {
@@ -871,6 +874,9 @@ app.route('/mon-profil').all(function (req, res, next) {
 		}
 		if (req.body.user.geo_county != res.locals.user.geo_county_id) {
 			updated_user.geo_county_id = req.body.user.geo_county;
+		}
+		if (req.body.user.camera_side != res.locals.user.camera_side) {
+			updated_user.camera_side = req.body.user.camera_side;
 		}
 		if (req.body.user.photo_styles != res.locals.user.photo_styles) {
 			updated_user.photo_styles = req.body.user.photo_styles;

@@ -16,7 +16,21 @@
 					Femme
 				{{ break; }}
 			{{ } }}
-		</div>
+		</p>
+		{{?}}
+	
+		{{? it.user.camera_side }}
+		<p>
+			Côté de la caméra préféré&nbsp;: 
+			{{ switch(it.user.camera_side) { }}
+				{{ case 'photographer': }}
+					Photographe
+				{{ break; }}
+				{{ case 'model': }}
+					Modèle
+				{{ break; }}
+			{{ } }}
+		</p>
 		{{?}}
 	
 		{{? it.user.biography }}
