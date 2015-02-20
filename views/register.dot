@@ -5,7 +5,7 @@
 
 		<form action="{{= it.app.url }}/inscription" method="post">
 			{{? it.form_error }}
-				<p class="alert-error">{{= it.form_error }}</p>
+				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}
 			<fieldset>
 				<legend>Informations de connexion</legend>
@@ -32,7 +32,7 @@
 				</div>
 
 				<div>
-					<label>Sexe</label>
+					<label for="register-user-sex-male">Sexe</label>
 					<label>
 						<input type="radio" name="user[sex]" id="register-user-sex-male" required value="male" {{? it.req.body && it.req.body.user && it.req.body.user.sex && it.req.body.user.sex === 'male' }} checked="checked"{{?}} /> Homme
 					</label>

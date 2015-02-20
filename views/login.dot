@@ -5,7 +5,7 @@
 
 		<form action="{{= it.app.url }}/connexion" method="post">
 			{{? it.form_error }}
-				<p class="alert-error">{{= it.form_error }}</p>
+				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}
 			<fieldset>
 				<legend>Identifiants</legend>

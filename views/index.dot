@@ -5,9 +5,21 @@
 
 		{{? it.last_users && it.last_users.length }}
 		<h2>Derniers inscrits</h2>
-		<ul id="last-registered-users">
+		<ul class="users-list" id="last-registered-users">
 			{{~ it.last_users :user }}
-			<li><a href="{{= it.app.url }}/book/{{= user.pseudo }}">{{= user.pseudo }}</a></li>
+			<li class="user">
+				<a href="{{= it.app.url }}/book/{{= user.pseudo }}">
+					<picture class="user-avatar">
+						<source srcset="{{= it.app.url }}/avatar/74x74x1/{{= user._id }}" media="(max-width: 32em)" />
+						<source srcset="{{= it.app.url }}/avatar/99x99x1/{{= user._id }}" media="(max-width: 40em)" />
+						<source srcset="{{= it.app.url }}/avatar/102x102x1/{{= user._id }}" media="(max-width: 50em)" />
+						<source srcset="{{= it.app.url }}/avatar/134x134x1/{{= user._id }}" media="(max-width: 60em)" />
+						<source srcset="{{= it.app.url }}/avatar/166x166x1/{{= user._id }}" media="(max-width: 80em)" />
+						<img srcset="{{= it.app.url }}/avatar/230x230x1/{{= user._id }}" alt="" />
+					</picture>
+					<span class="user-pseudo">{{= user.pseudo }}</span>
+				</a>
+			</li>
 			{{~}}
 		</ul>
 		{{?}}

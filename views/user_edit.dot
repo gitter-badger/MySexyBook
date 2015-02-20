@@ -5,7 +5,7 @@
 
 		<form action="{{= it.app.url }}/mon-profil" method="post">
 			{{? it.form_error }}
-				<p class="alert-error">{{= it.form_error }}</p>
+				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}
 
 			<fieldset>
@@ -46,7 +46,7 @@
 				<legend>Style</legend>
 
 				<div>
-					<label>Style(s) préféré(s)</label>
+					<label for="user-photo_styles">Style(s) préféré(s)</label>
 					<label title="Photo sexy en habit complet">
 						<input type="checkbox" name="user[photo_styles][]" id="user-photo_styles-fashion" value="fashion" {{= (it.req.body && it.req.body.user) ? ((it.req.body.user.photo_styles && it.req.body.user.photo_styles.indexOf('fashion') !== -1) ? 'checked="checked"' : '') : (it.user && it.user.photo_styles && it.user.photo_styles.indexOf('fashion') !== -1 ? 'checked="checked"' : '') }} /> <span class="checkbox-label">Mode</span>
 					</label>

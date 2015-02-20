@@ -258,8 +258,11 @@ input[type="file"]{
 	}
 }
 input[type="checkbox"], input[type="radio"]{
+	&~.checkbox-label, &~.radio-label{
+		margin-left: .5em;
+	}
 	&:not(:checked){
-		&~.checkbox-label{
+		&~.checkbox-label, &~.radio-label{
 			opacity: .7;
 		}
 	}
@@ -310,7 +313,7 @@ input, select, textarea{
 		.transition(~"opacity .3s, visibility 0 0");
 	}
 }
-label:first-child:not(:last-child){
+label[for]:first-child:not(:last-child){
 	width: 100%;
 
 	&+input, &+select, &+textarea{
@@ -318,7 +321,7 @@ label:first-child:not(:last-child){
 	}
 }
 @media screen and (min-width: @breakpoint-l) {
-	label:first-child:not(:last-child){
+	label[for]:first-child:not(:last-child){
 		width: 25%;
 
 		&+input, &+select, &+textarea{
@@ -331,6 +334,26 @@ label:first-child:not(:last-child){
 	}
 }
 
+.alert{
+	padding: .75em;
+	background-color: @background-secondary;
+	color: @color-secondary;
+	.border-radius(.5em);
+
+	&.info{
+		background-color: #33b5e5;
+	}
+	&.success{
+		background-color: #99cc00;
+	}
+	&.error{
+		background-color: #ff4444;
+	}
+	&.warning{
+		background-color: #ffbb33;
+	}
+}
+
 img{
 	max-width: 100%;
 	height: auto;
@@ -338,6 +361,56 @@ img{
 
 .album-description{
 	margin-left: 0;
+}
+.users-list{
+	margin: 0 -.5em;
+	padding: 0;
+	list-style: none;
+	
+	&:after{
+		content: '';
+		&:extend(.clearfix);
+	}
+
+	&>.user{
+		display: inline-block;
+		vertical-align: middle;
+		padding: .5em;
+		width: 20%;
+
+		&>a{
+			display: block;
+			padding: .5em;
+			text-align: center;
+			vertical-align: middle;
+			text-decoration: none;
+			background-color: @background-primary-accent;
+
+			&:hover, &:focus{
+				background-color: darken(@background-primary-accent, 10%);
+			}
+			&>picture.user-avatar{
+				position: relative;
+				display: block;
+				vertical-align: middle;
+				padding-top: 100%;
+
+				&>source, &>img{
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+				}
+			}
+			&>.user-pseudo{
+				display: block;
+				margin-top: .5em;
+			}
+		}
+	}
 }
 .albums-list{
 	margin: 0;
@@ -352,7 +425,7 @@ img{
 			background-color: @background-primary-accent;
 
 			&:hover, &:focus{
-				background-color: DARKEN(@background-primary-accent, 10%);
+				background-color: darken(@background-primary-accent, 10%);
 			}
 
 			&>.album-preview{

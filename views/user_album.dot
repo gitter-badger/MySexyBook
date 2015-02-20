@@ -37,9 +37,9 @@
 		{{?}}
 
 		{{? it.current_user && it.album.creator.equals(it.current_user._id) }}
-		<form action="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}" method="post" enctype="multipart/form-data">
+		<form action="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}#form-photo" method="post" enctype="multipart/form-data" id="form-photo">
 			{{? it.form_error }}
-				<p class="alert-error">{{= it.form_error }}</p>
+				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}
 			<fieldset>
 				<legend>Ajouter une photo</legend>

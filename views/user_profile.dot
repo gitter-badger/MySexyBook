@@ -99,9 +99,9 @@
 		{{?}}
 		
 		{{? it.current_user && it.user._id.equals(it.current_user._id) }}
-		<form action="{{= it.app.url }}/nouvel-album" method="post">
+		<form action="{{= it.app.url }}/nouvel-album#form-album" method="post" id="form-album">
 			{{? it.form_error }}
-				<p class="alert-error">{{= it.form_error }}</p>
+				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}
 			<fieldset>
 				<legend>Créer un album</legend>
