@@ -7,6 +7,7 @@ public/css/*.min.css
 public/js/*.min.js
 uploads/originals/*
 !uploads/originals/.gitkeep
+!uploads/originals/default_*
 uploads/thumbs/*
 !uploads/thumbs/.gitkeep
 *.sublime-workspace

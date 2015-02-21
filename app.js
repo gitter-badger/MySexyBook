@@ -198,8 +198,8 @@ app.route('/avatar/:dimensions/:userid').get(function (req, res, next) {
 		_id: pmongo.ObjectId(req.params.userid)
 	}).then(function (user){
 		if (!user || !user.avatar || !user.avatar.file_src) {
-			var original_path = 'uploads/originals/default_avatar.png';
-			var thumb_path = 'uploads/thumbs/' + dimensions[0] + 'x' + dimensions[1] + 'x' + (crop_thumb ? '1' : '0') + '_default_avatar.png';
+			var original_path = 'uploads/originals/default_avatar' + (user && user.sex ? '_' + user.sex : '') + '.png';
+			var thumb_path = 'uploads/thumbs/' + dimensions[0] + 'x' + dimensions[1] + 'x' + (crop_thumb ? '1' : '0') + '_default_avatar' + (user && user.sex ? '_' + user.sex : '') + '.png';
 		}
 		else {
 			var original_path = 'uploads/originals/' + user._id + '/' + user.avatar.file_src;
@@ -442,7 +442,7 @@ app.route('/book/:userpseudo').get(function (req, res, next) {
 		}).then(function (county) {
 			user.geo_county = county;
 
-			db.collection('albums').find({ creator: user._id }).toArray().then(function (albums) {
+			db.collection('albums').find({ creator: user._id }).sort({ created_at: 1 }).toArray().then(function (albums) {
 				res.render('user_profile', { user: user, albums: albums });
 				res.end();
 			});

@@ -2,82 +2,94 @@
 <main id="page">
 	<div class="container">
 		<h1>Bienvenue sur le book de {{= it.sanitize(it.user.pseudo) }}</h1>
-
+	
 		<div class="user-profile">
-			{{? it.user.sex }}
-			<p class="user-sex">
-				Sexe&nbsp;: 
-				{{ switch(it.user.sex) { }}
-					{{ case 'male': }}
-						Homme
-					{{ break; }}
-					{{ case 'female': }}
-						Femme
-					{{ break; }}
-				{{ } }}
-			</p>
-			{{?}}
-		
-			{{? it.user.geo_county }}
-			<p class="user-geo_county">Département&nbsp;: {{= it.sanitize(it.user.geo_county._id + ' — '+ it.user.geo_county.name) }}</p>
-			{{?}}
-		
-			{{? it.user.biography }}
-			<h2 class="sr-only">Biographie</h2>
-			<blockquote class="user-biography">
-				{{= it.sanitize(it.markdown_inline.render(it.user.biography)) }}
-			</blockquote>
-			{{?}}
-		
-			{{? it.user.camera_side }}
-			<p class="user-camera_side">
-				Côté de la caméra préféré&nbsp;: 
-				{{ switch(it.user.camera_side) { }}
-					{{ case 'photographer': }}
-						Photographe
-					{{ break; }}
-					{{ case 'model': }}
-						Modèle
-					{{ break; }}
-				{{ } }}
-			</p>
-			{{?}}
-		
-			{{? it.user.photo_styles && it.user.photo_styles.length }}
-			<p class="user-photo_styles">
-				{{ var photo_styles = []; }}
-				{{~ it.user.photo_styles :style }}
-					{{ switch(style) { }}
-						{{ case 'fashion': }}
-							{{ photo_styles.push('Mode'); }}
+			<picture class="user-avatar">
+				<source srcset="{{= it.app.url }}/avatar/74x74x1/{{= it.user._id }}" media="(max-width: 32em)" />
+				<source srcset="{{= it.app.url }}/avatar/99x99x1/{{= it.user._id }}" media="(max-width: 40em)" />
+				<source srcset="{{= it.app.url }}/avatar/102x102x1/{{= it.user._id }}" media="(max-width: 50em)" />
+				<source srcset="{{= it.app.url }}/avatar/134x134x1/{{= it.user._id }}" media="(max-width: 60em)" />
+				<source srcset="{{= it.app.url }}/avatar/166x166x1/{{= it.user._id }}" media="(max-width: 80em)" />
+				<img srcset="{{= it.app.url }}/avatar/230x230x1/{{= it.user._id }}" alt="" />
+			</picture>
+			
+			<div class="user-profile-content">
+
+				{{? it.user.sex }}
+				<p class="user-sex">
+					Sexe&nbsp;: 
+					{{ switch(it.user.sex) { }}
+						{{ case 'male': }}
+							Homme
 						{{ break; }}
-						{{ case 'glamour': }}
-							{{ photo_styles.push('Glamour'); }}
-						{{ break; }}
-						{{ case 'lingerie': }}
-							{{ photo_styles.push('Lingerie'); }}
-						{{ break; }}
-						{{ case 'erotic': }}
-							{{ photo_styles.push('Érotique'); }}
-						{{ break; }}
-						{{ case 'nude': }}
-							{{ photo_styles.push('Nu'); }}
+						{{ case 'female': }}
+							Femme
 						{{ break; }}
 					{{ } }}
-				{{~}}
-				{{= photo_styles.length > 1 ? 'Styles préféré' : 'Style préféré' }}&nbsp;:
-				{{= ' ' + photo_styles.join(', ') }}
-			</p>
-			{{?}}
-		
-			{{? it.user.photo_conditions }}
-			<h2 class="sr-only">Conditions</h2>
-			<blockquote class="user-photo_conditions">
-				{{= it.sanitize(it.markdown_inline.render(it.user.photo_conditions)) }}
-			</blockquote>
-			{{?}}
+				</p>
+				{{?}}
+			
+				{{? it.user.geo_county }}
+				<p class="user-geo_county">Département&nbsp;: {{= it.sanitize(it.user.geo_county._id + ' — '+ it.user.geo_county.name) }}</p>
+				{{?}}
+			
+				{{? it.user.biography }}
+				<h2 class="sr-only">Biographie</h2>
+				<blockquote class="user-biography">
+					{{= it.sanitize(it.markdown_inline.render(it.user.biography)) }}
+				</blockquote>
+				{{?}}
+			
+				{{? it.user.camera_side }}
+				<p class="user-camera_side">
+					Côté de la caméra préféré&nbsp;: 
+					{{ switch(it.user.camera_side) { }}
+						{{ case 'photographer': }}
+							Photographe
+						{{ break; }}
+						{{ case 'model': }}
+							Modèle
+						{{ break; }}
+					{{ } }}
+				</p>
+				{{?}}
+			
+				{{? it.user.photo_styles && it.user.photo_styles.length }}
+				<p class="user-photo_styles">
+					{{ var photo_styles = []; }}
+					{{~ it.user.photo_styles :style }}
+						{{ switch(style) { }}
+							{{ case 'fashion': }}
+								{{ photo_styles.push('Mode'); }}
+							{{ break; }}
+							{{ case 'glamour': }}
+								{{ photo_styles.push('Glamour'); }}
+							{{ break; }}
+							{{ case 'lingerie': }}
+								{{ photo_styles.push('Lingerie'); }}
+							{{ break; }}
+							{{ case 'erotic': }}
+								{{ photo_styles.push('Érotique'); }}
+							{{ break; }}
+							{{ case 'nude': }}
+								{{ photo_styles.push('Nu'); }}
+							{{ break; }}
+						{{ } }}
+					{{~}}
+					{{= photo_styles.length > 1 ? 'Styles préféré' : 'Style préféré' }}&nbsp;:
+					{{= ' ' + photo_styles.join(', ') }}
+				</p>
+				{{?}}
+			
+				{{? it.user.photo_conditions }}
+				<h2 class="sr-only">Conditions</h2>
+				<blockquote class="user-photo_conditions">
+					{{= it.sanitize(it.markdown_inline.render(it.user.photo_conditions)) }}
+				</blockquote>
+				{{?}}
 
-			<p class="user-register_date">Date d'inscription&nbsp;: {{= it.strftime("%d %B %Y", it.user.register_date) }}</p>
+				<p class="user-register_date">Date d'inscription&nbsp;: {{= it.strftime("%d %B %Y", it.user.register_date) }}</p>
+			</div>
 		</div>
 
 		{{? it.albums.length }}
