@@ -6,24 +6,50 @@
 		{{= it.dots.search_form(it) }}
 
 		{{? it.search_results && it.search_results.length }}
-		<h2>{{= it.search_results.length }} {{? it.search_results.length > 1 }}utilisateurs trouvés{{??}}utilisateur trouvé{{?}}</h2>
-		<ul class="users-list" id="last-registered-users">
-			{{~ it.search_results :user }}
-			<li class="user">
-				<a href="{{= it.app.url }}/book/{{= user.pseudo }}">
-					<picture class="user-avatar">
-						<source srcset="{{= it.app.url }}/avatar/74x74x1/{{= user._id }}" media="(max-width: 32em)" />
-						<source srcset="{{= it.app.url }}/avatar/99x99x1/{{= user._id }}" media="(max-width: 40em)" />
-						<source srcset="{{= it.app.url }}/avatar/102x102x1/{{= user._id }}" media="(max-width: 50em)" />
-						<source srcset="{{= it.app.url }}/avatar/134x134x1/{{= user._id }}" media="(max-width: 60em)" />
-						<source srcset="{{= it.app.url }}/avatar/166x166x1/{{= user._id }}" media="(max-width: 80em)" />
-						<img srcset="{{= it.app.url }}/avatar/230x230x1/{{= user._id }}" alt="" />
-					</picture>
-					<span class="user-pseudo">{{= user.pseudo }}</span>
-				</a>
-			</li>
-			{{~}}
-		</ul>
+			<h2>{{= it.search_results_nb }} {{? it.search_results_nb > 1 }}utilisateurs trouvés{{??}}utilisateur trouvé{{?}}</h2>
+			<ul class="users-list" id="last-registered-users">
+				{{~ it.search_results :user }}
+				<li class="user">
+					<a href="{{= it.app.url }}/book/{{= user.pseudo }}">
+						<picture class="user-avatar">
+							<source srcset="{{= it.app.url }}/avatar/74x74x1/{{= user._id }}" media="(max-width: 32em)" />
+							<source srcset="{{= it.app.url }}/avatar/99x99x1/{{= user._id }}" media="(max-width: 40em)" />
+							<source srcset="{{= it.app.url }}/avatar/102x102x1/{{= user._id }}" media="(max-width: 50em)" />
+							<source srcset="{{= it.app.url }}/avatar/134x134x1/{{= user._id }}" media="(max-width: 60em)" />
+							<source srcset="{{= it.app.url }}/avatar/166x166x1/{{= user._id }}" media="(max-width: 80em)" />
+							<img srcset="{{= it.app.url }}/avatar/230x230x1/{{= user._id }}" alt="" />
+						</picture>
+						<span class="user-pseudo">{{= user.pseudo }}</span>
+					</a>
+				</li>
+				{{~}}
+			</ul>
+			{{? it.pages_nb > 1 }}
+				{{ var page_params = { user: {} }; }}
+				{{? it.search_filters && it.search_filters.pseudo }}
+					{{ page_params.user.pseudo = it.search_filters.pseudo ;}}
+				{{?}}
+				{{? it.search_filters && it.search_filters.sex }}
+					{{ page_params.user.sex = it.search_filters.sex; }}
+				{{?}}
+				{{? it.search_filters && it.search_filters.geo_county_id }}
+					{{ page_params.user.geo_county = it.search_filters.geo_county_id; }}
+				{{?}}
+				{{? it.search_filters && it.search_filters.camera_side }}
+					{{ page_params.user.camera_side = it.search_filters.camera_side; }}
+				{{?}}
+				<nav class="pagination">
+					Page&nbsp;:
+					{{ for (var p=1; p<=it.pages_nb; p++) { }}
+						{{ page_params.page = p; }}
+						{{? p == it.current_page }}
+						<strong>{{= p }}</strong>
+						{{??}}
+						<a href="{{= it.app.url }}/recherche?{{= it.querystring.stringify(page_params) }}">{{= p }}</a>
+						{{?}}
+					{{ } }}
+				</nav>
+			{{?}}
 		{{??}}
 		<h2>Aucun résultat</h2>
 		<p>Votre recherche ne correspond à aucun profil présent dans notre base de données. Essayez de modifier vos critères&nbsp;: vous aurez sans doute plus de chance.</p>

@@ -2,6 +2,7 @@ var pkg = require('./package.json');
 
 var Promise = require('promise');
 var fs = require('fs');
+var querystring = require('querystring');
 var mime = require('mime-types');
 var gm = require('gm');
 var crypto = require('crypto');
@@ -44,6 +45,7 @@ switch (app.get('env')) {
 }
 
 app.locals.title = 'My Sexy Book';
+app.locals.querystring = querystring;
 app.locals.sanitize = sanitize;
 app.locals.markdown = new MarkDown();
 app.locals.markdown_inline = new MarkDown('zero', { breaks: true }).enable([ 'newline', 'emphasis' ]);
@@ -604,9 +606,28 @@ app.route('/recherche').all(function (req, res, next) {
 
 	res.locals.search_filters = search_filters;
 
-	db.collection('users').find(search_filters).sort({ register_date: -1 }).limit(50).toArray().then(function (search_results) {
-		res.render('search', { search_results: search_results });
-		res.end();
+	var query_cursor = db.collection('users').find(search_filters).sort({ register_date: -1 });
+
+	query_cursor.count().then(function (search_results_nb) {
+		if (!search_results_nb) {
+			res.render('search');
+			res.end();
+			return;
+		}
+
+		var results_per_page = 20;
+
+		if (req.query.page && validator.isInt(req.query.page)) {
+			var query_offset = Math.min(parseInt(req.query.page) * results_per_page, search_results_nb);
+		}
+		else {
+			var query_offset = 0;
+		}
+
+		query_cursor.limit(results_per_page).skip(query_offset).toArray().then(function (search_results) {
+			res.render('search', { search_results: search_results, pages_nb: Math.ceil(search_results_nb / results_per_page), search_results_nb: search_results_nb, current_page: (query_offset / results_per_page) + 1 });
+			res.end();
+		});
 	});
 });
 
