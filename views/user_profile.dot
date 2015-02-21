@@ -5,12 +5,12 @@
 	
 		<div class="user-profile">
 			<picture class="user-avatar">
-				<source srcset="{{= it.app.url }}/avatar/74x74x1/{{= it.user._id }}" media="(max-width: 32em)" />
-				<source srcset="{{= it.app.url }}/avatar/99x99x1/{{= it.user._id }}" media="(max-width: 40em)" />
-				<source srcset="{{= it.app.url }}/avatar/102x102x1/{{= it.user._id }}" media="(max-width: 50em)" />
-				<source srcset="{{= it.app.url }}/avatar/134x134x1/{{= it.user._id }}" media="(max-width: 60em)" />
-				<source srcset="{{= it.app.url }}/avatar/166x166x1/{{= it.user._id }}" media="(max-width: 80em)" />
-				<img srcset="{{= it.app.url }}/avatar/230x230x1/{{= it.user._id }}" alt="" />
+				<source srcset="{{= it.app.url }}/avatar/140x140x1/{{= it.user._id }}" media="(max-width: 32em)" />
+				<source srcset="{{= it.app.url }}/avatar/177x177x1/{{= it.user._id }}" media="(max-width: 40em)" />
+				<source srcset="{{= it.app.url }}/avatar/182x182x1/{{= it.user._id }}" media="(max-width: 50em)" />
+				<source srcset="{{= it.app.url }}/avatar/230x230x1/{{= it.user._id }}" media="(max-width: 60em)" />
+				<source srcset="{{= it.app.url }}/avatar/278x278x1/{{= it.user._id }}" media="(max-width: 80em)" />
+				<img srcset="{{= it.app.url }}/avatar/384x384x1/{{= it.user._id }}" alt="" />
 			</picture>
 			
 			<div class="user-profile-content">
