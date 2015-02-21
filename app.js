@@ -588,8 +588,7 @@ app.route('/recherche').all(function (req, res, next) {
 	var search_filters = {};
 
 	if (req.query.user) {
-		if (req.query.user.pseudo) {
-			// search_filters.pseudo = new RegExp(req.query.user.pseudo, 'i');
+		if (req.query.user.pseudo && validator.isAlphanumeric(req.query.user.pseudo)) {
 			search_filters.pseudo = { $regex: req.query.user.pseudo, $options: 'i' };
 		}
 		if (req.query.user.sex && ['male', 'female'].indexOf(req.query.user.sex) !== -1) {

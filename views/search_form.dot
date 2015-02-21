@@ -5,7 +5,7 @@
 				
 				<div>
 					<label for="search-user-pseudo">Pseudo</label>
-					<input type="search" name="user[pseudo]" id="search-user-pseudo" size="12" placeholder="Utilisateurs dont le pseudo contient…" value="{{= it.search_filters && it.search_filters.pseudo ? it.search_filters.pseudo['$regex'] : '' }}" />
+					<input type="search" name="user[pseudo]" id="search-user-pseudo" size="12" pattern="[a-zA-Z0-9]+" placeholder="Utilisateurs dont le pseudo contient…" value="{{= it.search_filters && it.search_filters.pseudo ? it.search_filters.pseudo['$regex'] : '' }}" />
 				</div>
 				
 				<div>
