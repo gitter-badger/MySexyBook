@@ -117,6 +117,12 @@ a{
 	color: inherit;
 }
 
+.left{
+	float: left;
+}
+.right{
+	float: right;
+}
 .clearfix{
 	display: block;
 	clear: both;
@@ -234,12 +240,13 @@ fieldset+div{
 	margin-top: 1em;
 	text-align: right;
 }
-label, button, input, select, textarea{
+label, button, .button, input, select, textarea{
 	display: inline-block;
 	margin: 0;
 	padding: .5em;
 }
-button{
+button, .button{
+	text-decoration: none;
 	background-color: @background-secondary;
 	color: @color-secondary;
 	border-color: @background-secondary;

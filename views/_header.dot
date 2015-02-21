@@ -22,7 +22,6 @@
 			</nav>
 			{{??}}
 			<nav id="header-menu">
-				<a href="{{= it.app.url }}/mon-profil">Mon profil</a>
 				<a href="{{= it.app.url }}/book/{{= it.current_user.pseudo }}">Mon book</a>
 				<a href="{{= it.app.url }}/deconnexion">Déconnexion</a>
 			</nav>
