@@ -28,10 +28,9 @@ require('./public/js/prototypes.js');
 
 var app = express();
 
-var app_config = require('./config/app-' + app.get('env') + '.json');
-
 switch (app.get('env')) {
 	case 'production':
+		var app_config = require('./config/app-production.json');
 		app.locals.url = 'http://mysexybook.photo';
 		app.locals.domain = 'mysexybook.photo';
 	break;
@@ -39,6 +38,7 @@ switch (app.get('env')) {
 	case 'development':
 	case 'test':
 	default:
+		var app_config = require('./config/app-test.json');
 		app.locals.url = 'http://127.0.0.1:' + pkg.config.port;
 		app.locals.domain = '127.0.0.1';
 	break;
@@ -1098,7 +1098,7 @@ app.route('/db_reset/:tables').get(function (req, res, next) {
 });
 
 app.route('/').get(function (req, res) {
-	if (app.get('env') === 'production') {
+	if (app.get('env') === 'production' && (!req.session || !req.session.current_user)) {
 		res.render('opening');
 		res.end();
 		return;
