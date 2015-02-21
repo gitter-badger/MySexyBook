@@ -106,7 +106,7 @@
 						<h3 class="album-title">{{= it.sanitize(album.title) }}</h3>
 						{{? album.description }}
 						<blockquote class="album-description">
-							{{= it.sanitize(album.description) }}
+							{{= it.sanitize(it.markdown_inline.render(album.description)) }}
 						</blockquote>
 						{{?}}
 						
