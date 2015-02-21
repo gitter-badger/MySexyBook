@@ -38,7 +38,7 @@ switch (app.get('env')) {
 	case 'development':
 	case 'test':
 	default:
-		var app_config = require('./config/app-test.json');
+		var app_config = require('./config/app-development.json');
 		app.locals.url = 'http://127.0.0.1:' + pkg.config.port;
 		app.locals.domain = '127.0.0.1';
 	break;

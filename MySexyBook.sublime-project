@@ -2,7 +2,7 @@
 	"build_systems":
 	[
 		{
-			"name": "Start Node App (test env)",
+			"name": "Start Node App (development env)",
 			"shell": true,
 			"working_dir": "${project_path:${folder}}",
 			"shell_cmd": "lessc -x public/css/mysexybook.less public/css/mysexybook.min.css && npm run-script test"
