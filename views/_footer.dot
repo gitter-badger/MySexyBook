@@ -1,6 +1,6 @@
 	<footer id="footer">
 		<div class="container">
-			<p>&copy; {{= it.strftime('%Y') }}</p>
+			<p>{{= it.app.title }} — {{= it.strftime('%Y') }}</p>
 		</div>
 	</footer>
 	<script src="{{= it.app.url }}/assets/js/prototypes.js"></script>
