@@ -26,6 +26,18 @@ npm run-script test
 
 ### In production (using forever)
 
+If you haven't already compiled the LESS files to CSS, check a few lines higher…
+
+#### Start servers (using forever)
+
 ```
 NODE_ENV=production forever start ./ -c "npm run-script start"
+```
+
+#### Start servers (one time only)
+
+If you prefer starting the server once (just to test it, maybe), you can use the npm script directly
+
+```
+npm run-script start
 ```
