@@ -186,10 +186,12 @@ a{
 		text-align: center;
 		color: @color-secondary;
 		text-decoration: none;
+		.transition(300ms);
 
-		&:hover{
+		&:hover, &:focus{
 			background-color: @background-secondary-accent;
 			background-color: lighten(@background-secondary, 5%);
+			outline: none;
 		}
 		&:active{
 			background-color: @background-secondary-accent;
@@ -260,11 +262,17 @@ button, .button{
 	border-color: @background-secondary;
 	.border-radius(.5em);
 
+	&:hover, &:focus{
+		.box-shadow(0 0 .5em @background-secondary-accent);
+		background-color: @background-secondary;
+		background-image: none;
+		outline: none;
+	}
 	&:active{
-		outline: 0;
 		background-color: @background-secondary-accent;
 		background-image: none;
 		border-color: @background-secondary-accent;
+		.box-shadow(0 0 .5em @background-secondary);
 	}
 }
 input[type="file"]{
@@ -408,9 +416,11 @@ img{
 			vertical-align: middle;
 			text-decoration: none;
 			background-color: @background-primary-accent;
+			.transition(200ms);
 
 			&:hover, &:focus{
 				.box-shadow(0 0 .5em darken(@background-primary-accent, 50%));
+				outline: none;
 			}
 			&:active{
 				background-color: darken(@background-primary-accent, 10%);
@@ -449,9 +459,11 @@ img{
 			padding: 1em;
 			text-decoration: none;
 			background-color: @background-primary-accent;
+			.transition(200ms);
 
 			&:hover, &:focus{
 				.box-shadow(0 0 .5em darken(@background-primary-accent, 50%));
+				outline: none;
 			}
 			&:active{
 				background-color: darken(@background-primary-accent, 10%);
