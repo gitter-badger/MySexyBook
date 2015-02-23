@@ -4,9 +4,9 @@
 		<h1 class="album-title">Album <strong>{{= it.sanitize(it.album.title) }}</strong> par <em>{{= it.sanitize(it.user.pseudo) }}</em></h1>
 		
 		{{? it.album.description }}
-			<blockquote class="album-description">
+			<div class="album-description">
 				{{= it.sanitize(it.album.description) }}
-			</blockquote>
+			</div>
 		{{?}}
 		{{? it.album.photos && it.album.photos.length }}
 			<ul class="album-photos">
