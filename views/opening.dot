@@ -25,5 +25,6 @@
 
 		<p id="opening-info">Ouverture bientôt — <a href="mailto:contact@mysexybook.photo">Contactez-nous</a></p>
 	</main>
+	{{= it.dots._analytics(it) }}
 </body>
 </html>

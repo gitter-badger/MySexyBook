@@ -28,3 +28,4 @@
 			{{?}}
 		</div>
 	</header>
+{{= it.dots._analytics(it) }}

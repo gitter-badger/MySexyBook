@@ -44,6 +44,7 @@ switch (app.get('env')) {
 	break;
 }
 
+app.locals.environment = app.get('env');
 app.locals.title = 'My Sexy Book';
 app.locals.querystring = querystring;
 app.locals.sanitize = sanitize;
