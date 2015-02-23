@@ -46,6 +46,7 @@
 				<div>
 					<label for="new-image-src">Fichier</label>
 					<input type="file" name="image[src]" id="new-image-src" required accept="image/jpeg,image/png" data-drag-drop-area />
+					<span class="field-indication">Dimensions minimales&nbsp;: 1980px minimum pour le plus grand côté</span>
 				</div>
 
 				<div>

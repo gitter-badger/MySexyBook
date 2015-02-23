@@ -529,9 +529,22 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 				return;
 			}
 
-			if (!info.ratio && (info.width && info.height)) {
+			if (!info.width || !info.height) {
+				res.render('user_album', { form_error: 'Impossible de lire les dimensions de la photo' });
+				res.end();
+				return;
+			}
+
+			if (!info.ratio) {
 				info.ratio = info.width / info.height;
 			}
+
+			if ((info.ratio >= 1 && info.width < 1980) || (info.ratio < 1 && info.height < 1980)) {
+				res.render('user_album', { form_error: 'La photo est trop petite (1980px minimum pour le plus grand côté)' });
+				res.end();
+				return;
+			}
+
 			if (!info.orientation && (info.width && info.height)) {
 				if (info.width > info.height) {
 					info.orientation = 'landscape';
