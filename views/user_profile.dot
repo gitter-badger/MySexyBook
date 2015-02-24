@@ -55,6 +55,9 @@
 						{{ case 'model': }}
 							Modèle
 						{{ break; }}
+						{{ default: }}
+							N/A
+						{{ break; }}
 					{{ } }}
 				</p>
 				{{?}}
