@@ -1057,17 +1057,6 @@ app.route('/mon-profil').all(function (req, res, next) {
 	res.end();
 });
 
-app.route('/mes-photos').all(function (req, res, next) {
-	if (!req.session.current_user) {
-		res.redirect(app.locals.url + '/');
-		res.end();
-		return;
-	}
-
-	res.redirect(app.locals.url + '/book/' + req.session.current_user.pseudo);
-	res.end();
-});
-
 app.route('/deconnexion').get(function (req, res, next) {
 	req.session.current_user = null;
 	delete req.session.current_user;
