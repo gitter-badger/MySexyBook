@@ -23,9 +23,7 @@
 						</picture>
 						{{? photo.title }}
 						<figcaption class="photo-caption">
-							{{? photo.title }}
-								<h2>{{= it.sanitize(photo.title) }}</h2>
-							{{?}}
+							{{= it.sanitize(photo.title) }}
 						</figcaption>
 						{{?}}
 					</figure>
