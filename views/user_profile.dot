@@ -122,12 +122,12 @@
 									{{~ album.photos.slice(0, 5) :photo }}
 									<span class="album-preview-thumb">
 										<picture class="thumb">
-											<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/74x74x1/' + photo.src }}" media="(max-width: 32em)" />
-											<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/99x99x1/' + photo.src }}" media="(max-width: 40em)" />
-											<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/102x102x1/' + photo.src }}" media="(max-width: 50em)" />
-											<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/134x134x1/' + photo.src }}" media="(max-width: 60em)" />
-											<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/166x166x1/' + photo.src }}" media="(max-width: 80em)" />
-											<img srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + album._id + '/230x230x1/' + photo.src }}" alt="" />
+											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/74x74x1/' + photo.src }}" media="(max-width: 32em)" />
+											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/99x99x1/' + photo.src }}" media="(max-width: 40em)" />
+											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/102x102x1/' + photo.src }}" media="(max-width: 50em)" />
+											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/134x134x1/' + photo.src }}" media="(max-width: 60em)" />
+											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/166x166x1/' + photo.src }}" media="(max-width: 80em)" />
+											<img srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/230x230x1/' + photo.src }}" alt="" />
 										</picture>
 									</span>
 									{{~}}

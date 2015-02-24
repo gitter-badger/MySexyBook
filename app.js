@@ -308,7 +308,7 @@ app.route('/avatar/:dimensions/:userid').get(function (req, res, next) {
 	});
 });
 
-app.route('/photos/:userid/:albumid/:dimensions/:photosrc').get(function (req, res, next) {
+app.route('/photo/:userid/:albumid/:dimensions/:photosrc').get(function (req, res, next) {
 	db.collection('users').findOne({
 		_id: pmongo.ObjectId(req.params.userid)
 	}).then(function (user){

@@ -14,12 +14,12 @@
 				<li id="photo-{{= photo._id }}">
 					<figure class="photo" tabindex="0">
 						<picture>
-							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/512x512/' + photo.src }}" media="(max-width: 32em)" />
-							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/640x640/' + photo.src }}" media="(max-width: 40em)" />
-							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/800x800/' + photo.src }}" media="(max-width: 50em)" />
-							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/960x960/' + photo.src }}" media="(max-width: 60em)" />
-							<source srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/1280x1280/' + photo.src }}" media="(max-width: 80em)" />
-							<img srcset="{{= it.app.url }}/photos/{{= it.user._id + '/' + it.album._id + '/1920x1920/' + photo.src }}" alt="" />
+							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/512x512/' + photo.src }}" media="(max-width: 32em)" />
+							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/640x640/' + photo.src }}" media="(max-width: 40em)" />
+							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/800x800/' + photo.src }}" media="(max-width: 50em)" />
+							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/960x960/' + photo.src }}" media="(max-width: 60em)" />
+							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/1280x1280/' + photo.src }}" media="(max-width: 80em)" />
+							<img srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/1920x1920/' + photo.src }}" alt="" />
 						</picture>
 						{{? photo.title }}
 						<figcaption class="photo-caption">
