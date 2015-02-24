@@ -46,6 +46,7 @@ switch (app.get('env')) {
 
 app.locals.environment = app.get('env');
 app.locals.title = 'My Sexy Book';
+app.locals.short_title = 'MSB';
 app.locals.querystring = querystring;
 app.locals.sanitize = sanitize;
 app.locals.markdown = new MarkDown();

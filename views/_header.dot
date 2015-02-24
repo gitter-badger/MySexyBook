@@ -4,16 +4,19 @@
 	<meta charset="UTF-8" />
 	<title>{{= it.app.title }}</title>
 
+	<!--[if lt IE 9]><script src="{{= it.app.url }}/assets/js/html5shiv.js"></script><![endif]-->
 	<meta name="viewport" content="width=device-width, user-scalable=no" />
 	<link rel="stylesheet" href="{{= it.app.url }}/assets/css/mysexybook.min.css" />
 	
-	<!--[if lt IE 9]><script src="{{= it.app.url }}/assets/js/html5shiv.js"></script><![endif]-->
 	<script src="{{= it.app.url }}/assets/js/picturefill.js" async></script>
 </head>
 <body>
 	<header id="header">
 		<div class="container">
-			<a href="{{= it.app.url }}/" id="logo"><span id="logo-text">{{= it.app.title }}</span></a>
+			<a href="{{= it.app.url }}/" id="logo">
+				<acronym id="logo-alternative-text" aria-hidden="true">{{= it.app.short_title }}</acronym>
+				<span id="logo-text">{{= it.app.title }}</span>
+			</a>
 			
 			{{? !it.current_user }}
 			<nav id="header-menu">
