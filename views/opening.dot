@@ -6,7 +6,7 @@
 	
 	<meta name="robots" content="index,nofollow" />
 	<meta name="viewport" content="width=device-width, user-scalable=no" />
-	<link rel="stylesheet" href="{{= it.app.url }}/assets/css/mysexybook.min.css" />
+	<link rel="stylesheet" href="{{= it.app.url }}/assets/css/mysexybook-opening.min.css" />
 
 	<meta property="og:url" content="{{= it.app.url }}" />
 	<meta property="og:title" content="{{= it.app.title }}" />

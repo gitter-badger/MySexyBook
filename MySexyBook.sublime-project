@@ -8,6 +8,12 @@
 			"shell_cmd": "lessc -x public/css/mysexybook.less public/css/mysexybook.min.css && npm run-script test"
 		},
 		{
+			"name": "Compile all LESS files",
+			"shell": true,
+			"working_dir": "${project_path:${folder}}",
+			"shell_cmd": "lessc -x public/css/mysexybook-opening.less public/css/mysexybook-opening.min.css && lessc -x public/css/mysexybook.less public/css/mysexybook.min.css"
+		},
+		{
 			"name": "Start Node App (prod env)",
 			"shell": true,
 			"working_dir": "${project_path:${folder}}",
