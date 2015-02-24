@@ -1140,10 +1140,32 @@ app.route('/').get(function (req, res) {
 		return;
 	}
 	else {
-		db.collection('users').find({}).sort({ register_date: 1 }).limit(5).toArray().then(function (last_users) {
-			db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
-				res.render('index', { last_users: last_users, geo_counties: geo_counties });
-				res.end();
+		db.collection('users').find({}).sort({ register_date: -1 }).limit(5).toArray().then(function (last_users) {
+			db.collection('photos').find({}).sort({ uploaded_at: -1 }).limit(5).toArray().then(function (last_photos) {
+				db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
+
+					if (last_photos && last_photos.length) {
+						var photos_promises = new Array(last_photos.length);
+
+						last_photos.forEach(function (photo, index) {
+							var promise = db.collection('users').findOne({ _id: pmongo.ObjectId(photo.owner) });
+							photos_promises[index] = promise;
+						});
+
+						Promise.all(photos_promises).then(function (results) {
+							results.forEach(function (user, index) {
+								last_photos[index].owner_profile = user;
+							});
+
+							res.render('index', { last_users: last_users, last_photos: last_photos, geo_counties: geo_counties });
+							res.end();
+						});
+					}
+					else {
+						res.render('index', { last_users: last_users, last_photos: last_photos, geo_counties: geo_counties });
+						res.end();
+					}
+				});
 			});
 		});
 	}
