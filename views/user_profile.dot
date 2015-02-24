@@ -145,7 +145,7 @@
 		{{?}}
 		
 		{{? it.current_user && it.user._id.equals(it.current_user._id) }}
-		<form action="{{= it.app.url }}/book/{{= it.user._id }}#form-new-album" method="post" id="form-new-album">
+		<form action="{{= it.app.url }}/book/{{= it.user.pseudo }}#form-new-album" method="post" id="form-new-album">
 			{{? it.form_error }}
 				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}

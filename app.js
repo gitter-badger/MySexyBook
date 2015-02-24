@@ -524,7 +524,7 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 						return;
 					}
 
-					res.redirect(app.locals.url + '/mes-photos');
+					res.redirect(app.locals.url + '/book/' + req.session.current_user.pseudo);
 					res.end();
 				});
 			});

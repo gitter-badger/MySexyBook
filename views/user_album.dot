@@ -1,7 +1,9 @@
 {{= it.dots._header(it) }}
 <main id="page">
 	<div class="container">
-		<h1 class="album-title">Album <strong>{{= it.sanitize(it.album.title) }}</strong> par <em><a href="{{= it.app.url}}/book/{{= it.user.pseudo }}" rel="parent">{{= it.sanitize(it.user.pseudo) }}</a></em></h1>
+		<h1 class="album-title">{{= it.sanitize(it.album.title) }}</h1>
+
+		<p>Créé par <em><a href="{{= it.app.url}}/book/{{= it.user.pseudo }}" rel="parent">{{= it.sanitize(it.user.pseudo) }}</a></em></p>
 		
 		{{? it.album.description }}
 			<div class="album-description">
