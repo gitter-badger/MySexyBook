@@ -574,6 +574,7 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 						_id: 1
 					},
 					update: {
+						$set: { last_modified: new Date() },
 						$push: { photos: new_photo }
 					},
 					new: true
