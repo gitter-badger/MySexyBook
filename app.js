@@ -72,7 +72,7 @@ var ACCOUNTS_RIGHTS = {
 };
 
 /* Database */
-var db = pmongo('mysexybook', ['users', 'albums', 'geo_counties']);
+var db = pmongo('mysexybook', ['users', 'albums', 'photos', 'geo_counties']);
 
 db.collection('users').dropIndexes();
 db.collection('users').ensureIndex({ email: 1 }, { unique: true, dropDups: true });
@@ -83,8 +83,11 @@ db.collection('users').ensureIndex({ geo_county_id: 1 });
 db.collection('albums').dropIndexes();
 db.collection('albums').ensureIndex({ creator: 1 });
 db.collection('albums').ensureIndex({ created_at: 1 });
-db.collection('albums').ensureIndex({ 'photos.uploaded_at': 1 });
 db.collection('albums').ensureIndex({ creator: 1, title: 1 }, { unique: true, dropDups: true });
+
+db.collection('photos').dropIndexes();
+db.collection('photos').ensureIndex({ owner: 1, album: 1 });
+db.collection('photos').ensureIndex({ uploaded_at: 1 });
 
 db.collection('geo_counties').dropIndexes();
 db.collection('geo_counties').ensureIndex({ name: 1 }, { unique: true });
@@ -430,12 +433,12 @@ app.route('/photos/:userid/:albumid/:dimensions/:photosrc').get(function (req, r
 });
 
 
-app.route('/book/:userpseudo').get(function (req, res, next) {
+app.route('/book/:userpseudo').all(function (req, res, next) {
 	db.collection('users').findOne({
 		pseudo: req.params.userpseudo
 	}).then(function (user) {
 		if (!user) {
-			next();
+			next('route');
 			return;
 		}
 
@@ -540,6 +543,9 @@ app.route('/book/:userpseudo').get(function (req, res, next) {
 			results.forEach(function (photos, index) {
 				albums[index].photos = photos;
 			});
+
+			res.render('user_profile', { albums: albums });
+			res.end();
 		});
 	});
 });
@@ -566,13 +572,15 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 				return;
 			}
 
-			res.locals.user = user;
-			res.locals.album = album;
+			db.collection('photos').find({ owner: user._id, album: album._id }).sort({ uploaded_at: 1 }).toArray().then(function (photos) {
+				album.photos = photos;
 
-			next();
+				res.locals.user = user;
+				res.locals.album = album;
+
+				next();
+			});
 		});
-	}, function (e) {
-		res.write('Fail');
 	});
 }).post(function (req, res, next) {
 	if (!req.files) {
@@ -595,8 +603,9 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 	}
 
 	var new_photo = {
-		_id: new pmongo.ObjectId(),
 		uploaded_at: new Date(),
+		owner: pmongo.ObjectId(res.locals.user._id),
+		album: pmongo.ObjectId(res.locals.album._id),
 		src: Date.now().toString(10) + '_' + crypto.createHash('sha1').update(image.originalname).digest('hex') + '.' + image.extension
 	}
 
@@ -659,24 +668,34 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 					return;
 				}
 
-				db.collection('albums').findAndModify({
-					query: {
-						_id: pmongo.ObjectId(res.locals.album._id)
-					},
-					sort: {
-						_id: 1
-					},
-					update: {
-						$set: { last_modified: new Date() },
-						$push: { photos: new_photo }
-					},
-					new: true
-				}).then(function (album) {
-					if (!album) {
+				db.collection('photos').insert(new_photo).then(function (photo) {
+					if (!photo) {
 						res.render('user_album', { form_error: 'Impossible d\'enregistrer la photo dans la base de données' });
 						res.end();
 						return;
 					}
+
+					db.collection('albums').findAndModify({
+						query: {
+							_id: pmongo.ObjectId(res.locals.album._id)
+						},
+						sort: {
+							_id: 1
+						},
+						update: {
+							$set: { last_modified: new Date() }
+						},
+						new: true
+					}).then(function (album) {
+						if (!album) {
+							res.render('user_album', { form_error: 'Impossible de mettre à jour l\'album dans la base de données' });
+							res.end();
+							return;
+						}
+
+						res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id + '#photo-' + photo._id);
+						res.end();
+					});
 
 					res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id + '#photo-' + new_photo._id);
 					res.end();
@@ -945,10 +964,6 @@ app.route('/mon-profil').all(function (req, res, next) {
 
 	res.locals.user = res.locals.current_user;
 
-	db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
-		res.locals.geo_counties = geo_counties;
-		next();
-	});
 }).post(function (req, res) {
 	var photo_styles = ['fashion', 'glamour', 'lingerie', 'erotic', 'nude'];
 	if (!req.body.user) {
