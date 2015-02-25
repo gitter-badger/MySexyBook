@@ -226,7 +226,8 @@ a{
 		&:not(.scrolled){
 			#header{
 				&:hover{
-					background-color: fade(@background-primary, 30%);
+					&:extend(#header);
+					background-image: none;
 				}
 			}
 		}
