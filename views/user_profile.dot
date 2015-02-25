@@ -153,7 +153,7 @@
 				<legend>Créer un album</legend>
 				<div>
 					<label for="new-album-title">Nom de l'album</label>
-					<input type="text" name="album[title]" id="new-album-title" required size="12" maxlength="50" value="{{? it.req.body && it.req.body.album && it.req.body.album.title }}{{= it.req.body.album.title }}{{?}}" />
+					<input type="text" name="album[title]" id="new-album-title" required size="12" maxlength="40" value="{{? it.req.body && it.req.body.album && it.req.body.album.title }}{{= it.req.body.album.title }}{{?}}" />
 				</div>
 
 				<div>

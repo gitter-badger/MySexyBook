@@ -470,7 +470,7 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 	if (!req.body.album) {
 		var form_error = 'Formulaire invalide';
 	}
-	else if (!req.body.album.title || !validator.isLength(req.body.album.title, 1, 50)) {
+	else if (!req.body.album.title || !validator.isLength(req.body.album.title, 1, 40)) {
 		var form_error = 'Titre invalide';
 	}
 
@@ -594,6 +594,9 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 	}
 	else if (image.mimetype !== 'image/jpeg' && image.mimetype !== 'image/png') {
 		var form_error = 'Seules les images au format JPEG et PNG sont autorisées';
+	}
+	if (req.body.image.title && !validator.isLength(req.body.image.title, 0, 60)) {
+		var form_error = 'Le titre de l\'image est trop long (60 caractères max.)';
 	}
 
 	if (form_error) {
