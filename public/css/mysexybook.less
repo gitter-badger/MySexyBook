@@ -206,14 +206,14 @@ a{
 		#header{
 			background: none;
 			color: @color-primary;
-			.transition(~"background-color 300ms, background-image 300ms");
+			.transition(~"background-color 200ms, background-image 200ms");
 
 			a{
 				&:hover, &:focus{
-					background-color: fade(@background-primary, 20%);
+					background-color: fade(@background-secondary-accent, 40%);
 				}
 				&:active{
-					background-color: fade(@background-primary, 50%);
+					background-color: @background-secondary-accent;
 				}
 			}
 		}
