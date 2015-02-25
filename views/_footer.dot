@@ -4,6 +4,11 @@
 		</div>
 	</footer>
 	<script src="{{= it.app.url }}/assets/js/prototypes.js"></script>
-	<script src="{{= it.app.url }}/assets/js/emailcompleter.js"></script>
+	<script src="{{= it.app.url }}/assets/js/mysexybook.js"></script>
+	{{? it.js_files && it.js_files.length }}
+		{{~ it.js_files :file_name }}
+			<script src="{{= it.app.url }}/assets/js/{{= file_name }}.js" id="js-file-{{= file_name }}"></script>
+		{{~}}
+	{{?}}
 </body>
 </html>

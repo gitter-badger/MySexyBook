@@ -42,4 +42,4 @@
 		<p><a href="{{= it.app.url }}/mot-de-passe-perdu">Mot de passe perdu ?</a></p>
 	</div>
 </main>
-{{= it.dots._footer(it) }}
+{{= it.dots._footer(it.extend({ js_files: ['emailcompleter'] })) }}

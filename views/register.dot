@@ -58,4 +58,4 @@
 		</form>
 	</div>
 </main>
-{{= it.dots._footer(it) }}
+{{= it.dots._footer(it.extend({ js_files: ['emailcompleter'] })) }}
