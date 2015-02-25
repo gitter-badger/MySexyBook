@@ -1,7 +1,7 @@
-{{= it.dots._header(it) }}
+{{= it.dots._header(it.extend({ page_id: 'home' })) }}
 <main id="page" class="page-index">
 	<div class="container">
-		<h1>Bienvenue sur <strong>{{= it.app.title }}</strong> !</h1>
+		<h1>{{= it.app.title }}</h1>
 
 		{{? it.last_users && it.last_users.length }}
 		<h2>Derniers inscrits</h2>

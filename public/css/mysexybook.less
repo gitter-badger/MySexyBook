@@ -57,7 +57,7 @@ html{
 		zoom: 1.01;
 	}
 	&::after{
-		background-color: fade(@background-primary-accent, 50%);
+		background-color: fade(@background-primary, 50%);
 	}
 }
 body{
@@ -135,6 +135,7 @@ a{
 	right: 0;
 	left: 0;
 	height: @header-height;
+	color: @color-secondary;
 	background-color: @background-secondary;
 	.gradient(@background-secondary, lighten(@background-secondary, 5%), @background-secondary);
 
@@ -143,7 +144,6 @@ a{
 		padding: 1em .5em;
 		height: @header-height;
 		text-align: center;
-		color: @color-secondary;
 		text-decoration: none;
 		.transition(200ms);
 
@@ -200,10 +200,56 @@ a{
 		}
 	}
 
-	&.page-index{
+}
+#home-page{
+	#header{
+		background: none;
+		color: @color-primary;
+		.transition(background-color 300ms);
+
+		a{
+			&:hover, &:focus{
+				background-color: fade(@background-primary, 20%);
+			}
+			&:active{
+				background-color: fade(@background-primary, 50%);
+			}
+		}
+	}
+	&.js{
+		#header{
+			background: none;
+			color: @color-primary;
+			.transition(~"background-color 300ms, background-image 300ms");
+		}
+		&.scrolled{
+			#header{
+				&:extend(#header);
+				background-image: none;
+			}
+		}
+	}
+	#logo{
+		display: none;
+	}
+	#page{
 		&>.container{
 			background-color: transparent;
+			&>h1{
+				text-align: center;
+			}
 		}
+	}
+
+	.users-list{
+		&>.user{
+			&>a{
+				background-color: fade(@background-primary-accent, 50%);
+			}
+		}
+	}
+	fieldset{
+		background-color: fade(@background-primary-accent, 50%);
 	}
 }
 
