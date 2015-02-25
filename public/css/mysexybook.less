@@ -202,30 +202,32 @@ a{
 
 }
 #home-page{
-	#header{
-		background: none;
-		color: @color-primary;
-		.transition(background-color 300ms);
-
-		a{
-			&:hover, &:focus{
-				background-color: fade(@background-primary, 20%);
-			}
-			&:active{
-				background-color: fade(@background-primary, 50%);
-			}
-		}
-	}
 	&.js{
 		#header{
 			background: none;
 			color: @color-primary;
 			.transition(~"background-color 300ms, background-image 300ms");
+
+			a{
+				&:hover, &:focus{
+					background-color: fade(@background-primary, 20%);
+				}
+				&:active{
+					background-color: fade(@background-primary, 50%);
+				}
+			}
 		}
 		&.scrolled{
 			#header{
 				&:extend(#header);
 				background-image: none;
+			}
+		}
+		&:not(.scrolled){
+			#header{
+				&:hover{
+					background-color: fade(@background-primary, 30%);
+				}
 			}
 		}
 	}
@@ -244,12 +246,16 @@ a{
 	.users-list{
 		&>.user{
 			&>a{
-				background-color: fade(@background-primary-accent, 50%);
+				background-color: fade(@background-primary-accent, 70%);
 			}
 		}
 	}
 	fieldset{
-		background-color: fade(@background-primary-accent, 50%);
+		background-color: fade(@background-primary-accent, 70%);
+	}
+
+	::after{
+		background-color: fade(@background-primary, 70%);
 	}
 }
 
