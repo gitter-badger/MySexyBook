@@ -7,6 +7,8 @@
 	<!--[if lt IE 9]><script src="{{= it.app.url }}/assets/js/html5shiv.js"></script><![endif]-->
 	<meta name="viewport" content="width=device-width, user-scalable=no" />
 	<link rel="stylesheet" href="{{= it.app.url }}/assets/css/mysexybook.min.css" />
+
+	<meta name="theme-color" content="#820043" />
 	
 	<script src="{{= it.app.url }}/assets/js/picturefill.js" async></script>
 </head>
