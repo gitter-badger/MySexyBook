@@ -140,12 +140,16 @@ a{
 
 	a{
 		float: left;
-		padding: 1em;
+		padding: 1em .5em;
 		height: @header-height;
 		text-align: center;
 		color: @color-secondary;
 		text-decoration: none;
 		.transition(200ms);
+
+		@media screen and (min-width: @breakpoint-xs) {
+			padding: 1em;
+		}
 
 		&:hover, &:focus{
 			background-color: @background-secondary-accent;
