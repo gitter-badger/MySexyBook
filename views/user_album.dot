@@ -1,19 +1,22 @@
 {{= it.dots._header(it.extend({ page_id: 'user-album' })) }}
 <main id="page">
-	<div class="container" class="album-full">
-		<h1 class="album-title">{{= it.sanitize(it.album.title) }}</h1>
+	<div class="container" id="album-container" data-user-id="{{= it.user._id}}" data-album-id="{{= it.album._id}}">
+		<div class="album-info">
+			<h1 class="album-title">{{= it.sanitize(it.album.title) }}</h1>
 
-		<p>Créé par <em><a href="{{= it.app.url}}/book/{{= it.user.pseudo }}" rel="parent">{{= it.sanitize(it.user.pseudo) }}</a></em></p>
+			<p>Créé par <em><a href="{{= it.app.url}}/book/{{= it.user.pseudo }}" rel="parent">{{= it.sanitize(it.user.pseudo) }}</a></em></p>
+			
+			{{? it.album.description }}
+				<div class="album-description">
+					{{= it.sanitize(it.album.description) }}
+				</div>
+			{{?}}
+		</div>
 		
-		{{? it.album.description }}
-			<div class="album-description">
-				{{= it.sanitize(it.album.description) }}
-			</div>
-		{{?}}
 		{{? it.album.photos && it.album.photos.length }}
 			<ul class="album-photos">
 			{{~ it.album.photos :photo }}
-				<li id="photo-{{= photo._id }}">
+				<li id="photo-{{= photo._id }}" data-photo-src="{{= photo.src }}">
 					<figure class="photo" tabindex="0">
 						<picture>
 							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/512x512/' + photo.src }}" media="(max-width: 32em)" />
@@ -62,4 +65,4 @@
 		{{?}}
 	</div>
 </main>
-{{= it.dots._footer(it) }}
+{{= it.dots._footer(it.extend({ js_files: ['photoviewer'] })) }}
