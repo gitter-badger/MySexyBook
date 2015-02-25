@@ -1,5 +1,5 @@
 {{= it.dots._header(it) }}
-<main id="page">
+<main id="page" class="page-index">
 	<div class="container">
 		<h1>Bienvenue sur <strong>{{= it.app.title }}</strong> !</h1>
 
