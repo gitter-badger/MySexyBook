@@ -1,4 +1,4 @@
-{{= it.dots._header(it) }}
+{{= it.dots._header(it.extend({ page_id: 'user-profile' })) }}
 <main id="page">
 	<div class="container">
 		<h1>Book de {{= it.sanitize(it.user.pseudo) }}</h1>
