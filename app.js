@@ -959,14 +959,14 @@ app.route('/connexion').all(function (req, res, next) {
 });
 
 app.route('/mon-profil').all(function (req, res, next) {
-	if (!req.session.current_user) {
+	if (!req.session || !req.session.current_user) {
 		res.redirect(app.locals.url + '/');
 		res.end();
 		return;
 	}
 
-	res.locals.user = res.locals.current_user;
-
+	res.locals.user = req.session.current_user;
+	next();
 }).post(function (req, res) {
 	var photo_styles = ['fashion', 'glamour', 'lingerie', 'erotic', 'nude'];
 	if (!req.body.user) {
