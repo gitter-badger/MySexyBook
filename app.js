@@ -596,7 +596,7 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 		var form_error = 'Seules les images au format JPEG et PNG sont autorisées';
 	}
 	if (req.body.image.title && !validator.isLength(req.body.image.title, 0, 60)) {
-		var form_error = 'Le titre de l\'image est trop long (60 caractères max.)';
+		var form_error = 'La description de l\'image est trop longue (60 caractères max.)';
 	}
 
 	if (form_error) {
