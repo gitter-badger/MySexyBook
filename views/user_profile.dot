@@ -102,7 +102,7 @@
 			</div>
 		</div>
 
-		{{? it.albums.length }}
+		{{? it.albums && it.albums.length }}
 			<h2>Albums</h2>
 			<ul class="albums-list">
 			{{~ it.albums :album }}

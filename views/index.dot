@@ -3,7 +3,7 @@
 	<div class="container">
 		<h1>{{= it.app.title }}</h1>
 
-		{{? it.last_users && it.last_users.length === 5 }}
+		{{? it.last_users && it.last_users.length }}
 		<h2>Derniers inscrits</h2>
 		<ul class="users-list" id="last-registered-users">
 			{{~ it.last_users :user }}
@@ -24,7 +24,7 @@
 		</ul>
 		{{?}}
 
-		{{? it.last_photos && it.last_photos.length === 5 }}
+		{{? it.last_photos && it.last_photos.length }}
 		<h2>Dernières photos mises en ligne</h2>
 		<ul class="users-list" id="last-uploaded-photos">
 			{{~ it.last_photos :photo }}
