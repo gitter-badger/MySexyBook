@@ -883,56 +883,115 @@ app.route('/deconnexion').get(function (req, res, next) {
 });
 
 
-app.route('/db_reset/:tables').get(function (req, res, next) {
-	if (req.params.tables) {
+app.route('/db_reset/:table').all(function (req, res, next) {
+	if (req.params.table) {
 		var db_reset_promises = [];
 
-		var tables = req.params.tables.split(',');
-
-		tables.forEach(function (table) {
-			db_reset_promises.push(db.collection(table).remove({}));
-
-			if (table === 'users') {
+		switch (req.params.table) {
+			case 'users':
 				if (req.session.current_user) {
 					delete req.session.current_user;
 				}
-			}
-			if (table === 'geo_counties') {
-				var csv = require('csv');
 
-				csv.parse(fs.readFileSync('data/geo_counties_fr.csv', { encoding: 'utf8' }) || '', function(err, data){
-					if (err || !data) {
-						throw 'Erreur lors de la lecture du fichier CSV';
-					}
-					data.shift();
+				MSB.getUsers({}).then(function (users) {
+					users.forEach(function (user) {
+						db_reset_promises.push(MSB.deleteUser(user));
+					});
 
-					data.forEach(function (county_data) {
-						var county = {
-							_id: county_data[1],
-							district: parseInt(county_data[0]),
-							capital: county_data[2],
-							name: county_data[5],
-							name_type: parseInt(county_data[3])
-						};
-
-						db_reset_promises.push(db.collection(table).insert(county));
+					Promise.all(db_reset_promises).then(function () {
+						res.locals.db_reset_result = 'Utilisateurs réinitialisés';
+						next();
+					}).catch(function (err) {
+						console.error(err);
+						res.locals.db_reset_result = 'Erreur lors de la réinitialisation des utilisateurs';
+						next();
 					});
 				});
-			}
-		});
+			break;
 
-		setTimeout(function () {
-			Promise.all(db_reset_promises).then(function (results) {
-				res.write('Reset done');
-				res.end();
-			});
-		}, 500);
+			case 'albums':
+				MSB.getAlbums({}).then(function (albums) {
+					albums.forEach(function (album) {
+						db_reset_promises.push(MSB.deleteAlbum(album));
+					});
+
+					Promise.all(db_reset_promises).then(function () {
+						res.locals.db_reset_result = 'Albums réinitialisés';
+						next();
+					}).catch(function (err) {
+						console.error(err);
+						res.locals.db_reset_result = 'Erreur lors de la réinitialisation des albums';
+						next();
+					});
+				});
+
+			break;
+
+			case 'photos':
+				MSB.getPhotos({}).then(function (photos) {
+					photos.forEach(function (photo) {
+						db_reset_promises.push(MSB.deletePhoto(photo));
+					});
+
+					Promise.all(db_reset_promises).then(function () {
+						res.locals.db_reset_result = 'Photos réinitialisées';
+						next();
+					}).catch(function (err) {
+						console.error(err);
+						res.locals.db_reset_result = 'Erreur lors de la réinitialisation des photos';
+						next();
+					});
+				});
+			break;
+			
+			case 'geo_counties': 
+				db.collection(table).remove({}).then(function (){
+					var csv = require('csv');
+
+					fsp.readFile('data/geo_counties_fr.csv', { encoding: 'utf8' }).then(function(csv_txt){
+						data = csv.parse(csv_txt || '');
+						if (!data) {
+							reject('Pas de départements à importer');
+							return;
+						}
+
+						data.shift();
+
+						data.forEach(function (county_data) {
+							var county = {
+								_id: county_data[1],
+								district: parseInt(county_data[0]),
+								capital: county_data[2],
+								name: county_data[5],
+								name_type: parseInt(county_data[3])
+							};
+
+							db_reset_promises.push(db.collection(table).insert(county));
+						});
+
+						Promise.all(db_reset_promises).then(function () {
+							res.locals.db_reset_result = 'Département réinitialisés';
+							next();
+						}).catch(function (err) {
+							res.locals.db_reset_result = 'Erreur lors de la réinitialisation des départements';
+							next();
+						});
+					}).catch(function (err) {
+						res.locals.db_reset_result = 'Erreur lors de la lecture du fichier CSV';
+						next();
+					});
+				});
+			break;
+		}
 	}
 	else{
 		res.redirect(app.locals.url + '/');
 		res.write('No collection to reset');
 		res.end();
 	}
+}).get(function (req, res, next) {
+	res.write(res.locals.db_reset_result);
+	res.end();
 });
 
 app.route('/').get(function (req, res) {

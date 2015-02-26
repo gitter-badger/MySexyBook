@@ -94,6 +94,48 @@ MSB.createUser = function (email, password, pseudo, sex, geo_county_id) {
 		});
 	});
 };
+MSB.deleteUser = function (user) {
+	return new Promise(function (resolve, reject) {
+		MSB.db.collection('users').remove({ _id: user._id }, true).then(function () {
+			MSB.getAlbums({ creator_id: user._id }).then(function (albums) {
+				var albums_promises = new Array(albums.length);
+
+				albums.forEach(function (album, index) {
+					albums_promises.push(MSB.deleteAlbum(album));
+				});
+
+				Promise.all(albums_promises).then(function () {
+					var thumbs_dir = 'uploads/thumbs/' + user._id;
+
+					fsp.readdir(thumbs_dir).then(function (thumbs) {
+						var folder_promises = new Array();
+
+						thumbs.forEach(function (thumb_name) {
+							thumbs_promises.push(fsp.unlink(thumbs_dir + '/' + thumb_name));
+						});
+
+						folder_promises.push(fsp.rmdir('uploads/originals/' + user._id));
+						folder_promises.push(fsp.rmdir(thumbs_dir));
+
+						Promise.all(folder_promises).then(function () {
+							resolve('Utilisateur supprimé');
+						}).catch(function (err) {
+							console.error(err);
+							reject('Impossible de supprimer le dossier personnel le l\'utilisateur ' + user._id);
+						});
+					}).catch(function (err) {
+						console.error(err);
+						reject('Dossier de miniatures personnel illisible');
+					});
+				}).catch(function (err) {
+					reject(err);
+				});
+			}).catch(function () {});
+		}).catch(function () {
+			reject('Impossible de supprimer l\'utilisateur de la base de données');
+		});
+	});
+};
 MSB.getUser = function (filter) {
 	if (filter._id && typeof filter._id === 'string') {
 		filter._id = pmongo.ObjectId(filter._id);
@@ -236,7 +278,35 @@ MSB.createAlbum = function (title, creator_id, description) {
 		});
 	});
 };
+MSB.deleteAlbum = function (album) {
+	return new Promise(function (resolve, reject) {
+		MSB.db.collection('albums').remove({ _id: album._id }, true).then(function () {
+			MSB.getPhotos({ album_id: album._id }).then(function (photos) {
+				var photos_promises = new Array(photos.length);
 
+				photos.forEach(function (photo, index) {
+					photos_promises.push(MSB.deletePhoto(photo));
+				});
+
+				Promise.all(photos_promises).then(function () {
+					Promise.all([
+						fsp.rmdir('uploads/originals/' + album.creator_id + '/' + album._id),
+						fsp.rmdir('uploads/thumbs/' + album.creator_id + '/' + album._id)
+					]).then(function () {
+						resolve('Album supprimé');
+					}).catch(function (err) {
+						console.error(err);
+						reject('Impossible de supprimer le dossier de l\'album ' + album.creator_id + '/' + album._id);
+					});
+				}).catch(function (err) {
+					reject(err);
+				});
+			}).catch(function () {});
+		}).catch(function () {
+			reject('Impossible de supprimer l\'album de la base de données');
+		});
+	});
+};
 MSB.getAlbum = function (filter) {
 	if (filter._id && typeof filter._id === 'string') {
 		filter._id = pmongo.ObjectId(filter._id);
@@ -388,6 +458,42 @@ MSB.createPhoto = function (temp_img, album_id, owner_id, title) {
 			console.error(err);
 			reject('Impossible de lire la photo');
 			return;
+		});
+	});
+};
+MSB.deletePhoto = function (photo) {
+	return new Promise(function (resolve, reject) {
+		MSB.db.collection('photos').remove({ _id: photo._id }, true).then(function () {
+			fsp.unlink('uploads/originals/' + photo.owner_id + '/' + photo.album_id + '/' + photo.src).then(function () {
+
+				var thumbs_dir = 'uploads/thumbs/' + photo.owner_id + '/' + photo.album_id;
+
+				fsp.readdir(thumbs_dir).then(function (thumbs) {
+					var thumbs_promises = new Array();
+					var thumbs_regex = new RegExp('(.*)_' + photo._id + '\.([a-z]{3,4})$');
+
+					console.dir(thumbs_regex);
+
+					thumbs.forEach(function (thumb_name) {
+						if (thumb_name.match(thumbs_regex)) {
+							thumbs_promises.push(fsp.unlink(thumbs_dir + '/' + thumb_name));
+						}
+					});
+
+					Promise.all(thumbs_promises).then(function () {
+						resolve('Photo supprimée');
+					}).catch(function (err) {
+						reject('Impossible de supprimer les miniatures de la photo ' + photo.owner_id + '/' + photo.album_id + '/' + photo.src);
+					});
+				}).catch(function () {
+					reject('Dossier des miniatures (' + photo.owner_id + '/' + photo.album_id + ') illisibles');
+				});
+			}).catch(function (err) {
+				console.error(err);
+				reject('Impossible de supprimer la photo ' + photo.owner_id + '/' + photo.album_id + '/' + photo.src);
+			});
+		}).catch(function (err) {
+			reject('Impossible de supprimer la photo ' + photo._id + ' de la base de données');
 		});
 	});
 };
