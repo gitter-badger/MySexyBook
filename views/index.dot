@@ -29,17 +29,17 @@
 		<ul class="users-list" id="last-uploaded-photos">
 			{{~ it.last_photos :photo }}
 			<li class="user">
-				<a href="{{= it.app.url }}/book/{{= photo.owner_profile.pseudo }}/{{= photo.album }}#photo-{{= photo._id }}">
+				<a href="{{= it.app.url }}/book/{{= photo.owner.pseudo }}/{{= photo.album_id }}#photo-{{= photo._id }}">
 					<picture class="user-avatar">
-						<source srcset="{{= it.app.url }}/photo/{{= photo.owner }}/{{= photo.album }}/74x74x1/{{= photo.src }}" media="(max-width: 32em)" />
-						<source srcset="{{= it.app.url }}/photo/{{= photo.owner }}/{{= photo.album }}/99x99x1/{{= photo.src }}" media="(max-width: 40em)" />
-						<source srcset="{{= it.app.url }}/photo/{{= photo.owner }}/{{= photo.album }}/102x102x1/{{= photo.src }}" media="(max-width: 50em)" />
-						<source srcset="{{= it.app.url }}/photo/{{= photo.owner }}/{{= photo.album }}/134x134x1/{{= photo.src }}" media="(max-width: 60em)" />
-						<source srcset="{{= it.app.url }}/photo/{{= photo.owner }}/{{= photo.album }}/166x166x1/{{= photo.src }}" media="(max-width: 80em)" />
-						<img srcset="{{= it.app.url }}/photo/{{= photo.owner }}/{{= photo.album }}/230x230x1/{{= photo.src }}" alt="" />
+						<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/74x74x1/{{= photo.src }}" media="(max-width: 32em)" />
+						<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/99x99x1/{{= photo.src }}" media="(max-width: 40em)" />
+						<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/102x102x1/{{= photo.src }}" media="(max-width: 50em)" />
+						<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/134x134x1/{{= photo.src }}" media="(max-width: 60em)" />
+						<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/166x166x1/{{= photo.src }}" media="(max-width: 80em)" />
+						<img srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/230x230x1/{{= photo.src }}" alt="" />
 					</picture>
-					{{? photo.owner_profile }}
-					<span class="user-pseudo">Par {{= photo.owner_profile.pseudo }}</span>
+					{{? photo.owner }}
+					<span class="user-pseudo">Par {{= photo.owner.pseudo }}</span>
 					{{?}}
 				</a>
 			</li>

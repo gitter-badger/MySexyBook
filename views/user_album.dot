@@ -17,7 +17,7 @@
 			<ul class="album-photos">
 			{{~ it.album.photos :photo }}
 				<li id="photo-{{= photo._id }}" data-photo-src="{{= photo.src }}">
-					<figure class="photo" tabindex="0">
+					<figure class="photo orientation-{{= photo.file_info.orientation }}" tabindex="0">
 						<picture>
 							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/512x512/' + photo.src }}" media="(max-width: 32em)" />
 							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/640x640/' + photo.src }}" media="(max-width: 40em)" />
