@@ -39,7 +39,7 @@
 			<p><em>{{= it.sanitize(it.user.pseudo) }}</em> n'a pas ajouté encore de photos dans cet album</p>
 		{{?}}
 
-		{{? it.current_user && it.album.creator.equals(it.current_user._id) }}
+		{{? it.current_user && it.album.creator_id.equals(it.current_user._id) }}
 		<form action="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}#form-photo" method="post" enctype="multipart/form-data" id="form-photo">
 			{{? it.form_error }}
 				<p class="alert error">{{= it.form_error }}</p>

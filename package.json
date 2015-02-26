@@ -6,6 +6,7 @@
 	"main": "app.js",
 	"author": "Corentin Hatte <contact@corentin-hatte.eu>",
 	"dependencies": {
+		"fs-promise": "0.3.*",
 		"mime-types": "2.0.*",
 		"strftime": "0.8.*",
 		"markdown-it": "3.0.*",

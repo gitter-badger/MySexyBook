@@ -2,6 +2,7 @@ var pkg = require('./package.json');
 
 var Promise = require('promise');
 var fs = require('fs');
+var fsp = require('fs-promise');
 var querystring = require('querystring');
 var mime = require('mime-types');
 var gm = require('gm');
@@ -81,12 +82,12 @@ db.collection('users').ensureIndex({ pseudo: 1 }, { unique: true, dropDups: true
 db.collection('users').ensureIndex({ geo_county_id: 1 });
 
 db.collection('albums').dropIndexes();
-db.collection('albums').ensureIndex({ creator: 1 });
+db.collection('albums').ensureIndex({ creator_id: 1 });
 db.collection('albums').ensureIndex({ created_at: 1 });
-db.collection('albums').ensureIndex({ creator: 1, title: 1 }, { unique: true, dropDups: true });
+db.collection('albums').ensureIndex({ creator_id: 1, title: 1 }, { unique: true, dropDups: true });
 
 db.collection('photos').dropIndexes();
-db.collection('photos').ensureIndex({ owner: 1, album: 1 });
+db.collection('photos').ensureIndex({ owner_id: 1, album_id: 1 });
 db.collection('photos').ensureIndex({ uploaded_at: 1 });
 
 db.collection('geo_counties').dropIndexes();
@@ -131,9 +132,9 @@ catch(e) {
 	console.error(e);
 }
 
-function hashPassword (pwd) {
-	return crypto.createHash('sha512').update(app_config.pwd_salt_start + pwd + app_config.pwd_salt_end).digest('hex');
-}
+
+MSB = require('./MSB_model');
+MSB.db = db;
 
 app.use(cookieParser());
 app.use(session({
@@ -163,18 +164,16 @@ app.use(function (req, res, next) {
 	res.locals.req = req;
 
 	if (req.cookies && req.cookies.user_id) {
-		db.collection('users').findOne({
+		MSB.getUser({
 			_id: pmongo.ObjectId(req.cookies.user_id)
 		}).then(function (user) {
-			if (!user) {
-				res.clearCookie('user_id');
-				next();
-				return;
-			}
-
 			req.session.current_user = user;
 			res.locals.current_user = user;
 			next();
+		}).catch(function () {
+			res.clearCookie('user_id');
+			next();
+			return;
 		});
 	}
 	else if(req.session && req.session.current_user) {
@@ -434,31 +433,13 @@ app.route('/photo/:userid/:albumid/:dimensions/:photosrc').get(function (req, re
 
 
 app.route('/book/:userpseudo').all(function (req, res, next) {
-	db.collection('users').findOne({
-		pseudo: req.params.userpseudo
-	}).then(function (user) {
-		if (!user) {
-			next('route');
-			return;
-		}
+	MSB.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
+		res.locals.user = user;
 
-		db.collection('geo_counties').findOne({
-			_id: user.geo_county_id
-		}).then(function (county) {
-			user.geo_county = county;
-
-			res.locals.user = user;
-
-			if (req.session && req.session.current_user && req.session.current_user._id.equals(user._id)) {
-				db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
-					res.locals.geo_counties = geo_counties;
-					next();
-				});
-			}
-			else {
-				next();
-			}
-		});
+		next();
+	}).catch(function () {
+		next('route');
+		return;
 	});
 }).post(function (req, res, next) {
 	if (!req.session || !req.session.current_user) {
@@ -475,78 +456,48 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 	}
 
 	if (form_error) {
-		res.render('new_album', { form_error: form_error });
+		res.render('user_profile', { form_error: form_error });
 		res.end();
 		return;
 	}
-		// console.error('Fail 1');
 
-	db.collection('albums').findOne({
-		creator: pmongo.ObjectId(req.session.current_user._id),
-		title: req.body.album.title
-	}).then(function (album_title) {
-		// console.error('Fail 2');
-		if (album_title) {
-			res.render('new_album', { form_error: 'Vous avez déjà un album portant ce nom' });
-			res.end();
-			return;
-		}
-
-		var new_album = {
-			creator: pmongo.ObjectId(req.session.current_user._id),
-			title: req.body.album.title
-		};
-
-		if (req.body.album.description) {
-			new_album.description = req.body.album.description;
-		}
-
-		new_album.created_at = new Date();
-
-		db.collection('albums').insert(new_album).then(function (album) {
-			if (!album) {
-				res.render('new_album', { form_error: 'Erreur lors de l\'enregistrement de l\'album' });
-				res.end();
-				return;
-			}
-
-			fs.mkdir('uploads/originals/' + req.session.current_user._id + '/' + album._id, function (err) {
-				if (err) {
-					res.render('new_album', { form_error: 'Erreur lors de la création du dossier de l\'album' });
-					res.end();
-					return;
-				}
-
-				fs.mkdir('uploads/thumbs/' + req.session.current_user._id + '/' + album._id, function (err) {
-					if (err) {
-						res.render('new_album', { form_error: 'Erreur lors de la création du dossier de miniatures de l\'album' });
-						res.end();
-						return;
-					}
-
-					res.redirect(app.locals.url + '/book/' + req.session.current_user.pseudo);
-					res.end();
-				});
-			});
-		});
+	MSB.createAlbum(req.body.album.title, req.session.current_user._id, req.body.album.description).then(function (album) {
+		res.redirect(app.locals.url + '/book/' + req.session.current_user.pseudo);
+		res.end();
+	}).catch(function (album_error) {
+		res.render('user_profile', { form_error: album_error });
+		res.end();
+		return;
 	});
 }).get(function (req, res, next) {
-	db.collection('albums').find({ creator: res.locals.user._id }).sort({ created_at: 1 }).toArray().then(function (albums) {
-		var photos_promises = new Array(albums.length);
+	MSB.getAlbums({ creator_id: res.locals.user._id }, { created_at: 1 }).then(function (albums) {
+		if (albums.length) {
+			var photos_promises = new Array(albums.length);
 
-		albums.forEach(function (album, index) {
-			var promise = db.collection('photos').find({ owner: res.locals.user._id, album: album._id }).sort({ uploaded_at: 1 }).toArray();
-			photos_promises[index] = promise;
-		});
-
-		Promise.all(photos_promises).then(function (results) {
-			results.forEach(function (photos, index) {
-				albums[index].photos = photos;
+			albums.forEach(function (album, index) {
+				var promise = MSB.getPhotos({ owner: res.locals.user._id, album: album._id }, { uploaded_at: 1 });
+				photos_promises[index] = promise;
 			});
 
+			Promise.all(photos_promises).then(function (results) {
+				results.forEach(function (photos, index) {
+					albums[index].photos = photos;
+				});
+
+				res.render('user_profile', { albums: albums });
+				res.end();
+			}).catch(function (err) {
+				res.render('user_profile', { albums: albums });
+				res.end();
+			});
+		}
+		else {
 			res.render('user_profile', { albums: albums });
 			res.end();
-		});
+		}
+	}).catch(function () {
+		res.render('user_profile');
+		res.end();
 	});
 });
 
@@ -556,31 +507,29 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 		return;
 	}
 
-	db.collection('users').findOne({
-		pseudo: req.params.userpseudo
-	}).then(function (user) {
-		if (!user) {
-			next('route');
-			return;
-		}
+	MSB.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
+		res.locals.user = user;
 
-		db.collection('albums').findOne({
-			_id: pmongo.ObjectId(req.params.albumid)
+		MSB.getAlbum({
+			_id: req.params.albumid,
+			creator_id: res.locals.user._id
 		}).then(function (album) {
-			if (!album) {
-				next('route');
-				return;
-			}
+			res.locals.album = album;
 
-			db.collection('photos').find({ owner: user._id, album: album._id }).sort({ uploaded_at: 1 }).toArray().then(function (photos) {
-				album.photos = photos;
-
-				res.locals.user = user;
-				res.locals.album = album;
+			MSB.getPhotos({ album_id: album._id }, { uploaded_at: 1 }).then(function (photos) {
+				res.locals.album.photos = photos;
 
 				next();
+			}).catch(function (err) {
+				next();
 			});
+		}).catch(function (err) {
+			next('route');
+			return;
 		});
+	}).catch(function () {
+		next('route');
+		return;
 	});
 }).post(function (req, res, next) {
 	if (!req.files) {
@@ -707,7 +656,7 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 		});
 	});
 }).get(function (req, res, next) {
-	res.render('user_album', {  });
+	res.render('user_album');
 	res.end();
 });
 
@@ -827,7 +776,7 @@ app.route('/inscription').all(function (req, res, next) {
 
 				var new_user = {
 					email: req.body.user.email,
-					password: hashPassword(req.body.user.password),
+					password: MSB.hashPassword(req.body.user.password),
 					pseudo: req.body.user.pseudo,
 					sex: req.body.user.sex,
 					geo_county_id: req.body.user.geo_county,
@@ -936,7 +885,7 @@ app.route('/connexion').all(function (req, res, next) {
 
 	db.collection('users').findOne({
 		email: req.body.user.email,
-		password: hashPassword(req.body.user.password)
+		password: MSB.hashPassword(req.body.user.password)
 	}).then(function (user) {
 		if (!user) {
 			res.render('login', { form_error: 'Ces identifiants sont incorrects' });
@@ -1143,8 +1092,8 @@ app.route('/').get(function (req, res) {
 		return;
 	}
 	else {
-		db.collection('users').find({}).sort({ register_date: -1 }).limit(5).toArray().then(function (last_users) {
-			db.collection('photos').find({}).sort({ uploaded_at: -1 }).limit(5).toArray().then(function (last_photos) {
+		MSB.getUsers({}, { register_date: -1 }, 5).then(function (last_users) {
+			MSB.getPhotos({}, { register_date: -1 }, 5).then(function (last_photos) {
 				db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
 
 					if (last_photos && last_photos.length) {
@@ -1170,6 +1119,8 @@ app.route('/').get(function (req, res) {
 					}
 				});
 			});
+		}).catch(function () {
+
 		});
 	}
 });
