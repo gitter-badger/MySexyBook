@@ -3,7 +3,7 @@
 	"name": "mysexybook",
 	"description": "Site de publications de photos de charme et de mis en relations entre photographes et modèles",
 	"version": "0.0.0",
-	"main": "app.js",
+	"main": "MSB_app.js",
 	"author": "Corentin Hatte <contact@corentin-hatte.eu>",
 	"dependencies": {
 		"fs-promise": "0.3.*",
@@ -21,9 +21,7 @@
 		"sanitize-caja": "0.1.*",
 		"promise": "6.1.*",
 		"promised-mongo": "0.11.5",
-		"gm": "1.17.*"
-	},
-	"devDependencies": {
+		"gm": "1.17.*",
 		"csv": "0.4.*"
 	},
 	"repository": {
@@ -34,7 +32,7 @@
 		"port" : 6996
 	},
 	"scripts": {
-		"test": "killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete ; npm install --dev ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=test node app.js",
-		"start": "killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete ; npm install --production ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=production node app.js"
+		"test": "killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete ; npm install --dev ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=test node MSB_app.js",
+		"start": "killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete ; npm install --production ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=production node MSB_app.js"
 	}
 }
