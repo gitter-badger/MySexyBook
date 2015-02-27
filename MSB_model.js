@@ -22,20 +22,20 @@ var crypto = require('crypto');
 
 var gm = require('gm');
 
-var MSB = {};
+var MSB_Model = {};
 
 /* ---------- Passwords ---------- */
 
-MSB.hashPassword = function (pwd) {
+MSB_Model.hashPassword = function (pwd) {
 	return crypto.createHash('sha512').update(app_config.pwd_salt_start + pwd + app_config.pwd_salt_end).digest('hex');
 }
 
 /* ---------- Users ---------- */
 
-MSB.createUser = function (email, password, pseudo, sex, geo_county_id) {
+MSB_Model.createUser = function (email, password, pseudo, sex, geo_county_id) {
 	var new_user = {
 		email: email,
-		password: MSB.hashPassword(password),
+		password: MSB_Model.hashPassword(password),
 		pseudo: pseudo,
 		sex: sex,
 		geo_county_id: geo_county_id,
@@ -43,10 +43,10 @@ MSB.createUser = function (email, password, pseudo, sex, geo_county_id) {
 	};
 
 	return new Promise(function (resolve, reject){
-		MSB.getGeoCounty({
+		MSB_Model.getGeoCounty({
 			_id: new_user.geo_county_id
 		}).then(function (geo_county) {
-			MSB.db.collection('users').findOne({
+			MSB_Model.db.collection('users').findOne({
 				email: new_user.email
 			}).then(function (user_email) {
 				if (user_email) {
@@ -54,7 +54,7 @@ MSB.createUser = function (email, password, pseudo, sex, geo_county_id) {
 					return;
 				}
 
-				MSB.db.collection('users').findOne({
+				MSB_Model.db.collection('users').findOne({
 					pseudo: new_user.pseudo
 				}).then(function (user_pseudo) {
 					if (user_pseudo) {
@@ -62,7 +62,7 @@ MSB.createUser = function (email, password, pseudo, sex, geo_county_id) {
 						return;
 					}
 
-					return MSB.db.collection('users').insert(new_user).then(function (user) {
+					return MSB_Model.db.collection('users').insert(new_user).then(function (user) {
 						if (!user) {
 							reject('Erreur lors de la création de l\'user');
 							return;
@@ -94,14 +94,14 @@ MSB.createUser = function (email, password, pseudo, sex, geo_county_id) {
 		});
 	});
 };
-MSB.deleteUser = function (user) {
+MSB_Model.deleteUser = function (user) {
 	return new Promise(function (resolve, reject) {
-		MSB.db.collection('users').remove({ _id: user._id }, true).then(function () {
-			MSB.getAlbums({ creator_id: user._id }).then(function (albums) {
+		MSB_Model.db.collection('users').remove({ _id: user._id }, true).then(function () {
+			MSB_Model.getAlbums({ creator_id: user._id }).then(function (albums) {
 				var albums_promises = new Array(albums.length);
 
 				albums.forEach(function (album, index) {
-					albums_promises.push(MSB.deleteAlbum(album));
+					albums_promises.push(MSB_Model.deleteAlbum(album));
 				});
 
 				Promise.all(albums_promises).then(function () {
@@ -136,13 +136,13 @@ MSB.deleteUser = function (user) {
 		});
 	});
 };
-MSB.getUser = function (filter) {
+MSB_Model.getUser = function (filter) {
 	if (filter._id && typeof filter._id === 'string') {
 		filter._id = pmongo.ObjectId(filter._id);
 	}
 
 	return new Promise(function (resolve, reject){
-		var query = MSB.db.collection('users').findOne(filter);
+		var query = MSB_Model.db.collection('users').findOne(filter);
 		
 		query.then(function (user) {
 			if (!user) {
@@ -150,7 +150,7 @@ MSB.getUser = function (filter) {
 				return;
 			}
 
-			MSB.getGeoCounty({ _id: user.geo_county_id }).then(function (geo_county) {
+			MSB_Model.getGeoCounty({ _id: user.geo_county_id }).then(function (geo_county) {
 				user.geo_county = geo_county;
 				resolve(user);
 			}).catch(function (error) {
@@ -162,13 +162,13 @@ MSB.getUser = function (filter) {
 		});
 	});
 };
-MSB.getUsers = function (filter, sort, limit, offset) {
+MSB_Model.getUsers = function (filter, sort, limit, offset) {
 	if (filter._id && typeof filter._id === 'string') {
 		filter._id = pmongo.ObjectId(filter._id);
 	}
 
 	return new Promise(function (resolve, reject){
-		var query = MSB.db.collection('users').find(filter);
+		var query = MSB_Model.db.collection('users').find(filter);
 
 		if (sort) {
 			query = query.sort(sort);
@@ -191,9 +191,9 @@ MSB.getUsers = function (filter, sort, limit, offset) {
 
 /* ---------- Geo Counties ---------- */
 
-MSB.getGeoCounty = function (filter) {
+MSB_Model.getGeoCounty = function (filter) {
 	return new Promise(function (resolve, reject){
-		var query = MSB.db.collection('geo_counties').findOne(filter);
+		var query = MSB_Model.db.collection('geo_counties').findOne(filter);
 		
 		query.then(function (geo_county) {
 			if (!geo_county) {
@@ -207,9 +207,9 @@ MSB.getGeoCounty = function (filter) {
 		});
 	});
 };
-MSB.getGeoCounties = function (filter, sort, limit, offset) {
+MSB_Model.getGeoCounties = function (filter, sort, limit, offset) {
 	return new Promise(function (resolve, reject){
-		var query = MSB.db.collection('geo_counties').find(filter);
+		var query = MSB_Model.db.collection('geo_counties').find(filter);
 
 		if (sort) {
 			query = query.sort(sort);
@@ -232,7 +232,7 @@ MSB.getGeoCounties = function (filter, sort, limit, offset) {
 
 /* ---------- Albums ---------- */
 
-MSB.createAlbum = function (title, creator_id, description) {
+MSB_Model.createAlbum = function (title, creator_id, description) {
 	var new_album = {
 		creator_id: typeof creator_id === 'string' ? pmongo.ObjectId(creator_id) : creator_id,
 		title: title,
@@ -244,7 +244,7 @@ MSB.createAlbum = function (title, creator_id, description) {
 	}
 
 	return new Promise(function (resolve, reject){
-		MSB.db.collection('albums').findOne({
+		MSB_Model.db.collection('albums').findOne({
 			creator_id: new_album.creator_id,
 			title: new_album.title
 		}).then(function (album_title) {
@@ -253,7 +253,7 @@ MSB.createAlbum = function (title, creator_id, description) {
 				return;
 			}
 
-			return MSB.db.collection('albums').insert(new_album).then(function (album) {
+			return MSB_Model.db.collection('albums').insert(new_album).then(function (album) {
 				if (!album) {
 					reject('Erreur lors de la création de l\'album');
 					return;
@@ -278,14 +278,14 @@ MSB.createAlbum = function (title, creator_id, description) {
 		});
 	});
 };
-MSB.deleteAlbum = function (album) {
+MSB_Model.deleteAlbum = function (album) {
 	return new Promise(function (resolve, reject) {
-		MSB.db.collection('albums').remove({ _id: album._id }, true).then(function () {
-			MSB.getPhotos({ album_id: album._id }).then(function (photos) {
+		MSB_Model.db.collection('albums').remove({ _id: album._id }, true).then(function () {
+			MSB_Model.getPhotos({ album_id: album._id }).then(function (photos) {
 				var photos_promises = new Array(photos.length);
 
 				photos.forEach(function (photo, index) {
-					photos_promises.push(MSB.deletePhoto(photo));
+					photos_promises.push(MSB_Model.deletePhoto(photo));
 				});
 
 				Promise.all(photos_promises).then(function () {
@@ -307,7 +307,7 @@ MSB.deleteAlbum = function (album) {
 		});
 	});
 };
-MSB.getAlbum = function (filter) {
+MSB_Model.getAlbum = function (filter) {
 	if (filter._id && typeof filter._id === 'string') {
 		filter._id = pmongo.ObjectId(filter._id);
 	}
@@ -315,7 +315,7 @@ MSB.getAlbum = function (filter) {
 		filter.creator_id = pmongo.ObjectId(filter.creator_id);
 	}
 	return new Promise(function (resolve, reject){
-		var query = MSB.db.collection('albums').findOne(filter);
+		var query = MSB_Model.db.collection('albums').findOne(filter);
 		
 		query.then(function (album) {
 			if (!album) {
@@ -330,7 +330,7 @@ MSB.getAlbum = function (filter) {
 		});
 	});
 };
-MSB.getAlbums = function (filter, sort, limit, offset) {
+MSB_Model.getAlbums = function (filter, sort, limit, offset) {
 	if (filter._id && typeof filter._id === 'string') {
 		filter._id = pmongo.ObjectId(filter._id);
 	}
@@ -339,7 +339,7 @@ MSB.getAlbums = function (filter, sort, limit, offset) {
 	}
 
 	return new Promise(function (resolve, reject){
-		var query = MSB.db.collection('albums').find(filter);
+		var query = MSB_Model.db.collection('albums').find(filter);
 
 		if (sort) {
 			query = query.sort(sort);
@@ -362,7 +362,7 @@ MSB.getAlbums = function (filter, sort, limit, offset) {
 
 /* ---------- Photos ---------- */
 
-MSB.createPhoto = function (temp_img, album_id, owner_id, title) {
+MSB_Model.createPhoto = function (temp_img, album_id, owner_id, title) {
 	return new Promise(function (resolve, reject) {
 		if (!temp_img) {
 			reject('Aucun fichier n\'a été spécifié');
@@ -425,13 +425,13 @@ MSB.createPhoto = function (temp_img, album_id, owner_id, title) {
 				new_photo.file_info = info;
 
 				fsp.writeFile(newPath, image_raw_data).then(function () {
-					return MSB.db.collection('photos').insert(new_photo).then(function (photo) {
+					return MSB_Model.db.collection('photos').insert(new_photo).then(function (photo) {
 						if (!photo) {
 							reject('Impossible d\'enregistrer la photo dans la base de données');
 							return;
 						}
 
-						MSB.db.collection('albums').findAndModify({
+						MSB_Model.db.collection('albums').findAndModify({
 							query: {
 								_id: pmongo.ObjectId(new_photo.album_id)
 							},
@@ -461,9 +461,9 @@ MSB.createPhoto = function (temp_img, album_id, owner_id, title) {
 		});
 	});
 };
-MSB.deletePhoto = function (photo) {
+MSB_Model.deletePhoto = function (photo) {
 	return new Promise(function (resolve, reject) {
-		MSB.db.collection('photos').remove({ _id: photo._id }, true).then(function () {
+		MSB_Model.db.collection('photos').remove({ _id: photo._id }, true).then(function () {
 			fsp.unlink('uploads/originals/' + photo.owner_id + '/' + photo.album_id + '/' + photo.src).then(function () {
 
 				var thumbs_dir = 'uploads/thumbs/' + photo.owner_id + '/' + photo.album_id;
@@ -497,7 +497,7 @@ MSB.deletePhoto = function (photo) {
 		});
 	});
 };
-MSB.getPhoto = function (filter) {
+MSB_Model.getPhoto = function (filter) {
 	if (filter._id && typeof filter._id === 'string') {
 		filter._id = pmongo.ObjectId(filter._id);
 	}
@@ -506,7 +506,7 @@ MSB.getPhoto = function (filter) {
 	}
 
 	return new Promise(function (resolve, reject){
-		var query = MSB.db.collection('photos').findOne(filter);
+		var query = MSB_Model.db.collection('photos').findOne(filter);
 		
 		query.then(function (photo) {
 			if (!photo) {
@@ -520,7 +520,7 @@ MSB.getPhoto = function (filter) {
 		});
 	});
 };
-MSB.getPhotos = function (filter, sort, limit, offset) {
+MSB_Model.getPhotos = function (filter, sort, limit, offset) {
 	if (filter._id && typeof filter._id === 'string') {
 		filter._id = pmongo.ObjectId(filter._id);
 	}
@@ -529,7 +529,7 @@ MSB.getPhotos = function (filter, sort, limit, offset) {
 	}
 
 	return new Promise(function (resolve, reject){
-		var query = MSB.db.collection('photos').find(filter);
+		var query = MSB_Model.db.collection('photos').find(filter);
 
 		if (sort) {
 			query = query.sort(sort);
@@ -550,4 +550,4 @@ MSB.getPhotos = function (filter, sort, limit, offset) {
 	});
 };
 
-module.exports = MSB;
+module.exports = MSB_Model;

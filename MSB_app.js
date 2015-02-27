@@ -134,8 +134,8 @@ catch(e) {
 }
 
 
-MSB = require('./MSB_model');
-MSB.db = db;
+var MSB_Model = require('./MSB_Model');
+MSB_Model.db = db;
 
 app.use(cookieParser());
 app.use(session({
@@ -165,7 +165,7 @@ app.use(function (req, res, next) {
 	res.locals.req = req;
 
 	if (req.cookies && req.cookies.user_id) {
-		MSB.getUser({
+		MSB_Model.getUser({
 			_id: req.cookies.user_id
 		}).then(function (user) {
 			req.session.current_user = user;
@@ -434,7 +434,7 @@ app.route('/photo/:userid/:albumid/:dimensions/:photosrc').get(function (req, re
 
 
 app.route('/book/:userpseudo').all(function (req, res, next) {
-	MSB.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
+	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
 		res.locals.user = user;
 
 		next();
@@ -462,7 +462,7 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 		return;
 	}
 
-	MSB.createAlbum(req.body.album.title, req.session.current_user._id, req.body.album.description).then(function (album) {
+	MSB_Model.createAlbum(req.body.album.title, req.session.current_user._id, req.body.album.description).then(function (album) {
 		res.redirect(app.locals.url + '/book/' + req.session.current_user.pseudo);
 		res.end();
 	}).catch(function (album_error) {
@@ -471,12 +471,12 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 		return;
 	});
 }).get(function (req, res, next) {
-	MSB.getAlbums({ creator_id: res.locals.user._id }, { created_at: 1 }).then(function (albums) {
+	MSB_Model.getAlbums({ creator_id: res.locals.user._id }, { created_at: 1 }).then(function (albums) {
 		if (albums.length) {
 			var photos_promises = new Array(albums.length);
 
 			albums.forEach(function (album, index) {
-				var promise = MSB.getPhotos({ owner_id: res.locals.user._id, album_id: album._id }, { uploaded_at: 1 });
+				var promise = MSB_Model.getPhotos({ owner_id: res.locals.user._id, album_id: album._id }, { uploaded_at: 1 });
 				photos_promises[index] = promise;
 			});
 
@@ -508,10 +508,10 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 		return;
 	}
 
-	MSB.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
+	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
 		res.locals.user = user;
 
-		MSB.getAlbum({
+		MSB_Model.getAlbum({
 			_id: req.params.albumid,
 			creator_id: res.locals.user._id
 		}).then(function (album) {
@@ -552,7 +552,7 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 		return;
 	}
 
-	MSB.createPhoto(image_temp, res.locals.album._id, res.locals.user._id, req.body.image.title || '').then(function (photo) {
+	MSB_Model.createPhoto(image_temp, res.locals.album._id, res.locals.user._id, req.body.image.title || '').then(function (photo) {
 		res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id + '#photo-' + photo._id);
 		res.end();
 	}).catch(function (err) {
@@ -561,7 +561,7 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 		res.end();
 	});
 }).get(function (req, res, next) {
-	MSB.getPhotos({ album_id: res.locals.album._id }, { uploaded_at: 1 }).then(function (photos) {
+	MSB_Model.getPhotos({ album_id: res.locals.album._id }, { uploaded_at: 1 }).then(function (photos) {
 		res.locals.album.photos = photos;
 
 		res.render('user_album');
@@ -659,7 +659,7 @@ app.route('/inscription').all(function (req, res, next) {
 		return;
 	}
 
-	MSB.createUser(req.body.user.email, req.body.user.password, req.body.user.pseudo, req.body.user.sex, req.body.user.geo_county).then(function (user) {
+	MSB_Model.createUser(req.body.user.email, req.body.user.password, req.body.user.pseudo, req.body.user.sex, req.body.user.geo_county).then(function (user) {
 		req.session.current_user = user;
 
 		res.redirect(app.locals.url + '/book/' + user.pseudo);
@@ -735,9 +735,9 @@ app.route('/connexion').all(function (req, res, next) {
 		return;
 	}
 
-	MSB.getUser({
+	MSB_Model.getUser({
 		email: req.body.user.email,
-		password: MSB.hashPassword(req.body.user.password)
+		password: MSB_Model.hashPassword(req.body.user.password)
 	}).then(function (user) {
 		req.session.current_user = user;
 
@@ -893,9 +893,9 @@ app.route('/db_reset/:table').all(function (req, res, next) {
 					delete req.session.current_user;
 				}
 
-				MSB.getUsers({}).then(function (users) {
+				MSB_Model.getUsers({}).then(function (users) {
 					users.forEach(function (user) {
-						db_reset_promises.push(MSB.deleteUser(user));
+						db_reset_promises.push(MSB_Model.deleteUser(user));
 					});
 
 					Promise.all(db_reset_promises).then(function () {
@@ -910,9 +910,9 @@ app.route('/db_reset/:table').all(function (req, res, next) {
 			break;
 
 			case 'albums':
-				MSB.getAlbums({}).then(function (albums) {
+				MSB_Model.getAlbums({}).then(function (albums) {
 					albums.forEach(function (album) {
-						db_reset_promises.push(MSB.deleteAlbum(album));
+						db_reset_promises.push(MSB_Model.deleteAlbum(album));
 					});
 
 					Promise.all(db_reset_promises).then(function () {
@@ -928,9 +928,9 @@ app.route('/db_reset/:table').all(function (req, res, next) {
 			break;
 
 			case 'photos':
-				MSB.getPhotos({}).then(function (photos) {
+				MSB_Model.getPhotos({}).then(function (photos) {
 					photos.forEach(function (photo) {
-						db_reset_promises.push(MSB.deletePhoto(photo));
+						db_reset_promises.push(MSB_Model.deletePhoto(photo));
 					});
 
 					Promise.all(db_reset_promises).then(function () {
@@ -1001,10 +1001,10 @@ app.route('/').get(function (req, res) {
 		return;
 	}
 	else {
-		MSB.getUsers({}, { register_date: -1 }, 5).then(function (last_users) {
+		MSB_Model.getUsers({}, { register_date: -1 }, 5).then(function (last_users) {
 			res.locals.last_users = last_users;
 
-			MSB.getPhotos({}, { uploaded_at: -1 }, 5).then(function (last_photos) {
+			MSB_Model.getPhotos({}, { uploaded_at: -1 }, 5).then(function (last_photos) {
 				res.locals.last_photos = last_photos;
 
 				db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
@@ -1014,7 +1014,7 @@ app.route('/').get(function (req, res) {
 						var photos_promises = new Array(last_photos.length);
 
 						last_photos.forEach(function (photo, index) {
-							var promise = MSB.getUser({ _id: pmongo.ObjectId(photo.owner_id) });
+							var promise = MSB_Model.getUser({ _id: pmongo.ObjectId(photo.owner_id) });
 							photos_promises[index] = promise;
 						});
 
