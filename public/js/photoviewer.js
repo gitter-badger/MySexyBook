@@ -36,9 +36,6 @@ if (album_elem) {
 
 			this.thumbs_sizes = this.thumbs_container.offsetHeight || (16 * 5.5);
 
-			console.log(this.thumbs_sizes);
-			console.dir(this.thumbs_container);
-
 			Array.prototype.forEach.call(this.photos_elem, function (li, index) {
 				var photo = {
 					_id: li.id.replace(/^photo-/, '')
@@ -55,18 +52,33 @@ if (album_elem) {
 				}
 				photo.src = li.dataset.photoSrc;
 
-				if (index > 0) {
-					li.classList.add('hidden');
+				if (index === 0) {
+					if (!window.location.hash || !document.querySelector(window.location.hash) || !document.querySelector(window.location.hash).dataset || !document.querySelector(window.location.hash).dataset.photoSrc) {
+						window.location.hash = '#' + li.id;
+					}
+				}
+				else {
+					// li.classList.add('hidden');
 				}
 
 				var thumb_elem = document.createElement('li');
 				thumb_elem.dataset.photoId = photo._id;
 
+				var thumb_link = document.createElement('a');
+				thumb_link.href = '#' + li.id;
+
 				var thumb_img = document.createElement('img');
 				thumb_img.src = '/photo/' + this.user._id + '/' + this.album._id + '/' + this.thumbs_sizes + 'x' + this.thumbs_sizes + 'x1/' + photo.src;
+				thumb_img.alt = photo.title || '';
 
-				thumb_elem.appendChild(thumb_img);
+				thumb_link.appendChild(thumb_img);
+				thumb_elem.appendChild(thumb_link);
 				this.thumbs_container.appendChild(thumb_elem);
+
+				var figure = li.querySelector('.photo')
+				if (figure) {
+					figure.removeAttribute('tabindex');
+				}
 
 				this.photos.push(photo);
 			}, this);
