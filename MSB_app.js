@@ -456,7 +456,7 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
 		if (!user.account_validated && (
 			!req.session.current_user || 
-			(req.session.current_user && !user._id.equals(req.session.current_user._id))
+			(req.session.current_user && !user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
 		)) {
 			res.status(403);
 			res.render('error403', { error: { message: 'Ce compte n\'a pas encore été validé' } });
@@ -541,7 +541,7 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
 		if (!user.account_validated && (
 			!req.session.current_user || 
-			(req.session.current_user && !user._id.equals(req.session.current_user._id))
+			(req.session.current_user && !user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
 		)) {
 			res.status(403);
 			res.render('error403', { error: { message: 'Ce compte n\'a pas encore été validé' } });
@@ -557,7 +557,7 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 		}).then(function (album) {
 			if (album.is_private && (
 				!req.session.current_user || 
-				(req.session.current_user && !res.locals.user._id.equals(req.session.current_user._id))
+				(req.session.current_user && !res.locals.user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
 			)) {
 				res.status(403);
 				res.render('error403', { error: { message: 'Cet album est privé' } });
