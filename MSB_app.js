@@ -135,7 +135,7 @@ catch(e) {
 }
 
 
-var MSB_Model = require('./MSB_Model');
+var MSB_Model = require('./MSB_model.js');
 MSB_Model.db = db;
 
 app.use(cookieParser());
