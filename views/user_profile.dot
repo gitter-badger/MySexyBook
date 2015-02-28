@@ -163,6 +163,14 @@
 					<label for="new-album-description">Description <small class="field-indication">(facultative)</small></label>
 					<textarea name="album[description]" id="new-album-description" cols="50" rows="4">{{? it.req.body && it.req.body.album && it.req.body.album.description }}{{= it.req.body.album.description }}{{?}}</textarea>
 				</div>
+
+				<div>
+					<label for="new-album-is_private">Album privé</label>
+					<label>
+						<input type="checkbox" name="album[is_private]" id="new-album-is_private" value="yes" {{? it.req.body && it.req.body.album && it.req.body.album.is_private }} checked="checked"{{?}} />
+						<span class="checkbox-label">Je souhaite que cet album soit accessible uniquement par moi</span>
+					</label>
+				</div>
 			</fieldset>
 			<div>
 				<button type="submit">Créer</button>

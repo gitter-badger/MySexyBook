@@ -232,15 +232,19 @@ MSB_Model.getGeoCounties = function (filter, sort, limit, offset) {
 
 /* ---------- Albums ---------- */
 
-MSB_Model.createAlbum = function (title, creator_id, description) {
+MSB_Model.createAlbum = function (title, creator_id, description, is_private) {
 	var new_album = {
 		creator_id: typeof creator_id === 'string' ? pmongo.ObjectId(creator_id) : creator_id,
 		title: title,
 		created_at: new Date()
 	};
 
-	if (description) {
+	if (typeof description === 'string') {
 		new_album.description = description;
+	}
+
+	if (typeof is_private !== 'undefined') {
+		new_album.is_private = is_private ? true : false;
 	}
 
 	return new Promise(function (resolve, reject){

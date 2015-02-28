@@ -454,6 +454,16 @@ app.route('/photo/:userid/:albumid/:dimensions/:photosrc').get(function (req, re
 
 app.route('/book/:userpseudo').all(function (req, res, next) {
 	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
+		if (!user.account_validated && (
+			!req.session.current_user || 
+			(req.session.current_user && !user._id.equals(req.session.current_user._id))
+		)) {
+			res.status(403);
+			res.render('error403', { error: { message: 'Ce compte n\'a pas encore été validé' } });
+			res.end();
+			return;
+		}
+
 		res.locals.user = user;
 
 		next();
@@ -463,7 +473,8 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 	});
 }).post(function (req, res, next) {
 	if (!req.session || !req.session.current_user) {
-		res.redirect(app.locals.url + '/');
+		res.status(403);
+		res.render('error403', { error: { message: 'Vous devez être connecté pour accéder à cette page' } });
 		res.end();
 		return;
 	}
@@ -481,7 +492,7 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 		return;
 	}
 
-	MSB_Model.createAlbum(req.body.album.title, req.session.current_user._id, req.body.album.description).then(function (album) {
+	MSB_Model.createAlbum(req.body.album.title, req.session.current_user._id, req.body.album.description, req.body.album.is_private).then(function (album) {
 		res.redirect(app.locals.url + '/book/' + req.session.current_user.pseudo);
 		res.end();
 	}).catch(function (album_error) {
@@ -528,12 +539,31 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 	}
 
 	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
+		if (!user.account_validated && (
+			!req.session.current_user || 
+			(req.session.current_user && !user._id.equals(req.session.current_user._id))
+		)) {
+			res.status(403);
+			res.render('error403', { error: { message: 'Ce compte n\'a pas encore été validé' } });
+			res.end();
+			return;
+		}
+
 		res.locals.user = user;
 
 		MSB_Model.getAlbum({
 			_id: req.params.albumid,
 			creator_id: res.locals.user._id
 		}).then(function (album) {
+			if (album.is_private && (
+				!req.session.current_user || 
+				(req.session.current_user && !res.locals.user._id.equals(req.session.current_user._id))
+			)) {
+				res.status(403);
+				res.render('error403', { error: { message: 'Cet album est privé' } });
+				res.end();
+				return;
+			}
 			res.locals.album = album;
 			next();
 		}).catch(function (err) {
@@ -545,6 +575,13 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 		return;
 	});
 }).post(function (req, res, next) {
+	if (!req.session || !req.session.current_user) {
+		res.status(403);
+		res.render('error403', { error: { message: 'Vous devez être connecté pour accéder à cette page' } });
+		res.end();
+		return;
+	}
+
 	if (!req.files || !req.files['image[src]']) {
 		next();
 		return;
@@ -642,8 +679,9 @@ app.route('/recherche').all(function (req, res, next) {
 });
 
 app.route('/inscription').all(function (req, res, next) {
-	if (req.session.current_user) {
-		res.redirect(app.locals.url + '/');
+	if (req.session && req.session.current_user) {
+		res.status(403);
+		res.render('error403', { error: { message: 'Vous êtes déjà connecté' } });
 		res.end();
 		return;
 	}
@@ -694,8 +732,9 @@ app.route('/inscription').all(function (req, res, next) {
 });
 
 app.route('/mot-de-passe-perdu').all(function (req, res, next) {
-	if (req.session.current_user) {
-		res.redirect(app.locals.url + '/');
+	if (req.session && req.session.current_user) {
+		res.status(403);
+		res.render('error403', { error: { message: 'Vous êtes déjà connecté' } });
 		res.end();
 		return;
 	}
@@ -731,8 +770,9 @@ app.route('/mot-de-passe-perdu').all(function (req, res, next) {
 });
 
 app.route('/connexion').all(function (req, res, next) {
-	if (req.session.current_user) {
-		res.redirect(app.locals.url + '/');
+	if (req.session && req.session.current_user) {
+		res.status(403);
+		res.render('error403', { error: { message: 'Vous êtes déjà connecté' } });
 		res.end();
 		return;
 	}
@@ -778,7 +818,8 @@ app.route('/connexion').all(function (req, res, next) {
 
 app.route('/mon-profil').all(function (req, res, next) {
 	if (!req.session || !req.session.current_user) {
-		res.redirect(app.locals.url + '/');
+		res.status(403);
+		res.render('error403', { error: { message: 'Vous devez être connecté pour accéder à cette page' } });
 		res.end();
 		return;
 	}
@@ -903,6 +944,13 @@ app.route('/deconnexion').get(function (req, res, next) {
 
 
 app.route('/db_reset/:table').all(function (req, res, next) {
+	if (!req.session || !req.session.current_user || !req.session.current_user.is_admin) {
+		res.status(403);
+		res.render('error403', { error: { message: 'Vous devez être administrateur pour accéder à cette page' } });
+		res.end();
+		return;
+	}
+
 	if (req.params.table) {
 		var db_reset_promises = [];
 
@@ -1020,7 +1068,7 @@ app.route('/').get(function (req, res) {
 		return;
 	}
 	else {
-		MSB_Model.getUsers({}, { register_date: -1 }, 5).then(function (last_users) {
+		MSB_Model.getUsers({ account_validated: true }, { register_date: -1 }, 5).then(function (last_users) {
 			res.locals.last_users = last_users;
 
 			MSB_Model.getPhotos({}, { uploaded_at: -1 }, 5).then(function (last_photos) {

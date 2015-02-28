@@ -2,7 +2,9 @@
 <main id="page">
 	<div class="container" id="album-container" data-user-id="{{= it.user._id}}" data-album-id="{{= it.album._id}}">
 		<div class="album-info">
-			<h1 class="album-title">{{= it.sanitize(it.album.title) }}</h1>
+			<h1 class="album-title">{{= it.sanitize(it.album.title) }} {{? it.album.is_private }}{{?}}</h1>
+
+			<p class="alert warning">Cet album est privé</p>
 
 			<p>Créé le <time datetime="{{= it.strftime('%Y-%m-%d') }}">{{= it.strftime('%d %B %Y') }}</time> par <em><a href="{{= it.app.url}}/book/{{= it.user.pseudo }}" rel="parent">{{= it.sanitize(it.user.pseudo) }}</a></em></p>
 			
@@ -44,7 +46,7 @@
 			{{? it.form_error }}
 				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}
-			
+
 			<input type="hidden" name="_csrf" value="{{= it.csrfToken }}" />
 
 			<fieldset>
