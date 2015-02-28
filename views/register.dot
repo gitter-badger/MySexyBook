@@ -7,6 +7,9 @@
 			{{? it.form_error }}
 				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}
+
+			<input type="hidden" name="_csrf" value="{{= it.csrfToken }}" />
+			
 			<fieldset>
 				<legend>Informations de connexion</legend>
 

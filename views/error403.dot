@@ -1,0 +1,13 @@
+{{= it.dots._header(it.extend({ page_id: 'error-403' })) }}
+<main id="page">
+	<div class="container">
+		<h1>Erreur 403</h1>
+
+		{{? it.error && it.error.message }}
+			<p>{{= it.error.message }}</p>
+		{{??}}
+			<p>Accès interdit</p>
+		{{?}}
+	</div>
+</main>
+{{= it.dots._footer(it) }}

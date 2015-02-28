@@ -14,6 +14,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var csrf = require('csurf');
 var MongoStore = require('connect-mongo')(session);
 var multer = require('multer');
 var validator = require('validator');
@@ -106,7 +107,7 @@ app.engine('dot', function (view_path, data, callback) {
 
 	return callback(null, dots[view_name](data));
 });
-app.set('views', './views');
+app.locals.dots = dots;
 app.set('view engine', 'dot');
 
 try{
@@ -160,7 +161,6 @@ app.use(function (req, res, next) {
 	res.header('Cache-Control', 'no-cache');
 	res.header('Content-language', 'fr_FR');
 
-	res.locals.dots = dots;
 	res.locals.app = app.locals;
 	res.locals.req = req;
 
@@ -183,6 +183,25 @@ app.use(function (req, res, next) {
 	else {
 		next();
 	}
+});
+
+app.use(csrf());
+
+app.use(function (err, req, res, next) {
+	if (!err || !err.code || err.code !== 'EBADCSRFTOKEN') {
+		res.locals.csrfToken = req.csrfToken();
+		return next(err);
+	}
+
+	res.status(403);
+	res.render('error403', { error: { code: err.code, message: 'Jeton invalide. Tentative de CSRF ?' }});
+	res.end();
+});
+
+app.use(function (req, res, next) {
+	res.locals.csrfToken = req.csrfToken();
+
+	next();
 });
 
 app.route('/avatar/:dimensions/:userid').get(function (req, res, next) {

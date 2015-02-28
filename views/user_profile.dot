@@ -149,6 +149,9 @@
 			{{? it.form_error }}
 				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}
+			
+			<input type="hidden" name="_csrf" value="{{= it.csrfToken }}" />
+
 			<fieldset>
 				<legend>Créer un album</legend>
 				<div>

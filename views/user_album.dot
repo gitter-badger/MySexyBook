@@ -44,6 +44,9 @@
 			{{? it.form_error }}
 				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}
+			
+			<input type="hidden" name="_csrf" value="{{= it.csrfToken }}" />
+
 			<fieldset>
 				<legend>Ajouter une photo</legend>
 				<div>
