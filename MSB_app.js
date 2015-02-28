@@ -478,6 +478,12 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 		res.end();
 		return;
 	}
+	if (res.locals.user._id.equals(!req.session.current_user._id)) {
+		res.status(403);
+		res.render('error403', { error: { message: 'Ce profil ne vous appartient pas' } });
+		res.end();
+		return;
+	}
 
 	if (!req.body.album) {
 		var form_error = 'Formulaire invalide';
@@ -578,6 +584,12 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 	if (!req.session || !req.session.current_user) {
 		res.status(403);
 		res.render('error403', { error: { message: 'Vous devez être connecté pour accéder à cette page' } });
+		res.end();
+		return;
+	}
+	if (res.locals.album.owner_id.equals(!req.session.current_user._id)) {
+		res.status(403);
+		res.render('error403', { error: { message: 'Cet album ne vous appartient pas' } });
 		res.end();
 		return;
 	}
