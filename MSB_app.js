@@ -1080,40 +1080,43 @@ app.route('/').get(function (req, res) {
 		return;
 	}
 	else {
-		MSB_Model.getUsers({ account_validated: true }, { register_date: -1 }, 5).then(function (last_users) {
-			res.locals.last_users = last_users;
-
+		var home_promises = [
+			MSB_Model.getUsers({ account_validated: true }, { register_date: -1 }, 5).then(function (last_users) {
+				res.locals.last_users = last_users;
+			}),
 			MSB_Model.getPhotos({}, { uploaded_at: -1 }, 5).then(function (last_photos) {
 				res.locals.last_photos = last_photos;
+			}),
+			MSB_Model.getGeoCounties({}, { _id: 1 }).then(function (geo_counties) {
+				res.locals.geo_counties = geo_counties;
+			})
+		];
 
-				db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
-					res.locals.geo_counties = geo_counties;
+		Promise.all(home_promises).then(function () {
+			if (res.locals.last_photos && res.locals.last_photos.length) {
+				var photos_promises = new Array(res.locals.last_photos.length);
 
-					if (last_photos && last_photos.length) {
-						var photos_promises = new Array(last_photos.length);
-
-						last_photos.forEach(function (photo, index) {
-							var promise = MSB_Model.getUser({ _id: pmongo.ObjectId(photo.owner_id) });
-							photos_promises[index] = promise;
-						});
-
-						Promise.all(photos_promises).then(function (results) {
-							results.forEach(function (user, index) {
-								last_photos[index].owner = user;
-							});
-
-							res.render('index');
-							res.end();
-						});
-					}
-					else {
-						res.render('index');
-						res.end();
-					}
+				res.locals.last_photos.forEach(function (photo, index) {
+					var promise = MSB_Model.getUser({ _id: pmongo.ObjectId(photo.owner_id) });
+					photos_promises[index] = promise;
 				});
-			});
-		}).catch(function () {
 
+				Promise.all(photos_promises).then(function (results) {
+					results.forEach(function (user, index) {
+						res.locals.last_photos[index].owner = user;
+					});
+
+					res.render('index');
+					res.end();
+				});
+			}
+			else {
+				res.render('index');
+				res.end();
+			}
+		}).catch(function () {
+			res.render('index');
+			res.end();
 		});
 	}
 });
