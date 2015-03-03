@@ -1074,8 +1074,6 @@ app.route('/').get(function (req, res) {
 
 app.route('*').all(function (req, res, next) {
 	res.status(404);
-
 	res.render('error404');
-
 	res.end();
 });
