@@ -877,73 +877,24 @@ app.route('/mon-profil').all(function (req, res, next) {
 		return;
 	}
 
-	db.collection('geo_counties').findOne({
-		_id: req.body.user.geo_county
-	}).then(function (profile_county) {
-
-		if (!profile_county) {
-			res.render('user_edit', { form_error: 'Département invalide' });
-			res.end();
-			return;
+	MSB_Model.updateUser(res.locals.user._id, req.body.user.sex, req.body.user.biography, req.body.user.geo_county, req.body.user.camera_side, req.body.user.photo_styles, req.body.user.photo_conditions).then(function (user) {
+		if (user._id.equals(res.locals.current_user._id)) {
+			req.session.current_user = user;
+			res.locals.current_user = user;
 		}
 
-		var updated_user = {};
-
-		if (req.body.user.sex != res.locals.user.sex) {
-			updated_user.sex = req.body.user.sex;
-		}
-		if (req.body.user.biography != res.locals.user.biography) {
-			updated_user.biography = req.body.user.biography;
-		}
-		if (req.body.user.geo_county != res.locals.user.geo_county_id) {
-			updated_user.geo_county_id = req.body.user.geo_county;
-		}
-		if (req.body.user.camera_side != res.locals.user.camera_side) {
-			updated_user.camera_side = req.body.user.camera_side;
-		}
-		if (req.body.user.photo_styles != res.locals.user.photo_styles) {
-			updated_user.photo_styles = req.body.user.photo_styles;
-		}
-		if (req.body.user.photo_conditions != res.locals.user.photo_conditions) {
-			updated_user.photo_conditions = req.body.user.photo_conditions;
-		}
-
-		if (!updated_user) {
-			res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo);
-			res.end();
-			return;
-		}
-
-		db.collection('users').findAndModify({
-			query: {
-				_id: pmongo.ObjectId(res.locals.user._id)
-			},
-			sort: {
-				_id: 1
-			},
-			update: {
-				$set : updated_user
-			},
-			new: true
-		}).then(function (user) {
-			if (!user[0]) {
-				res.render('user_edit', { form_error: 'Erreur lors de la mise à jour de la base de données' });
-				res.end();
-				return;
-			}
-
-			if (res.locals.current_user._id == user[0]._id) {
-				req.session.current_user = user[0];
-				res.locals.current_user = user[0];
-			}
-
-			res.redirect(app.locals.url + '/book/' + user[0].pseudo);
-			res.end();
-		});
+		res.redirect(app.locals.url + '/book/' + user.pseudo);
+		res.end();
+	}).catch(function (err) {
+		res.render('user_edit', { form_error: err });
+		res.end();
 	});
 }).get(function (req, res) {
-	res.render('user_edit');
-	res.end();
+	MSB_Model.getGeoCounties({}, { _id: 1 }).then(function (geo_counties) {
+		res.locals.geo_counties = geo_counties;
+		res.render('user_edit');
+		res.end();
+	})
 });
 
 app.route('/deconnexion').get(function (req, res, next) {

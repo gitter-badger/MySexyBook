@@ -1,4 +1,5 @@
 var pkg = require('./package.json');
+require('./public/js/prototypes.js');
 
 switch (process.env.NODE_ENV) {
 	case 'production':
@@ -88,6 +89,62 @@ MSB_Model.createUser = function (email, password, pseudo, sex, geo_county_id) {
 			}).catch(function (err) {
 				reject('Erreur de la base de données');
 				console.error(err);
+			});
+		}).catch(function (err) {
+			reject('Département invalide');
+		});
+	});
+};
+MSB_Model.updateUser = function (user_id, sex, biography, geo_county_id, camera_side, photo_styles, photo_conditions) {
+	return new Promise(function (resolve, reject) {
+		if (!user_id) {
+			reject('ID invalide');
+			return;
+		}
+
+		var user_updates = {
+			last_modified: new Date()
+		};
+
+		if (typeof sex === 'string') {
+			user_updates.sex = sex;
+		}
+		if (typeof biography === 'string') {
+			user_updates.biography = biography;
+		}
+		if (typeof geo_county_id === 'string') {
+			user_updates.geo_county_id = geo_county_id;
+		}
+		if (typeof camera_side === 'string') {
+			user_updates.camera_side = camera_side;
+		}
+		if (photo_styles instanceof Array) {
+			user_updates.photo_styles = photo_styles;
+		}
+		if (typeof photo_conditions === 'string') {
+			user_updates.photo_conditions = photo_conditions;
+		}
+
+		MSB_Model.getGeoCounty({
+			_id: geo_county_id
+		}).then(function (geo_county) {
+			MSB_Model.db.collection('users').findAndModify({
+				query: {
+					_id: pmongo.ObjectId(user_id)
+				},
+				update: {
+					$set: user_updates
+				},
+				new: true
+			}).then(function (results) {
+				if (results[0]) {
+					resolve(results[0]);
+				}
+				else {
+					reject('Impossible de mettre à jour le profil dans la base de données');
+				}
+			}).catch(function () {
+				reject('Impossible de mettre à jour le profil dans la base de données');
 			});
 		}).catch(function (err) {
 			reject('Département invalide');
