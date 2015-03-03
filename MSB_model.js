@@ -339,6 +339,49 @@ MSB_Model.createAlbum = function (title, creator_id, description, is_private) {
 		});
 	});
 };
+MSB_Model.updateAlbum = function (album_id, title, description, is_private) {
+	return new Promise(function (resolve, reject) {
+		if (!album_id) {
+			reject('ID invalide');
+			return;
+		}
+
+		var album_updates = {
+			last_modified: new Date()
+		};
+
+		if (typeof title === 'string') {
+			album_updates.title = title;
+		}
+
+		if (typeof description === 'string') {
+			album_updates.description = description;
+		}
+
+		if (typeof is_private !== 'undefined') {
+			album_updates.is_private = is_private ? true : false;
+		}
+
+		MSB_Model.db.collection('albums').findAndModify({
+			query: {
+				_id: pmongo.ObjectId(album_id)
+			},
+			update: {
+				$set: album_updates
+			},
+			new: true
+		}).then(function (results) {
+			if (results[0]) {
+				resolve(results[0]);
+			}
+			else {
+				reject('Impossible de mettre à jour le profil dans la base de données');
+			}
+		}).catch(function () {
+			reject('Impossible de mettre à jour l\'album dans la base de données');
+		});
+	});
+};
 MSB_Model.deleteAlbum = function (album) {
 	return new Promise(function (resolve, reject) {
 		MSB_Model.db.collection('albums').remove({ _id: album._id }, true).then(function () {
@@ -492,18 +535,7 @@ MSB_Model.createPhoto = function (temp_img, album_id, owner_id, title) {
 							return;
 						}
 
-						MSB_Model.db.collection('albums').findAndModify({
-							query: {
-								_id: pmongo.ObjectId(new_photo.album_id)
-							},
-							sort: {
-								_id: 1
-							},
-							update: {
-								$set: { last_modified: new Date() }
-							},
-							new: true
-						}).then(function (album) {
+						MSB_Model.updateAlbum(new_photo.album_id).then(function (album) {
 							resolve(photo);
 						}).catch(function (err) {
 							console.error(err);
@@ -519,6 +551,41 @@ MSB_Model.createPhoto = function (temp_img, album_id, owner_id, title) {
 			console.error(err);
 			reject('Impossible de lire la photo');
 			return;
+		});
+	});
+};
+MSB_Model.updatePhoto = function (photo_id, title) {
+	return new Promise(function (resolve, reject) {
+		if (!photo_id) {
+			reject('ID invalide');
+			return;
+		}
+
+		var photo_updates = {
+			last_modified: new Date()
+		};
+
+		if (typeof title === 'string') {
+			photo_updates.title = title;
+		}
+
+		MSB_Model.db.collection('photos').findAndModify({
+			query: {
+				_id: pmongo.ObjectId(photo_id)
+			},
+			update: {
+				$set: photo_updates
+			},
+			new: true
+		}).then(function (results) {
+			if (results[0]) {
+				resolve(results[0]);
+			}
+			else {
+				reject('Impossible de mettre à jour le profil dans la base de données');
+			}
+		}).catch(function () {
+			reject('Impossible de mettre à jour la photo dans la base de données');
 		});
 	});
 };
