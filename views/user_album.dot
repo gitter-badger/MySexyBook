@@ -10,6 +10,8 @@
 
 			{{? it.current_user && it.album.creator_id.equals(it.current_user._id) }}
 			<p>
+				<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id }}/supprimer" class="button">Supprimer l'album</a>
+				&nbsp;
 				<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id }}/modifier" class="button">Modifier l'album</a>
 			</p>
 			{{?}}
