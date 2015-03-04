@@ -364,7 +364,7 @@ MSB_Model.updateAlbum = function (album_id, title, description, is_private) {
 
 		MSB_Model.db.collection('albums').findAndModify({
 			query: {
-				_id: pmongo.ObjectId(album_id)
+				_id: (typeof album_id === 'string' ? pmongo.ObjectId(album_id) : album_id)
 			},
 			update: {
 				$set: album_updates

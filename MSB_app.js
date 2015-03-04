@@ -538,6 +538,75 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 	});
 });
 
+app.route('/book/:userpseudo/:albumid/modifier').all(function (req, res, next) {
+	if (!req.session || !req.session.current_user) {
+		res.status(403);
+		res.render('error403', { error: { message: 'Vous devez être connecté pour accéder à cette page' } });
+		res.end();
+		return;
+	}
+
+	if (!validator.isMongoId(req.params.albumid)) {
+		next('route');
+		return;
+	}
+
+	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
+		if (!user.account_validated && !req.session.current_user.is_admin) {
+			res.status(403);
+			res.render('error403', { error: { message: 'Ce compte n\'a pas encore été validé' } });
+			res.end();
+			return;
+		}
+
+		res.locals.user = user;
+
+		MSB_Model.getAlbum({
+			_id: req.params.albumid,
+			creator_id: res.locals.user._id
+		}).then(function (album) {
+			if (!album.creator_id.equals(req.session.current_user._id) && !req.session.current_user.is_admin) {
+				res.status(403);
+				res.render('error403', { error: { message: 'Cet album ne vous appartient pas' } });
+				res.end();
+				return;
+			}
+			res.locals.album = album;
+			next();
+		}).catch(function (err) {
+			next('route');
+			return;
+		});
+	}).catch(function (err) {
+		next('route');
+		return;
+	});
+}).post(function (req, res, next) {
+	if (!req.body.album) {
+		var form_error = 'Formulaire invalide';
+	}
+	else if (!req.body.album.title || !validator.isLength(req.body.album.title, 1, 40)) {
+		var form_error = 'Titre invalide';
+	}
+
+	if (form_error) {
+		res.render('user_album_edit', { form_error: form_error });
+		res.end();
+		return;
+	}
+
+	MSB_Model.updateAlbum(res.locals.album._id, req.body.album.title, req.body.album.description || null, req.body.album.is_private || false).then(function (album) {
+		res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id);
+		res.end();
+	}).catch(function (err) {
+		res.render('user_album_edit', { form_error: err });
+		res.end();
+	});
+}).get(function (req, res, next) {
+	res.render('user_album_edit');
+	res.end();
+});
+
 app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 	if (!validator.isMongoId(req.params.albumid)) {
 		next('route');
@@ -587,7 +656,7 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 		res.end();
 		return;
 	}
-	if (res.locals.album.owner_id.equals(!req.session.current_user._id)) {
+	if (res.locals.album.creator_id.equals(!req.session.current_user._id)) {
 		res.status(403);
 		res.render('error403', { error: { message: 'Cet album ne vous appartient pas' } });
 		res.end();

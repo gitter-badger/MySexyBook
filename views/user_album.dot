@@ -7,6 +7,12 @@
 			{{? it.album.is_private }}<p class="alert warning">Cet album est privé</p>{{?}}
 
 			<p>Créé le <time datetime="{{= it.strftime('%Y-%m-%d') }}">{{= it.strftime('%d %B %Y') }}</time> par <em><a href="{{= it.app.url}}/book/{{= it.user.pseudo }}" rel="parent">{{= it.sanitize(it.user.pseudo) }}</a></em></p>
+
+			{{? it.current_user && it.album.creator_id.equals(it.current_user._id) }}
+			<p>
+				<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id }}/modifier" class="button">Modifier l'album</a>
+			</p>
+			{{?}}
 			
 			{{? it.album.description }}
 				<div class="album-description">

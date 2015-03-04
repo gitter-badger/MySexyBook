@@ -1,0 +1,39 @@
+{{= it.dots._header(it.extend({ page_id: 'album-edit' })) }}
+<main id="page">
+	<div class="container">
+		<h1>Éditer l'album <em>{{= it.sanitize(it.album.title) }}</em></h1>
+
+		<form action="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id }}/modifier" method="post" id="form-edit-album">
+			{{? it.form_error }}
+				<p class="alert error">{{= it.form_error }}</p>
+			{{?}}
+			
+			<input type="hidden" name="_csrf" value="{{= it.csrfToken }}" />
+
+			<fieldset>
+				<legend>Créer un album</legend>
+				<div>
+					<label for="album-title">Nom de l'album</label>
+					<input type="text" name="album[title]" id="album-title" required size="12" maxlength="40" value="{{? it.req.body && it.req.body.album && it.req.body.album.title }}{{= it.req.body.album.title }}{{??}}{{= it.album.title || '' }}{{?}}" />
+				</div>
+
+				<div>
+					<label for="album-description">Description <small class="field-indication">(facultative)</small></label>
+					<textarea name="album[description]" id="album-description" cols="50" rows="4">{{? it.req.body && it.req.body.album && it.req.body.album.description }}{{= it.req.body.album.description }}{{??}}{{= it.album.description || '' }}{{?}}</textarea>
+				</div>
+
+				<div>
+					<label for="album-is_private">Album privé</label>
+					<label>
+						<input type="checkbox" name="album[is_private]" id="album-is_private" value="yes" {{? (it.req.body && it.req.body.album && it.req.body.album.is_private) || ((!it.req.body || !it.req.body.album) && it.album.is_private) }} checked="checked"{{?}} />
+						<span class="checkbox-label">Je souhaite que cet album soit accessible uniquement par moi</span>
+					</label>
+				</div>
+			</fieldset>
+			<div>
+				<button type="submit">Mettre à jour</button>
+			</div>
+		</form>
+	</div>
+</main>
+{{= it.dots._footer(it) }}
