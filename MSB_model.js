@@ -289,7 +289,7 @@ MSB_Model.getGeoCounties = function (filter, sort, limit, offset) {
 
 /* ---------- Albums ---------- */
 
-MSB_Model.createAlbum = function (title, creator_id, description, is_private) {
+MSB_Model.createAlbum = function (creator_id, title, description, is_private) {
 	var new_album = {
 		creator_id: typeof creator_id === 'string' ? pmongo.ObjectId(creator_id) : creator_id,
 		title: title,
@@ -599,8 +599,6 @@ MSB_Model.deletePhoto = function (photo) {
 				fsp.readdir(thumbs_dir).then(function (thumbs) {
 					var thumbs_promises = new Array();
 					var thumbs_regex = new RegExp('(.*)_' + photo._id + '\.([a-z]{3,4})$');
-
-					console.dir(thumbs_regex);
 
 					thumbs.forEach(function (thumb_name) {
 						if (thumb_name.match(thumbs_regex)) {

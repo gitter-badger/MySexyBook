@@ -478,7 +478,7 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 		res.end();
 		return;
 	}
-	if (res.locals.user._id.equals(!req.session.current_user._id)) {
+	if (!res.locals.user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin) {
 		res.status(403);
 		res.render('error403', { error: { message: 'Ce profil ne vous appartient pas' } });
 		res.end();
@@ -498,8 +498,8 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 		return;
 	}
 
-	MSB_Model.createAlbum(req.body.album.title, req.session.current_user._id, req.body.album.description, req.body.album.is_private).then(function (album) {
-		res.redirect(app.locals.url + '/book/' + req.session.current_user.pseudo);
+	MSB_Model.createAlbum(res.locals.user._id, req.body.album.title, req.body.album.description, req.body.album.is_private).then(function (album) {
+		res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo);
 		res.end();
 	}).catch(function (album_error) {
 		res.render('user_profile', { form_error: album_error });
