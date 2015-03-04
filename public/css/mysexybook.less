@@ -259,10 +259,10 @@ a{
 	}
 }
 #user-album-page{
-	::before{
+	&::before{
 		content: none;
 	}
-	::after{
+	&::after{
 		content: none;
 	}
 	&.js.photo-viewer{
@@ -394,6 +394,21 @@ a{
 						z-index: 80;
 						bottom: 0;
 						padding: 1em;
+					}
+
+					#form-photo{
+						label[for]:first-child:not(:last-child){
+							width: 100%;
+
+							&+input, &+select, &+textarea{
+								width: 100%;
+
+								&~.field-indication{
+									bottom: 3em;
+									left: 0;
+								}
+							}
+						}
 					}
 				}
 				&>.album-thumbs{

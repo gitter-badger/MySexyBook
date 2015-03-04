@@ -14,9 +14,17 @@ if (album_elem) {
 				_id: this.album_elem.dataset.albumId
 			};
 
+			this.album_info_elem = this.album_elem.querySelector('.album-info')
+			
 			var album_desc_elem = this.album_elem.querySelector('.album-description')
 			if (album_desc_elem && album_desc_elem.innerHTML) {
 				this.album.description = album_desc_elem.innerHTML;
+			}
+
+			this.form_container = this.album_elem.querySelector('#form-photo');
+
+			if (this.form_container) {
+				this.album_info_elem.appendChild(this.form_container);
 			}
 
 			this.photos_container = this.album_elem.querySelector('.album-photos');
