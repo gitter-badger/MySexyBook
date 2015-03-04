@@ -709,7 +709,7 @@ app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
 		res.end();
 		return;
 	}
-	if (res.locals.album.creator_id.equals(!req.session.current_user._id)) {
+	if (!res.locals.album.creator_id.equals(req.session.current_user._id)) {
 		res.status(403);
 		res.render('error403', { error: { message: 'Cet album ne vous appartient pas' } });
 		res.end();
