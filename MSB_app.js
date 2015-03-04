@@ -898,10 +898,16 @@ app.route('/mon-profil').all(function (req, res, next) {
 });
 
 app.route('/deconnexion').get(function (req, res, next) {
-	req.session.current_user = null;
-	delete req.session.current_user;
-	res.clearCookie('user_id');
-	res.redirect(app.locals.url + '/');
+	if (req.headers['referer'] && req.headers['referer'].indexOf(app.locals.url) === 0) {
+		req.session.current_user = null;
+		delete req.session.current_user;
+		res.clearCookie('user_id');
+		res.redirect(app.locals.url + '/');
+		res.end();
+		return;
+	}
+
+	res.write('Mauvais referer');
 	res.end();
 });
 
