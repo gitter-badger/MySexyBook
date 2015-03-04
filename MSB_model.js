@@ -130,7 +130,7 @@ MSB_Model.updateUser = function (user_id, sex, biography, geo_county_id, camera_
 		}).then(function (geo_county) {
 			MSB_Model.db.collection('users').findAndModify({
 				query: {
-					_id: pmongo.ObjectId(user_id)
+					_id: (typeof user_id === 'string' ? pmongo.ObjectId(user_id) : user_id)
 				},
 				update: {
 					$set: user_updates
