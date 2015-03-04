@@ -571,7 +571,7 @@ MSB_Model.updatePhoto = function (photo_id, title) {
 
 		MSB_Model.db.collection('photos').findAndModify({
 			query: {
-				_id: pmongo.ObjectId(photo_id)
+				_id: (typeof photo_id === 'string' ? pmongo.ObjectId(photo_id) : photo_id)
 			},
 			update: {
 				$set: photo_updates
