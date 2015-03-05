@@ -164,12 +164,36 @@ app.use(function (req, res, next) {
 	res.locals.app = app.locals;
 	res.locals.req = req;
 
-	if (req.cookies && req.cookies.user_id) {
+	if (req.cookies && req.cookies.user_id && (!req.session || !req.session.current_user)) {
 		MSB_Model.getUser({
 			_id: req.cookies.user_id
 		}).then(function (user) {
-			req.session.current_user = user;
-			res.locals.current_user = user;
+			var user_found = false;
+
+			if (user.sessions) {
+				var min_last_action = new Date();
+				min_last_action.setDate(min_last_action.getDate() - 30);
+
+				var currentIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+				var currentUserAgent = req.headers['user-agent'];
+
+				user.sessions.forEach(function (sess) {
+					if (sess.last_action >= min_last_action && sess.ip === currentIp && sess.user_agent === currentUserAgent) {
+							user_found = true;
+
+							req.session.current_user = user;
+							res.locals.current_user = user;
+
+							MSB_Model.updateUserLastLogin(user._id);
+							next();
+					}
+				});
+			}
+
+			if (!user_found) {
+				res.clearCookie('user_id');
+			}
+
 			next();
 		}).catch(function () {
 			res.clearCookie('user_id');
@@ -936,6 +960,11 @@ app.route('/connexion').all(function (req, res, next) {
 
 		if (req.body.stay_online) {
 			res.cookie('user_id', user._id);
+
+			MSB_Model.updateUserLastLogin(user._id, { ip: (req.headers['x-forwarded-for'] || req.connection.remoteAddress), user_agent: req.headers['user-agent'] });
+		}
+		else {
+			MSB_Model.updateUserLastLogin(user._id);
 		}
 
 		res.redirect(app.locals.url + '/book/' + user.pseudo);

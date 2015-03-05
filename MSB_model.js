@@ -151,6 +151,44 @@ MSB_Model.updateUser = function (user_id, sex, biography, geo_county_id, camera_
 		});
 	});
 };
+MSB_Model.updateUserLastLogin = function (user_id, session) {
+	return new Promise(function (resolve, reject) {
+		if (!user_id) {
+			reject('ID invalide');
+			return;
+		}
+
+		var user_updates = {
+			last_login: new Date()
+		};
+
+		var updates = {
+			$set: user_updates,
+		};
+
+		if (session && typeof session === 'object') {
+			session.last_action = user_updates.last_login;
+			updates.$push = { sessions : session }
+		}
+
+		MSB_Model.db.collection('users').findAndModify({
+			query: {
+				_id: (typeof user_id === 'string' ? pmongo.ObjectId(user_id) : user_id)
+			},
+			update: updates,
+			new: true
+		}).then(function (results) {
+			if (results[0]) {
+				resolve(results[0]);
+			}
+			else {
+				reject('Impossible de mettre à jour le profil dans la base de données');
+			}
+		}).catch(function () {
+			reject('Impossible de mettre à jour le profil dans la base de données');
+		});
+	});
+};
 MSB_Model.deleteUser = function (user) {
 	return new Promise(function (resolve, reject) {
 		MSB_Model.db.collection('users').remove({ _id: user._id }, true).then(function () {
