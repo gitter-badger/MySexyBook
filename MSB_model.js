@@ -189,6 +189,38 @@ MSB_Model.updateUserLastLogin = function (user_id, session) {
 		});
 	});
 };
+MSB_Model.updateUserPassword = function (user_id, password) {
+	return new Promise(function (resolve, reject) {
+		if (!user_id) {
+			reject('ID invalide');
+			return;
+		}
+
+		var user_updates = {
+			password: MSB_Model.hashPassword(password),
+			last_modified: new Date()
+		};
+
+		MSB_Model.db.collection('users').findAndModify({
+			query: {
+				_id: (typeof user_id === 'string' ? pmongo.ObjectId(user_id) : user_id)
+			},
+			update: {
+				$set: user_updates
+			},
+			new: true
+		}).then(function (results) {
+			if (results[0]) {
+				resolve(results[0]);
+			}
+			else {
+				reject('Impossible de mettre à jour le mot de passe dans la base de données');
+			}
+		}).catch(function () {
+			reject('Impossible de mettre à jour le mot de passe dans la base de données');
+		});
+	});
+};
 MSB_Model.deleteUser = function (user) {
 	return new Promise(function (resolve, reject) {
 		MSB_Model.db.collection('users').remove({ _id: user._id }, true).then(function () {
