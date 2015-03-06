@@ -4,8 +4,19 @@
 				<legend>Rechercher un utilisateur</legend>
 				
 				<div>
-					<label for="search-user-pseudo">Pseudo</label>
-					<input type="search" name="user[pseudo]" id="search-user-pseudo" size="12" pattern="[a-zA-Z0-9]+" placeholder="Utilisateurs dont le pseudo contient…" value="{{= it.search_filters && it.search_filters.pseudo ? it.search_filters.pseudo['$regex'] : '' }}" />
+					<label for="user-camera_side">Côté de la caméra</label>
+					<label>
+						<input type="radio" name="user[camera_side]" id="search-user-camera_side-photographer" value="photographer" {{= (it.search_filters && it.search_filters.camera_side && it.search_filters.camera_side === 'photographer') ? ' checked="checked"' : '' }} />
+						<span class="radio-label">Photographe</span>
+					</label>
+					<label>
+						<input type="radio" name="user[camera_side]" id="search-user-camera_side-model" value="model" {{= (it.search_filters && it.search_filters.camera_side && it.search_filters.camera_side === 'model') ? ' checked="checked"' : '' }} />
+						<span class="radio-label">Modèle</span>
+					</label>
+					<label>
+						<input type="radio" name="user[camera_side]" id="search-user-camera_side-any" value="any" {{= (!it.search_filters || !it.search_filters.camera_side || it.search_filters.camera_side === 'any') ? ' checked="checked"' : '' }} />
+						<span class="radio-label">Peu Importe</span>
+					</label>
 				</div>
 				
 				<div>
@@ -24,6 +35,11 @@
 					</label>
 				</div>
 				
+				<div>
+					<label for="search-user-pseudo">Pseudo</label>
+					<input type="search" name="user[pseudo]" id="search-user-pseudo" size="12" pattern="[a-zA-Z0-9]+" placeholder="Utilisateurs dont le pseudo contient…" value="{{= it.search_filters && it.search_filters.pseudo ? it.search_filters.pseudo['$regex'] : '' }}" />
+				</div>
+				
 				{{? it.geo_counties }}
 				<div>
 					<label for="search-user-geo_county">Département</label>
@@ -35,22 +51,6 @@
 					</select>
 				</div>
 				{{?}}
-				
-				<div>
-					<label for="user-camera_side">Côté de la caméra</label>
-					<label>
-						<input type="radio" name="user[camera_side]" id="search-user-camera_side-photographer" value="photographer" {{= (it.search_filters && it.search_filters.camera_side && it.search_filters.camera_side === 'photographer') ? ' checked="checked"' : '' }} />
-						<span class="radio-label">Photographe</span>
-					</label>
-					<label>
-						<input type="radio" name="user[camera_side]" id="search-user-camera_side-model" value="model" {{= (it.search_filters && it.search_filters.camera_side && it.search_filters.camera_side === 'model') ? ' checked="checked"' : '' }} />
-						<span class="radio-label">Modèle</span>
-					</label>
-					<label>
-						<input type="radio" name="user[camera_side]" id="search-user-camera_side-any" value="any" {{= (!it.search_filters || !it.search_filters.camera_side || it.search_filters.camera_side === 'any') ? ' checked="checked"' : '' }} />
-						<span class="radio-label">Peu Importe</span>
-					</label>
-				</div>
 			</fieldset>
 
 			<div>
