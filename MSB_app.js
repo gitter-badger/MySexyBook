@@ -48,7 +48,9 @@ switch (app.get('env')) {
 
 app.locals.environment = app.get('env');
 app.locals.title = 'My Sexy Book';
-app.locals.short_title = 'MSB';
+app.locals.title_short = 'MSB';
+app.locals.slogan = 'La photo sexy devient sociale';
+app.locals.sub_slogan = 'Trouvez un modèle parfait, un photographe créatif ou tout simplement de l\'inspiration';
 app.locals.querystring = querystring;
 app.locals.sanitize = sanitize;
 app.locals.markdown = new MarkDown();
@@ -1192,7 +1194,12 @@ app.route('/').get(function (req, res) {
 			MSB_Model.getUsers({ account_validated: true }, { register_date: -1 }, 5).then(function (last_users) {
 				res.locals.last_users = last_users;
 			}),
-			MSB_Model.getPhotos({}, { uploaded_at: -1 }, 5).then(function (last_photos) {
+			MSB_Model.getPhotos({ 
+				$or: [
+					{ "is_private": { $exists: false } },
+					{ "is_private": false }
+				]
+			}, { uploaded_at: -1 }, 5).then(function (last_photos) {
 				res.locals.last_photos = last_photos;
 			}),
 			MSB_Model.getGeoCounties({}, { _id: 1 }).then(function (geo_counties) {

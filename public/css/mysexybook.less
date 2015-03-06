@@ -34,10 +34,10 @@ html{
 	&::before, &::after{
 		content: '';
 		position: fixed;
-		top: -1em;
-		right: -1em;
-		bottom: -1em;
-		left: -1em;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
 		z-index: 0;
 	}
 	&::before{
@@ -53,7 +53,7 @@ html{
 		filter: blur(.75em);
 		filter: blur(1vmin);
 		filter:progid:DXImageTransform.Microsoft.Blur(PixelRadius='12');
-		zoom: 1.01;
+		zoom: 1.2;
 	}
 	&::after{
 		background-color: fade(@background-primary, 50%);
@@ -63,6 +63,15 @@ body{
 	position: relative;
 	z-index: 1;
 	min-height: 100%;
+}
+
+::selection{
+	background: fade(@background-secondary-accent, 50%);
+	.text-shadow(none)
+}
+::-moz-selection{
+	background: fade(@background-secondary-accent, 50%);
+	.text-shadow(none)
 }
 
 a{
@@ -136,7 +145,7 @@ a{
 	height: @header-height;
 	color: @color-secondary;
 	background-color: @background-secondary;
-	.gradient(@background-secondary, lighten(@background-secondary, 5%), @background-secondary);
+	.box-shadow(0 0 .5em darken(@background-secondary, 10%));
 
 	a{
 		float: left;
@@ -201,11 +210,18 @@ a{
 
 }
 #home-page{
+	&::before{
+		background-image: url('../img/home-bg.jpg');
+		-webkit-filter: none;
+		filter: none;
+	}
+
 	&.js{
 		#header{
 			background: none;
-			color: @color-primary;
-			.transition(~"background-color 200ms, background-image 200ms");
+			.transition(200ms);
+			.box-shadow(none);
+			.text-shadow(0 0 .25em fade(@color-primary, 50%));
 
 			a{
 				&:hover, &:focus{
@@ -219,43 +235,81 @@ a{
 		&.scrolled{
 			#header{
 				&:extend(#header);
-				background-image: none;
+				.text-shadow(none);
 			}
 		}
 		&:not(.scrolled){
 			#header{
 				&:hover{
 					&:extend(#header);
-					background-image: none;
+					.text-shadow(none);
 				}
 			}
 		}
 	}
-	#logo{
-		display: none;
-	}
+
 	#page{
-		&>.container{
-			background-color: transparent;
-			&>h1{
-				text-align: center;
+		h1, h2{
+			text-align: center;
+		}
+		&>#home-content{
+			background-color: @background-primary;
+			.box-shadow(0 0 .5em darken(@background-primary, 50%));
+
+			&>.container{
+				overflow: visible;
+				padding-top: 3em;
+				padding-bottom: 3em;
+
+				&>section+section{
+					margin-top: 3em;
+				}
+			}
+		}
+		&>#home-landing{
+			min-height: 90%;
+			min-height: calc(~"90vh - "@header-height);
+			padding: 18em 0;
+			padding: 37vh 0;
+			color: @color-secondary;
+			.text-shadow(0 0 .5em fade(@color-primary, 50%));
+
+			h1{
+				margin: 0;
+				font-size: 3em;
+				font-size: 5vh;
+			}
+			h2{
+				margin: 0;
+				font-weight: normal;
+				font-size: 1.135em;
+				font-size: 2vh;
+			}
+			h1+h2{
+				margin-top: 3vh;
 			}
 		}
 	}
 
 	.users-list{
-		&>.user{
-			&>a{
-				background-color: #fff;
-			}
-		}
+		text-align: center;
 	}
 	fieldset{
 		background-color: #fff;
+		padding: 0;
+
+		&>legend{
+			display: none;
+		}
+	}
+
+	#footer{
+		color: @color-secondary;
+		.text-shadow(0 0 .25em fade(@color-primary, 50%));
 	}
 
 	&::after{
-		background-color: fade(@background-primary, 70%);
+		content: none;
 	}
 }
 #user-album-page{
@@ -349,12 +403,15 @@ a{
 								left: 50%;
 								transform: translate(-50%, -50%) scale(2);
 								// transform: translate(0, -50%);
-								vertical-align: middle;
+								// max-height: 50%;
 								.box-shadow(0 0 .5em darken(@background-primary-accent, 30%));
+								object-fit: scale-down;
+								overflow: auto;
 
 								&>source, &>img{
 									max-width: 100%;
 									max-height: 100%;
+									object-fit: contain;
 								}
 							}
 
@@ -494,9 +551,7 @@ fieldset{
 	&>legend{
 		padding: .5em;
 		background-color: @background-secondary;
-		.gradient(@background-secondary, lighten(@background-secondary, 5%), @background-secondary);
 		color: @color-secondary;
-		.border-radius(.5em);
 	}
 
 	&>div{
@@ -516,15 +571,14 @@ label, button, .button, input, select, textarea{
 button, .button{
 	text-decoration: none;
 	background-color: @background-secondary;
-	.gradient(@background-secondary, lighten(@background-secondary, 5%), @background-secondary);
 	color: @color-secondary;
-	border-color: @background-secondary;
-	.border-radius(.5em);
+	border: none;
+	padding: .75em 1em;
+	.border-radius(0);
+	.transition(200ms);
 
 	&:hover, &:focus{
-		.box-shadow(0 0 .5em @background-secondary-accent);
-		background-color: @background-secondary;
-		background-image: none;
+		.linear-gradient-bottom(@background-secondary-accent, @background-secondary, .25em,transparent, .25em, transparent, 100%);
 		outline: none;
 	}
 	&:active{
@@ -541,10 +595,6 @@ input[type="file"]{
 		// &:extend(button);
 		padding: .25em .5em;
 		margin: -.25em;
-
-		// &:active{
-		// 	&:extend(button:active);
-		// }
 	}
 }
 input[type="checkbox"], input[type="radio"]{
@@ -678,7 +728,8 @@ img{
 			text-align: center;
 			vertical-align: middle;
 			text-decoration: none;
-			background-color: @background-primary-accent;
+			background-color: @background-primary;
+			border: 1px solid @background-primary-accent;
 			.transition(200ms);
 
 			@media screen and (min-width: @breakpoint-l) {
@@ -686,11 +737,14 @@ img{
 			}
 
 			&:hover, &:focus{
-				.box-shadow(0 0 .5em darken(@background-primary-accent, 50%));
+				color: @color-secondary;
+				background-color: @background-secondary;
+				border-color: transparent;
+				.box-shadow(0 0 .5em darken(@background-secondary, 10%));
 				outline: none;
 			}
 			&:active{
-				background-color: darken(@background-primary-accent, 10%);
+				background-color: @background-secondary-accent;
 			}
 			&>picture.user-avatar{
 				position: relative;
@@ -768,7 +822,8 @@ img{
 			display: block;
 			padding: .5em;
 			text-decoration: none;
-			background-color: @background-primary-accent;
+			background-color: @background-primary;
+			border: 1px solid @background-primary-accent;
 			.transition(200ms);
 
 			@media screen and (min-width: @breakpoint-l) {
@@ -776,11 +831,14 @@ img{
 			}
 
 			&:hover, &:focus{
-				.box-shadow(0 0 .5em darken(@background-primary-accent, 50%));
+				color: @color-secondary;
+				background-color: @background-secondary;
+				border-color: transparent;
+				.box-shadow(0 0 .5em darken(@background-secondary, 10%));
 				outline: none;
 			}
 			&:active{
-				background-color: darken(@background-primary-accent, 10%);
+				background-color: @background-secondary-accent;
 			}
 
 			&>.album-preview{
