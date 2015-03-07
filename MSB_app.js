@@ -1214,7 +1214,7 @@ app.route('/').get(function (req, res) {
 	}
 	else {
 		var home_promises = [
-			MSB_Model.getUsers({ account_validated: true }, { register_date: -1 }, 5).then(function (last_users) {
+			MSB_Model.getUsers({ account_validated: true }, { register_date: -1 }, 6).then(function (last_users) {
 				res.locals.last_users = last_users;
 			}),
 			MSB_Model.getPhotos({ 
@@ -1222,7 +1222,7 @@ app.route('/').get(function (req, res) {
 					{ "is_private": { $exists: false } },
 					{ "is_private": false }
 				]
-			}, { uploaded_at: -1 }, 5).then(function (last_photos) {
+			}, { uploaded_at: -1 }, 6).then(function (last_photos) {
 				res.locals.last_photos = last_photos;
 			}),
 			MSB_Model.getGeoCounties({}, { _id: 1 }).then(function (geo_counties) {
