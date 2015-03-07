@@ -4,33 +4,31 @@
 				<legend>Rechercher un utilisateur</legend>
 				
 				<div>
-					<label for="user-camera_side">Côté de la caméra</label>
+					<label for="user-camera_side-any">Côté de la caméra</label>
+					{{~ it.app.camera_sides :side_id }}
+						{{ var side_label = it.app.camera_sides_labels[side_id]; }}
 					<label>
-						<input type="radio" name="user[camera_side]" id="search-user-camera_side-photographer" value="photographer" {{= (it.search_filters && it.search_filters.camera_side && it.search_filters.camera_side === 'photographer') ? ' checked="checked"' : '' }} />
-						<span class="radio-label">Photographe</span>
+						<input type="radio" name="user[camera_side]" id="search-user-camera_side-{{= side_id }}" required value="{{= side_id }}" {{= (!it.search_filters || !it.search_filters.camera_side || it.search_filters.camera_side === side_id ? 'checked="checked"' : '') }} />
+						<span class="radio-label">{{= side_label }}</span>
 					</label>
+					{{~}}
 					<label>
-						<input type="radio" name="user[camera_side]" id="search-user-camera_side-model" value="model" {{= (it.search_filters && it.search_filters.camera_side && it.search_filters.camera_side === 'model') ? ' checked="checked"' : '' }} />
-						<span class="radio-label">Modèle</span>
-					</label>
-					<label>
-						<input type="radio" name="user[camera_side]" id="search-user-camera_side-any" value="any" {{= (!it.search_filters || !it.search_filters.camera_side || it.search_filters.camera_side === 'any') ? ' checked="checked"' : '' }} />
+						<input type="radio" name="user[camera_side]" id="search-user-camera_side-any" value="any" {{= (!it.search_filters || !it.search_filters.camera_side || it.app.camera_sides.indexOf(it.search_filters.camera_side) === -1) ? ' checked="checked"' : '' }} />
 						<span class="radio-label">Peu Importe</span>
 					</label>
 				</div>
 				
 				<div>
-					<label for="user-sex">Sexe</label>
+					<label for="search-user-sex-any">Sexe</label>
+					{{~ it.app.sexes :sex_id }}
+						{{ var sex_label = it.app.sexes_labels[sex_id]; }}
 					<label>
-						<input type="radio" name="user[sex]" id="search-user-sex-male" value="male" {{= (it.search_filters && it.search_filters.sex && it.search_filters.sex === 'male') ? ' checked="checked"' : '' }} />
-						<span class="radio-label">Homme</span>
+						<input type="radio" name="user[sex]" id="search-user-sex-{{= sex_id }}" required value="{{= sex_id }}" {{= (!it.search_filters || !it.search_filters.sex || it.search_filters.sex === sex_id ? 'checked="checked"' : '') }} />
+						<span class="radio-label">{{= sex_label }}</span>
 					</label>
+					{{~}}
 					<label>
-						<input type="radio" name="user[sex]" id="search-user-sex-female" value="female" {{= (it.search_filters && it.search_filters.sex && it.search_filters.sex === 'female') ? ' checked="checked"' : '' }} />
-						<span class="radio-label">Femme</span>
-					</label>
-					<label>
-						<input type="radio" name="user[sex]" id="search-user-sex-any" value="any" {{= (!it.search_filters || !it.search_filters.sex || it.search_filters.sex === 'any') ? ' checked="checked"' : '' }} />
+						<input type="radio" name="user[sex]" id="search-user-sex-any" value="any" {{= (!it.search_filters || !it.search_filters.sex || it.app.sexes.indexOf(it.search_filters.sex) === -1) ? ' checked="checked"' : '' }} />
 						<span class="radio-label">Peu importe</span>
 					</label>
 				</div>

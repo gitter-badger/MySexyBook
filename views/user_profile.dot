@@ -25,14 +25,7 @@
 
 				<p class="user-sex">
 					Sexe&nbsp;: 
-					{{ switch(it.user.sex) { }}
-						{{ case 'male': }}
-							Homme
-						{{ break; }}
-						{{ case 'female': }}
-							Femme
-						{{ break; }}
-					{{ } }}
+					{{= it.app.sexes_labels[it.user.sex] }}
 				</p>
 				{{?}}
 			
@@ -50,17 +43,7 @@
 				{{? it.user.camera_side }}
 				<p class="user-camera_side">
 					Côté de la caméra préféré&nbsp;: 
-					{{ switch(it.user.camera_side) { }}
-						{{ case 'photographer': }}
-							Photographe
-						{{ break; }}
-						{{ case 'model': }}
-							Modèle
-						{{ break; }}
-						{{ default: }}
-							N/A
-						{{ break; }}
-					{{ } }}
+					{{= it.app.camera_sides_labels[it.user.camera_side] }}
 				</p>
 				{{?}}
 			
@@ -68,25 +51,11 @@
 				<p class="user-photo_styles">
 					{{ var photo_styles = []; }}
 					{{~ it.user.photo_styles :style }}
-						{{ switch(style) { }}
-							{{ case 'fashion': }}
-								{{ photo_styles.push('Mode'); }}
-							{{ break; }}
-							{{ case 'glamour': }}
-								{{ photo_styles.push('Glamour'); }}
-							{{ break; }}
-							{{ case 'lingerie': }}
-								{{ photo_styles.push('Lingerie'); }}
-							{{ break; }}
-							{{ case 'erotic': }}
-								{{ photo_styles.push('Érotique'); }}
-							{{ break; }}
-							{{ case 'nude': }}
-								{{ photo_styles.push('Nu'); }}
-							{{ break; }}
-						{{ } }}
+						{{? it.app.photo_styles_labels[style] }}
+							{{ photo_styles.push(it.app.photo_styles_labels[style]); }}
+						{{?}}
 					{{~}}
-					{{= photo_styles.length > 1 ? 'Styles préféré' : 'Style préféré' }}&nbsp;:
+					{{= photo_styles.length > 1 ? 'Styles préférés' : 'Style préféré' }}&nbsp;:
 					{{= ' ' + photo_styles.join(', ') }}
 				</p>
 				{{?}}

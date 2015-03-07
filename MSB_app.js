@@ -47,17 +47,41 @@ switch (app.get('env')) {
 }
 
 app.locals.environment = app.get('env');
-app.locals.title = 'My Sexy Book';
-app.locals.title_short = 'MSB';
-app.locals.slogan = 'La photo sexy devient sociale';
-app.locals.sub_slogan = 'Trouvez un modèle parfait, un photographe créatif ou tout simplement de l\'inspiration';
 app.locals.querystring = querystring;
 app.locals.sanitize = sanitize;
 app.locals.markdown = new MarkDown();
 app.locals.markdown_inline = new MarkDown('zero', { breaks: true }).enable([ 'newline', 'emphasis' ]);
 app.locals.strftime = strftime;
-app.locals.contact_email = 'contact@mysexybook.photo';
 app.locals.isSecure = false;
+
+
+app.locals.title = 'My Sexy Book';
+app.locals.title_short = 'MSB';
+app.locals.slogan = 'La photo sexy devient sociale';
+app.locals.sub_slogan = 'Trouvez un modèle parfait, un photographe créatif ou tout simplement de l\'inspiration';
+app.locals.contact_email = 'contact@mysexybook.photo';
+
+app.locals.sexes = [ 'male', 'female' ];
+app.locals.sexes_labels = {
+	'male': 'Homme',
+	'female': 'Femme'
+};
+
+app.locals.camera_sides = [ 'photographer', 'model' ];
+app.locals.camera_sides_labels = {
+	'photographer': 'Photographe',
+	'model': 'Modèle'
+};
+
+app.locals.photo_styles = [ 'portrait', 'fashion', 'glamour', 'lingerie', 'nude', 'erotic' ];
+app.locals.photo_styles_labels = {
+	'portrait': 'Portrait',
+	'fashion': 'Mode',
+	'glamour': 'Glamour',
+	'lingerie': 'Lingerie',
+	'nude': 'Nu artistique',
+	'erotic': 'Érotique'
+};
 
 var ACCOUNTS_TYPES = {
 	banned: 1<<0,
@@ -800,13 +824,13 @@ app.route('/recherche').all(function (req, res, next) {
 		if (req.query.user.pseudo && validator.isAlphanumeric(req.query.user.pseudo)) {
 			search_filters.pseudo = { $regex: req.query.user.pseudo, $options: 'i' };
 		}
-		if (req.query.user.sex && ['male', 'female'].indexOf(req.query.user.sex) !== -1) {
+		if (req.query.user.sex && app.locals.sexes.indexOf(req.query.user.sex) !== -1) {
 			search_filters.sex = req.query.user.sex;
 		}
 		if (req.query.user.geo_county) {
 			search_filters.geo_county_id = req.query.user.geo_county;
 		}
-		if (req.query.user.camera_side && ['photographer', 'model'].indexOf(req.query.user.camera_side) !== -1) {
+		if (req.query.user.camera_side && app.locals.camera_sides.indexOf(req.query.user.camera_side) !== -1) {
 			search_filters.camera_side = req.query.user.camera_side;
 		}
 	}
@@ -863,7 +887,7 @@ app.route('/inscription').all(function (req, res, next) {
 	else if (!req.body.user.pseudo || !validator.isAlphanumeric(req.body.user.pseudo) || !validator.isLength(req.body.user.pseudo, 4, 30)){
 		var form_error = 'Pseudo invalide';
 	}
-	else if (!req.body.user.sex || ["male", "female"].indexOf(req.body.user.sex) === -1){
+	else if (!req.body.user.sex || app.locals.sexes.indexOf(req.body.user.sex) === -1){
 		var form_error = 'Sexe invalide';
 	}
 	else if (!req.body.user.geo_county) {
@@ -992,11 +1016,10 @@ app.route('/mon-profil').all(function (req, res, next) {
 	res.locals.user = req.session.current_user;
 	next();
 }).post(function (req, res) {
-	var photo_styles = ['fashion', 'glamour', 'lingerie', 'erotic', 'nude'];
 	if (!req.body.user) {
 		var form_error = 'Formulaire invalide';
 	}
-	else if (!req.body.user.sex || ['male', 'female'].indexOf(req.body.user.sex) === -1){
+	else if (!req.body.user.sex || app.locals.sexes.indexOf(req.body.user.sex) === -1){
 		var form_error = 'Sexe invalide';
 	}
 	// else if (!req.body.user.biography) {
@@ -1008,12 +1031,12 @@ app.route('/mon-profil').all(function (req, res, next) {
 	// else if (!req.body.user.photo_styles || !req.body.user.photo_styles.length){
 	// 	var form_error = 'Style photographique invalide';
 	// }
-	else if (req.body.user.camera_side && ['photographer', 'model'].indexOf(req.body.user.camera_side) === -1) {
+	else if (req.body.user.camera_side && app.locals.camera_sides.indexOf(req.body.user.camera_side) === -1) {
 		var form_error = 'Côté de la caméra préféré invalide';
 	}
 	else if (req.body.user.photo_styles && req.body.user.photo_styles.length){
 		for (var i=0, nb=req.body.user.photo_styles; i<nb; i++) {
-			if (photo_styles.indexOf(req.body.user.photo_styles[i]) === -1) {
+			if (app.locals.photo_styles.indexOf(req.body.user.photo_styles[i]) === -1) {
 				var form_error = 'Style photographique invalide';
 				break;
 			}
