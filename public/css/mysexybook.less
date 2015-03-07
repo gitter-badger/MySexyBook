@@ -273,20 +273,37 @@ a{
 			padding: 37vh 0;
 			color: @color-secondary;
 			.text-shadow(0 0 .5em fade(@color-primary, 50%));
+				
+			@media screen and (max-width: @breakpoint-l) and (orientation: portrait) {
+				min-height: calc(~"40vh - "@header-height);
+				padding: 15vh 0;
+			}
 
 			h1{
 				margin: 0;
 				font-size: 3em;
 				font-size: 5vh;
+				
+				@media screen and (max-width: @breakpoint-l) and (orientation: portrait) {
+					font-size: 5.5vw;
+				}
 			}
 			h2{
 				margin: 0;
 				font-weight: normal;
 				font-size: 1.135em;
 				font-size: 2vh;
+				
+				@media screen and (max-width: @breakpoint-l) and (orientation: portrait) {
+					font-size: 2vw;
+				}
 			}
 			h1+h2{
 				margin-top: 3vh;
+				
+				@media screen and (max-width: @breakpoint-l) and (orientation: portrait) {
+					margin-top: 3vw;
+				}
 			}
 		}
 	}
