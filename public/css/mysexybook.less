@@ -211,41 +211,8 @@ a{
 }
 #home-page{
 	&::before{
-		background-image: url('../img/home-bg.jpg');
 		-webkit-filter: none;
 		filter: none;
-	}
-
-	&.js{
-		#header{
-			background: none;
-			.transition(200ms);
-			.box-shadow(none);
-			.text-shadow(0 0 .25em fade(@color-primary, 50%));
-
-			a{
-				&:hover, &:focus{
-					background-color: fade(@background-secondary-accent, 40%);
-				}
-				&:active{
-					background-color: @background-secondary-accent;
-				}
-			}
-		}
-		&.scrolled{
-			#header{
-				&:extend(#header);
-				.text-shadow(none);
-			}
-		}
-		&:not(.scrolled){
-			#header{
-				&:hover{
-					&:extend(#header);
-					.text-shadow(none);
-				}
-			}
-		}
 	}
 
 	#page{
@@ -273,6 +240,8 @@ a{
 			padding: 37vh 0;
 			color: @color-secondary;
 			.text-shadow(0 0 .5em fade(@color-primary, 50%));
+			background: url(../img/home-bg.jpg) no-repeat center fixed;
+			background-size: cover;
 				
 			@media screen and (max-width: @breakpoint-l) and (orientation: portrait) {
 				min-height: calc(~"40vh - "@header-height);
