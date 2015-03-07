@@ -12,6 +12,7 @@ uploads/thumbs/*
 !uploads/thumbs/.gitkeep
 *.sublime-workspace
 mongod.log*
+fabfile.py
 
 
 
