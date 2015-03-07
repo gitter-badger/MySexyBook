@@ -26,7 +26,9 @@
 								<img srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/230x230x1/{{= photo.src }}" alt="" />
 							</picture>
 							{{? photo.owner }}
-							<span class="user-pseudo">Par {{= photo.owner.pseudo }}</span>
+							<span class="user-pseudo">
+								<span class="sr-only">Par</span> {{= photo.owner.pseudo }}
+							</span>
 							{{?}}
 						</a>
 					</li>
