@@ -656,9 +656,11 @@ input, select, textarea{
 }
 label[for]:first-child:not(:last-child){
 	width: 100%;
+	font-weight: bold;
 	
 	@media screen and (min-width: @breakpoint-l) {
 		width: 25%;
+		font-weight: normal;
 	}
 
 	&+input, &+select, &+textarea{
