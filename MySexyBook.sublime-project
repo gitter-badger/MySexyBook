@@ -5,7 +5,7 @@
 			"name": "Start Node App (development env)",
 			"shell": true,
 			"working_dir": "${project_path:${folder}}",
-			"shell_cmd": "lessc -x public/css/mysexybook.less public/css/mysexybook.min.css && npm run-script test"
+			"shell_cmd": "npm run-script test"
 		},
 		{
 			"name": "Compile all LESS files",

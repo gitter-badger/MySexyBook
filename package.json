@@ -33,7 +33,9 @@
 		"port" : 6996
 	},
 	"scripts": {
+		"pretest": "lessc -x public/css/mysexybook-opening.less public/css/mysexybook-opening.min.css && lessc -x public/css/mysexybook.less public/css/mysexybook.min.css",
 		"test": "killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete ; npm install --dev ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=test node MSB_app.js",
+		"prestart": "lessc -x public/css/mysexybook-opening.less public/css/mysexybook-opening.min.css && lessc -x public/css/mysexybook.less public/css/mysexybook.min.css",
 		"start": "killall node ; killall mongod ; find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete ; npm install --production ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=production node MSB_app.js"
 	}
 }
