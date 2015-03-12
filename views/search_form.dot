@@ -1,5 +1,5 @@
 
-		<form action="{{= it.app.url }}/recherche">
+		<form action="{{= it.app.url }}/recherche" method="get" id="user-search-form">
 			<fieldset>
 				<legend>Rechercher un utilisateur</legend>
 				
