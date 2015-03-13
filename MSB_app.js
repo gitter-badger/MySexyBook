@@ -57,7 +57,7 @@ app.locals.isSecure = false;
 
 app.locals.title = 'My Sexy Book';
 app.locals.title_short = 'MSB';
-app.locals.slogan = 'La photo sexy devient sociale';
+app.locals.slogan = 'La photo sexy et sociale';
 app.locals.sub_slogan = 'Trouvez un modèle parfait, un photographe créatif ou tout simplement de l\'inspiration';
 app.locals.contact_email = 'contact@mysexybook.photo';
 
