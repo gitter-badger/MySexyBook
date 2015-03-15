@@ -1218,10 +1218,7 @@ app.route('/').get(function (req, res) {
 				res.locals.last_users = last_users;
 			}),
 			MSB_Model.getPhotos({ 
-				$or: [
-					{ "is_private": { $exists: false } },
-					{ "is_private": false }
-				]
+				"is_private": { $ne: true }
 			}, { uploaded_at: -1 }, 6).then(function (last_photos) {
 				res.locals.last_photos = last_photos;
 			}),
