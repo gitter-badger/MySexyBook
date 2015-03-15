@@ -1,5 +1,7 @@
 # My Sexy Book
 
+![Home page — FR](public/img/screenshots/home-desktop.png)
+
 ## Requirements
 
 * [`Node.js`](nodejs.org) + `npm`
