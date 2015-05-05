@@ -72,8 +72,8 @@ MSB_Model.createUser = function (email, password, pseudo, sex, geo_county_id) {
 						}
 
 						Promise.all([
-							fsp.mkdir('uploads/originals/' + user._id, 0775), 
-							fsp.mkdir('uploads/thumbs/' + user._id, 0775)
+							fsp.mkdir('uploads/originals/' + user._id, 775), 
+							fsp.mkdir('uploads/thumbs/' + user._id, 775)
 						]).then(function () {
 							resolve(user);
 						}).catch(function (err) {
@@ -240,7 +240,7 @@ MSB_Model.deleteUser = function (user) {
 						var folder_promises = new Array();
 
 						thumbs.forEach(function (thumb_name) {
-							thumbs_promises.push(fsp.unlink(thumbs_dir + '/' + thumb_name));
+							folder_promises.push(fsp.unlink(thumbs_dir + '/' + thumb_name));
 						});
 
 						folder_promises.push(fsp.rmdir('uploads/originals/' + user._id));
@@ -393,8 +393,8 @@ MSB_Model.createAlbum = function (creator_id, title, description, is_private) {
 				}
 
 				Promise.all([
-					fsp.mkdir('uploads/originals/' + new_album.creator_id + '/' + album._id, 0775), 
-					fsp.mkdir('uploads/thumbs/' + new_album.creator_id + '/' + album._id, 0775)
+					fsp.mkdir('uploads/originals/' + new_album.creator_id + '/' + album._id, 775), 
+					fsp.mkdir('uploads/thumbs/' + new_album.creator_id + '/' + album._id, 775)
 				]).then(function () {
 					resolve(album);
 				}).catch(function (err) {

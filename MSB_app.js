@@ -331,21 +331,21 @@ app.route('/avatar/:dimensions/:userid').get(function (req, res, next) {
 							if (crop_ratio > original_info.ratio) {
 								// Coupe haut et bas
 								var crop_dimensions = {
-									w: original_info.width,
-									h: parseInt(original_info.width * crop_ratio),
+									w: parseInt(original_info.width),
+									h: Math.round(original_info.width * crop_ratio),
 									x: 0,
 									y: 0
 								};
-								crop_dimensions.y = parseInt((original_info.height / 2) - (crop_dimensions.h / 2));
+								crop_dimensions.y = Math.round((original_info.height / 2) - (crop_dimensions.h / 2));
 							}
 							else if (crop_ratio < original_info.ratio) {
 								var crop_dimensions = {
-									w: parseInt(original_info.height * crop_ratio),
-									h: original_info.height,
+									w: Math.round(original_info.height * crop_ratio),
+									h: parseInt(original_info.height),
 									x: 0,
 									y: 0
 								};
-								crop_dimensions.x = parseInt((original_info.width / 2) - (crop_dimensions.w / 2));
+								crop_dimensions.x = Math.round((original_info.width / 2) - (crop_dimensions.w / 2));
 							}
 
 							if (crop_dimensions) {
@@ -453,22 +453,22 @@ app.route('/photo/:userid/:albumid/:dimensions/:photosrc').get(function (req, re
 								if (crop_ratio > original_info.ratio) {
 									// Coupe haut et bas
 									var crop_dimensions = {
-										w: original_info.width,
-										h: parseInt(original_info.width * crop_ratio),
+										w: parseInt(original_info.width),
+										h: Math.round(original_info.width * crop_ratio),
 										x: 0,
 										y: 0
 									};
-									crop_dimensions.y = parseInt((original_info.height / 2) - (crop_dimensions.h / 2));
+									crop_dimensions.y = Math.round((original_info.height / 2) - (crop_dimensions.h / 2));
 								}
 								else if (crop_ratio < original_info.ratio) {
 									// Coupe les côtés
 									var crop_dimensions = {
-										w: parseInt(original_info.height * crop_ratio),
-										h: original_info.height,
+										w: Math.round(original_info.height * crop_ratio),
+										h: parseInt(original_info.height),
 										x: 0,
 										y: 0
 									};
-									crop_dimensions.x = parseInt((original_info.width / 2) - (crop_dimensions.w / 2));
+									crop_dimensions.x = Math.round((original_info.width / 2) - (crop_dimensions.w / 2));
 								}
 
 								if (crop_dimensions) {
@@ -1072,7 +1072,7 @@ app.route('/mon-profil').all(function (req, res, next) {
 		res.locals.geo_counties = geo_counties;
 		res.render('user_edit');
 		res.end();
-	})
+	});
 });
 
 app.route('/deconnexion').get(function (req, res, next) {
@@ -1159,13 +1159,13 @@ app.route('/db_reset/:table').all(function (req, res, next) {
 			break;
 			
 			case 'geo_counties': 
-				db.collection(table).remove({}).then(function (){
+				db.collection('geo_counties').remove({}).then(function (){
 					var csv = require('csv');
 
 					fsp.readFile('data/geo_counties_fr.csv', { encoding: 'utf8' }).then(function(csv_txt){
-						data = csv.parse(csv_txt || '');
+						var data = csv.parse(csv_txt || '');
 						if (!data) {
-							reject('Pas de départements à importer');
+							console.error('Pas de départements à importer');
 							return;
 						}
 
@@ -1180,7 +1180,7 @@ app.route('/db_reset/:table').all(function (req, res, next) {
 								name_type: parseInt(county_data[3])
 							};
 
-							db_reset_promises.push(db.collection(table).insert(county));
+							db_reset_promises.push(db.collection('geo_counties').insert(county));
 						});
 
 						Promise.all(db_reset_promises).then(function () {
