@@ -13,7 +13,7 @@ uploads/thumbs/*
 *.sublime-workspace
 mongod.log*
 fabfile.py
-
+/typings/
 
 
 # ====== Node.js related files

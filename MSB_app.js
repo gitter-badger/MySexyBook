@@ -1,3 +1,5 @@
+/// <reference path="typings/node/node.d.ts"/>
+
 var pkg = require('./package.json');
 
 var Promise = require('promise');
