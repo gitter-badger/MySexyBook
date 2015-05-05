@@ -6,6 +6,11 @@
 	"main": "MSB_app.js",
 	"author": "Corentin Hatte <contact@corentin-hatte.eu>",
 	"dependencies": {
+		"gulp": "3.8.*",
+		"gulp-less": "3.0.*",
+		"gulp-cssmin": "0.1.*",
+		"gulp-concat": "2.5.*",
+		"gulp-uglify": "1.2.*",
 		"fs-promise": "0.3.*",
 		"mime-types": "2.0.*",
 		"strftime": "0.8.*",
@@ -33,12 +38,16 @@
 		"port" : 6996
 	},
 	"scripts": {
-		"compile-less": "lessc -x public/css/mysexybook-opening.less public/css/mysexybook-opening.min.css && lessc -x public/css/mysexybook.less public/css/mysexybook.min.css",
+		"gulp": "gulp less ; gulp js",
+		"gulp-less": "gulp less",
+		"gulp-js": "gulp js",
 		"kill-old": "killall node ; killall mongod",
 		"clear-logs": "find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete",
-		"pretest": "npm run-script compile-less ; npm run-script kill-old ; npm run-script clear-logs",
+
+		"pretest": "npm run-script gulp ; npm run-script kill-old ; npm run-script clear-logs",
 		"test": "npm install --dev ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=test node MSB_app.js",
-		"prestart": "npm run-script compile-less ; npm run-script kill-old ; npm run-script clear-logs",
+
+		"prestart": "npm run-script gulp ; npm run-script kill-old ; npm run-script clear-logs",
 		"start": "npm install --production ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=production node MSB_app.js"
 	}
 }
