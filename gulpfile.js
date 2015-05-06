@@ -13,7 +13,7 @@ gulp.task('less', function() {
 });
 
 gulp.task('js', function() {
-	return gulp.src(['js/*.js'])
+	return gulp.src(['public/js/prototypes.js', 'public/js/mysexybook.js'])
 		.pipe(concat('mysexybook.min.js'))
 		.pipe(uglify({preserveComments: 'some'}))
 		.pipe(gulp.dest('public/js/'));
@@ -21,7 +21,7 @@ gulp.task('js', function() {
 
 gulp.task('watch', function() {
 	gulp.watch('public/css/*.less', ['less']);
-	gulp.watch('public/js/*.js', ['js']);
+	gulp.watch(['public/js/prototypes.js', 'public/js/mysexybook.js'], ['js']);
 });
 
 gulp.task('default', ['watch']);
