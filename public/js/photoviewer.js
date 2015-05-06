@@ -92,6 +92,34 @@ if (album_elem) {
 			}, this);
 
 			this.photos_container.parentNode.insertBefore(this.photos_container, this.photos_container.parentNode.firstChild);
+
+			setTimeout((function () {
+				var photo_width = this.photos_container.clientHeight;
+				var photo_height = this.photos_container.clientHeight;
+				Array.prototype.forEach.call(this.photos_elem, function (li, index) {
+					var photo_big = li.querySelector('picture');
+
+					var photo_width = li.firstElementChild.clientWidth;
+					var photo_height = li.firstElementChild.clientHeight;
+				console.dir(photo_width);
+				console.dir(photo_height);
+
+					console.dir(photo_big);
+
+					if (photo_big) {
+						photo_big.style.maxWidth = photo_width + 'px';
+						photo_big.style.maxHeight = photo_height + 'px';
+					}
+
+					Array.prototype.forEach.call(photo_big.children, function (src) {
+						console.dir(src);
+						if (src.style) {
+							src.style.maxWidth = photo_width + 'px';
+							src.style.maxHeight = photo_height + 'px';
+						}
+					})
+				}, this);
+			}).bind(this), 0);
 		}
 	};
 
