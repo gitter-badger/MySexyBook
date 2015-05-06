@@ -96,6 +96,4 @@ if (album_elem) {
 	};
 
 	viewer.initialize();
-
-	console.dir(viewer);
 }
