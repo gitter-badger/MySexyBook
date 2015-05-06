@@ -77,7 +77,7 @@
 			{{~ it.albums :album }}
 				{{? (it.current_user && it.user._id.equals(it.current_user._id)) || (album.photos && album.photos.length) }}
 					<li class="album">
-						<a href="{{= it.app.url}}/book/{{= it.user.pseudo}}/{{= album._id}}">
+						<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= album._id }}/-{{= it.slug(album.title) }}">
 							<h3 class="album-title">{{= it.sanitize(album.title) }}</h3>
 							{{? album.description }}
 							<div class="album-description">

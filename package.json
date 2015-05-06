@@ -22,6 +22,7 @@
 		"connect-mongo": "0.7.*",
 		"body-parser": "1.10.*",
 		"multer": "0.1.*",
+		"slug": "0.9.*",
 		"dot": "1.0.*",
 		"validator": "3.28.*",
 		"sanitize-caja": "0.1.*",

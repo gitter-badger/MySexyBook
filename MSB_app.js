@@ -21,6 +21,8 @@ var MongoStore = require('connect-mongo')(session);
 var multer = require('multer');
 var validator = require('validator');
 var sanitize = require('sanitize-caja');
+var slug = require('slug');
+slug.defaults.modes.pretty.lower = true;
 var MarkDown = require('markdown-it');
 var strftime = require('strftime').localizedStrftime({
 	days: [ 'dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi' ],
@@ -52,6 +54,7 @@ app.locals.environment = app.get('env');
 app.locals.querystring = querystring;
 app.locals.sanitize = sanitize;
 app.locals.markdown = new MarkDown();
+app.locals.slug = slug;
 app.locals.markdown_inline = new MarkDown('zero', { breaks: true }).enable([ 'newline', 'emphasis' ]);
 app.locals.strftime = strftime;
 app.locals.isSecure = false;
@@ -712,7 +715,7 @@ app.route('/book/:userpseudo/:albumid/supprimer').all(function (req, res, next) 
 	});
 });
 
-app.route('/book/:userpseudo/:albumid').all(function (req, res, next) {
+app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname']).all(function (req, res, next) {
 	if (!validator.isMongoId(req.params.albumid)) {
 		next('route');
 		return;
