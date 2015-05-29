@@ -10,6 +10,8 @@
 * [`forever`](https://github.com/foreverjs/forever) (Node module)
 * [`LESS.js`](http://lesscss.org/) (Node module)
 
+[![Dependency Status](https://www.versioneye.com/user/projects/5566d82b6138360018270100/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5566d82b6138360018270100)
+
 ## Running the site
 
 ### Locally
