@@ -24,7 +24,7 @@ var sanitize = require('sanitize-caja');
 var slug = require('slug');
 slug.defaults.modes.pretty.lower = true;
 var MarkDown = require('markdown-it');
-var strftime = require('strftime').localizedStrftime({
+var strftime = require('strftime').localize({
 	days: [ 'dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi' ],
 	shortDays: [ 'dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam' ],
 	months: [ 'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre' ],
