@@ -1054,8 +1054,11 @@ app.route('/mon-profil').all(function (req, res, next) {
 
 	// throw form_error;
 	if (form_error) {
-		res.render('user_edit', { form_error: form_error });
-		res.end();
+		MSB_Model.getGeoCounties({}, { _id: 1 }).then(function (geo_counties) {
+			res.locals.geo_counties = geo_counties;
+			res.render('user_edit', { form_error: form_error });
+			res.end();
+		});
 		return;
 	}
 
@@ -1068,8 +1071,11 @@ app.route('/mon-profil').all(function (req, res, next) {
 		res.redirect(app.locals.url + '/book/' + user.pseudo);
 		res.end();
 	}).catch(function (err) {
-		res.render('user_edit', { form_error: err });
-		res.end();
+		MSB_Model.getGeoCounties({}, { _id: 1 }).then(function (geo_counties) {
+			res.locals.geo_counties = geo_counties;
+			res.render('user_edit', { form_error: err });
+			res.end();
+		});
 	});
 }).get(function (req, res) {
 	MSB_Model.getGeoCounties({}, { _id: 1 }).then(function (geo_counties) {
