@@ -183,7 +183,7 @@ app.use(session({
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(multer());
+app.use(multer().fields());
 
 app.use('/assets', express.static(__dirname + '/public'));
 

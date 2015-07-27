@@ -27,7 +27,7 @@
 		"validator": "3.41.*",
 		"sanitize-caja": "0.1.*",
 		"promise": "7.0.*",
-		"promised-mongo": "1.2.*",
+		"promised-mongo": "1.1.*",
 		"gm": "1.18.*",
 		"csv": "0.4.*"
 	},
@@ -44,11 +44,12 @@
 		"gulp-js": "gulp js",
 		"kill-old": "killall node || true ; killall mongod || true",
 		"clear-logs": "find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete",
+		"start-mongo": "mongod --fork --logpath ./mongod.log --dbpath ~/data/db",
 
 		"pretest": "npm run-script gulp ; npm run-script kill-old ; npm run-script clear-logs",
-		"test": "npm install --dev ; npm update ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=test node MSB_app.js",
+		"test": "npm install --dev ; npm update ; npm run-script start-mongo ; NODE_ENV=test node MSB_app.js",
 
 		"prestart": "npm run-script gulp ; npm run-script kill-old ; npm run-script clear-logs",
-		"start": "npm install --production ; npm update ; mongod --fork --logpath ./mongod.log --dbpath ~/data/db ; NODE_ENV=production node MSB_app.js"
+		"start": "npm install --production ; npm update ; npm run-script start-mongo ; NODE_ENV=production node MSB_app.js"
 	}
 }
