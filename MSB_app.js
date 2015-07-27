@@ -243,7 +243,9 @@ app.use(csrf());
 
 app.use(function (err, req, res, next) {
 	if (!err || !err.code || err.code !== 'EBADCSRFTOKEN') {
-		res.locals.csrfToken = req.csrfToken();
+		if (req.csrfToken) {
+			res.locals.csrfToken = req.csrfToken();
+		}
 		return next(err);
 	}
 
