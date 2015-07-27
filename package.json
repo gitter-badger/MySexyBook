@@ -42,7 +42,7 @@
 		"gulp": "gulp less ; gulp js",
 		"gulp-less": "gulp less",
 		"gulp-js": "gulp js",
-		"kill-old": "killall node ; killall mongod",
+		"kill-old": "killall node || true ; killall mongod || true",
 		"clear-logs": "find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete",
 
 		"pretest": "npm run-script gulp ; npm run-script kill-old ; npm run-script clear-logs",
