@@ -139,8 +139,8 @@ MSB_Model.updateUser = function (user_id, sex, biography, geo_county_id, camera_
 				},
 				new: true
 			}).then(function (results) {
-				if (results[0]) {
-					resolve(results[0]);
+				if (results.value) {
+					resolve(results.value);
 				}
 				else {
 					reject('Impossible de mettre à jour le profil dans la base de données');
@@ -180,8 +180,8 @@ MSB_Model.updateUserLastLogin = function (user_id, session) {
 			update: updates,
 			new: true
 		}).then(function (results) {
-			if (results[0]) {
-				resolve(results[0]);
+			if (results.value) {
+				resolve(results.value);
 			}
 			else {
 				reject('Impossible de mettre à jour le profil dans la base de données');
@@ -212,8 +212,8 @@ MSB_Model.updateUserPassword = function (user_id, password) {
 			},
 			new: true
 		}).then(function (results) {
-			if (results[0]) {
-				resolve(results[0]);
+			if (results.value) {
+				resolve(results.value);
 			}
 			else {
 				reject('Impossible de mettre à jour le mot de passe dans la base de données');
@@ -443,8 +443,8 @@ MSB_Model.updateAlbum = function (album_id, title, description, is_private) {
 			},
 			new: true
 		}).then(function (results) {
-			if (results[0]) {
-				resolve(results[0]);
+			if (results.value) {
+				resolve(results.value);
 			}
 			else {
 				reject('Impossible de mettre à jour le profil dans la base de données');
@@ -650,8 +650,8 @@ MSB_Model.updatePhoto = function (photo_id, title) {
 			},
 			new: true
 		}).then(function (results) {
-			if (results[0]) {
-				resolve(results[0]);
+			if (results.value) {
+				resolve(results.value);
 			}
 			else {
 				reject('Impossible de mettre à jour le profil dans la base de données');
