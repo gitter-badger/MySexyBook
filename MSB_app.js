@@ -1178,7 +1178,6 @@ app.route('/db_reset/:table').all(function (req, res, next) {
 								next();
 								return;
 							}
-							console.dir(data);
 
 							data.shift();
 
