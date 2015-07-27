@@ -1162,36 +1162,45 @@ app.route('/db_reset/:table').all(function (req, res, next) {
 			break;
 			
 			case 'geo_counties': 
-				db.collection('geo_counties').remove({}).then(function (){
+				db.collection('geo_counties').remove({}).then(function () {
 					var csv = require('csv');
 
-					fsp.readFile('data/geo_counties_fr.csv', { encoding: 'utf8' }).then(function(csv_txt){
-						var data = csv.parse(csv_txt || '');
-						if (!data) {
-							console.error('Pas de départements à importer');
-							return;
-						}
+					fsp.readFile('data/geo_counties_fr.csv', { encoding: 'utf8' }).then(function (csv_txt) {
+						return csv.parse(csv_txt || '', function (err, data) {
+							if (err) {
+								res.locals.db_reset_result = 'Erreur lors du parsage du fichier CSV';
+								console.error(err);
+								next();
+								return;
+							}
+							if (!data) {
+								res.locals.db_reset_result = 'Pas de départements à importer';
+								next();
+								return;
+							}
+							console.dir(data);
 
-						data.shift();
+							data.shift();
 
-						data.forEach(function (county_data) {
-							var county = {
-								_id: county_data[1],
-								district: parseInt(county_data[0]),
-								capital: county_data[2],
-								name: county_data[5],
-								name_type: parseInt(county_data[3])
-							};
+							data.forEach(function (county_data) {
+								var county = {
+									_id: county_data[1],
+									district: parseInt(county_data[0]),
+									capital: county_data[2],
+									name: county_data[5],
+									name_type: parseInt(county_data[3])
+								};
 
-							db_reset_promises.push(db.collection('geo_counties').insert(county));
-						});
+								db_reset_promises.push(db.collection('geo_counties').insert(county));
+							});
 
-						Promise.all(db_reset_promises).then(function () {
-							res.locals.db_reset_result = 'Département réinitialisés';
-							next();
-						}).catch(function (err) {
-							res.locals.db_reset_result = 'Erreur lors de la réinitialisation des départements';
-							next();
+							Promise.all(db_reset_promises).then(function () {
+								res.locals.db_reset_result = 'Département réinitialisés';
+								next();
+							}).catch(function (err) {
+								res.locals.db_reset_result = 'Erreur lors de la réinitialisation des départements';
+								next();
+							});
 						});
 					}).catch(function (err) {
 						res.locals.db_reset_result = 'Erreur lors de la lecture du fichier CSV';
