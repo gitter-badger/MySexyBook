@@ -243,19 +243,16 @@ app.use(csrf());
 
 app.use(function (err, req, res, next) {
 	if (!err || !err.code || err.code !== 'EBADCSRFTOKEN') {
-		if (req.csrfToken) {
-			res.locals.csrfToken = req.csrfToken();
-		}
 		return next(err);
 	}
 
 	res.status(403);
-	res.render('error403', { error: { code: err.code, message: 'Jeton invalide. Tentative de CSRF ?' }});
+	res.render('error403', { error: { code: err.code, message: 'Formulaire invalide : le jeton est expiré ou non reconnu' }});
 	res.end();
 });
 
 app.use(function (req, res, next) {
-	res.locals.csrfToken = req.csrfToken();
+	res.cookie('XSRF-TOKEN', res.locals.csrfToken = req.csrfToken());
 
 	next();
 });
