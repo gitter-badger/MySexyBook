@@ -18,7 +18,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var csrf = require('csurf');
 var MongoStore = require('connect-mongo')(session);
-var multer = require('multer');
+var multer = require('multer'), upload = multer();
 var validator = require('validator');
 var sanitize = require('sanitize-caja');
 var slug = require('slug');
@@ -183,7 +183,6 @@ app.use(session({
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(multer().fields());
 
 app.use('/assets', express.static(__dirname + '/public'));
 
@@ -757,7 +756,7 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 		next('route');
 		return;
 	});
-}).post(function (req, res, next) {
+}).post(upload.single('image[src]'), function (req, res, next) {
 	if (!req.session || !req.session.current_user) {
 		res.status(403);
 		res.render('error403', { error: { message: 'Vous devez être connecté pour accéder à cette page' } });
