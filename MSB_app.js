@@ -235,7 +235,7 @@ app.route('/avatar/:dimensions/:userid').get(function (req, res, next) {
 		var crop_thumb = true;
 	}
 
-	db.collection('users').findOne({
+	MSB_Model.getUser({
 		_id: pmongo.ObjectId(req.params.userid)
 	}).then(function (user){
 		if (!user || !user.avatar || !user.avatar.file_src) {
@@ -345,10 +345,10 @@ app.route('/avatar/:dimensions/:userid').get(function (req, res, next) {
 });
 
 app.route('/photo/:userid/:albumid/:dimensions/:photosrc').get(function (req, res, next) {
-	db.collection('users').findOne({
+	MSB_Model.getUser({
 		_id: pmongo.ObjectId(req.params.userid)
 	}).then(function (user){
-		db.collection('albums').findOne({
+		MSB_Model.getAlbum({
 			_id: pmongo.ObjectId(req.params.albumid)
 		}).then(function (album){
 			var dimensions = req.params.dimensions.split('x');
@@ -932,7 +932,7 @@ app.route('/mot-de-passe-perdu').all(function (req, res, next) {
 		return;
 	}
 
-	db.collection('users').findOne({
+	MSB_Model.getUser({
 		email: req.body.user.email
 	}).then(function (user) {
 		// var new_password = (Math.random()*0xFFFFFF<<0).toString(16);
