@@ -317,6 +317,32 @@ MSB_Model.getUsers = function (filter, sort, limit, offset) {
 		});
 	});
 };
+MSB_Model.countUsers = function (filter, sort, limit, offset) {
+	if (filter._id && typeof filter._id === 'string') {
+		filter._id = pmongo.ObjectId(filter._id);
+	}
+
+	return new Promise(function (resolve, reject){
+		var query = MSB_Model.db.collection('users').find(filter);
+
+		if (sort) {
+			query = query.sort(sort);
+		}
+		if (limit) {
+			query = query.limit(limit);
+		}
+		if (offset) {
+			query = query.offset(offset);
+		}
+
+		query.count().then(function (users) {
+			resolve(users);
+		}).catch(function (err) {
+			reject('Erreur de la base de données');
+			console.error(err);
+		});
+	});
+};
 
 /* ---------- Geo Counties ---------- */
 
@@ -565,6 +591,16 @@ MSB_Model.createPhoto = function (temp_img, album_id, owner_id, title) {
 			var newPath = __dirname + '/uploads/originals/' + new_photo.owner_id + '/' + new_photo.album_id + '/' + new_photo.src;
 
 			var image = gm(image_raw_data, new_photo.src);
+
+			image.identify('%[EXIF:*]', function (err, info) {
+				// info is a newline separated string of key=value pairs
+				// imagemagick also prefixes each line with "exif:"
+				var m, exif = {}, re = /^(?:exif:)?(\w+)=(.+)$/mg;
+				while (m = re.exec(info)) {
+					exif[m[1]] = m[2];
+				}
+				console.dir(exif);
+			});
 
 			image.size(function (err, info) {
 				if (err) {
