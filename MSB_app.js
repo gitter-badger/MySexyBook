@@ -498,6 +498,8 @@ app.route('/book/:userpseudo').all(function (req, res, next) {
 
 		res.locals.user = user;
 
+		res.locals.csrfToken = req.csrfToken();
+
 		next();
 	}).catch(function () {
 		next('route');
@@ -604,6 +606,9 @@ app.route('/book/:userpseudo/:albumid/modifier').all(function (req, res, next) {
 				return;
 			}
 			res.locals.album = album;
+
+			res.locals.csrfToken = req.csrfToken();
+			
 			next();
 		}).catch(function (err) {
 			next('route');
@@ -865,6 +870,8 @@ app.route('/inscription').all(function (req, res, next) {
 		return;
 	}
 
+	res.locals.csrfToken = req.csrfToken();
+
 	db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
 		res.locals.geo_counties = geo_counties;
 		next();
@@ -917,6 +924,9 @@ app.route('/mot-de-passe-perdu').all(function (req, res, next) {
 		res.end();
 		return;
 	}
+
+	res.locals.csrfToken = req.csrfToken();
+
 	next();
 }).post(function (req, res, next) {
 	if (!req.body.user) {
@@ -955,6 +965,9 @@ app.route('/connexion').all(function (req, res, next) {
 		res.end();
 		return;
 	}
+
+	res.locals.csrfToken = req.csrfToken();
+
 	next();
 }).post(function (req, res, next) {
 	if (!req.body.user) {
@@ -1009,6 +1022,9 @@ app.route('/mon-profil').all(function (req, res, next) {
 	}
 
 	res.locals.user = req.session.current_user;
+
+	res.locals.csrfToken = req.csrfToken();
+
 	next();
 }).post(function (req, res) {
 	if (!req.body.user) {
