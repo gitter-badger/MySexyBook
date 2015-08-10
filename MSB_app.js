@@ -673,8 +673,6 @@ app.route('/book/:userpseudo/:albumid/supprimer').all(function (req, res, next) 
 				return;
 			}
 			res.locals.album = album;
-
-			res.locals.csrfToken = req.csrfToken();
 			next();
 		}).catch(function (err) {
 			next('route');
@@ -727,6 +725,8 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 				return;
 			}
 			res.locals.album = album;
+
+			res.locals.csrfToken = req.csrfToken();
 			next();
 		}).catch(function (err) {
 			next('route');

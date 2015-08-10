@@ -50,12 +50,10 @@
 		{{?}}
 
 		{{? it.current_user && it.album.creator_id.equals(it.current_user._id) }}
-		<form action="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}/-{{= it.slug(it.album.title) }}#form-photo" method="post" enctype="multipart/form-data" id="form-photo">
+		<form action="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}/-{{= it.slug(it.album.title) }}?_csrf={{= it.csrfToken }}#form-photo" method="post" enctype="multipart/form-data" id="form-photo">
 			{{? it.form_error }}
 				<p class="alert error">{{= it.form_error }}</p>
 			{{?}}
-
-			<input type="hidden" name="_csrf" value="{{= it.csrfToken }}" />
 
 			<fieldset>
 				<legend>Ajouter une photo</legend>
