@@ -34,6 +34,8 @@ require('./public/js/prototypes.js');
 
 var app = express();
 
+app.disable('x-powered-by');
+
 switch (app.get('env')) {
 	case 'production':
 		var app_config = require('./config/app-production.json');
