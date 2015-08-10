@@ -15,7 +15,7 @@
 				
 				<div>
 					<label for="login-user-email">Adresse e-mail</label>
-					<input type="email" name="user[email]" id="login-user-email" required size="12" autocapitalize="off" autocorrect="off" data-emailcompleter value="{{= (it.req.body.user && it.req.body.user.email) ? it.req.body.user.email : '' }}" value="{{? it.req.body && it.req.body.user && it.req.body.user.email }}{{= it.req.body.user.email }}{{?}}" />
+					<input type="email" name="user[email]" id="login-user-email" required size="12" autocapitalize="off" autocorrect="off" data-emailcompleter value="{{? it.req.body && it.req.body.user && it.req.body.user.email }}{{= it.req.body.user.email }}{{?}}" />
 				</div>
 
 				<div>
@@ -29,12 +29,12 @@
 
 				<div>
 					<label>
-						<input type="checkbox" name="stay_online" id="login-stay_online" value="yes" />
-						<span class="checkbox-label">Je souhaite rester connecté</span>
+						<input type="checkbox" name="stay_online" id="login-stay_online" value="yes" aria-labelledby="login-stay_online-label login-stay_online-explanation" />
+						<span class="checkbox-label" id="login-stay_online-label">Je souhaite rester connecté</span>
 					</label>
 				</div>
 
-				<p class="alert info">Un cookie sera créé sur votre ordinateur pour vous permettre de rester connecté jusqu'à votre prochaine visite</p>
+				<p class="alert info" id="login-stay_online-explanation">En cochant cette case, un cookie sera créé sur votre ordinateur pour vous permettre de rester connecté jusqu'à votre prochaine visite</p>
 			</fieldset>
 			
 			<div>
