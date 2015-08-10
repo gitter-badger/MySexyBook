@@ -16,9 +16,9 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
-var csrf = require('csurf');
+var csurf = require('csurf');
 var MongoStore = require('connect-mongo')(session);
-var multer = require('multer'), upload = multer();
+var multer = require('multer'), upload = multer({ storage: multer.diskStorage({}) });
 var validator = require('validator');
 var sanitize = require('sanitize-caja');
 var slug = require('slug');
@@ -171,6 +171,9 @@ catch(e) {
 var MSB_Model = require('./MSB_model.js');
 MSB_Model.db = db;
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(cookieParser());
 app.use(session({
 	secret: app_config.session_secret,
@@ -182,9 +185,6 @@ app.use(session({
 		secure: app.locals.isSecure
 	}
 }));
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/assets', express.static(__dirname + '/public'));
 
@@ -239,24 +239,6 @@ app.use(function (req, res, next) {
 	else {
 		next();
 	}
-});
-
-app.use(csrf());
-
-app.use(function (err, req, res, next) {
-	if (!err || !err.code || err.code !== 'EBADCSRFTOKEN') {
-		return next(err);
-	}
-
-	res.status(403);
-	res.render('error403', { error: { code: err.code, message: 'Formulaire invalide : le jeton est expiré ou non reconnu' }});
-	res.end();
-});
-
-app.use(function (req, res, next) {
-	res.cookie('XSRF-TOKEN', res.locals.csrfToken = req.csrfToken());
-
-	next();
 });
 
 app.route('/avatar/:dimensions/:userid').get(function (req, res, next) {
@@ -506,6 +488,21 @@ app.route('/photo/:userid/:albumid/:dimensions/:photosrc').get(function (req, re
 	});
 });
 
+app.use(csurf({ cookie: true }));
+
+app.use(function (err, req, res, next) {
+	console.dir(err);
+	switch (err.code) {
+		case 'EBADCSRFTOKEN':
+			res.status(403);
+			res.render('error403', { error: { code: err.code, message: 'Formulaire invalide : le jeton est expiré ou non reconnu' }});
+			res.end();
+			return;
+		break;
+	}
+
+	next();
+});
 
 app.route('/book/:userpseudo').all(function (req, res, next) {
 	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
@@ -696,6 +693,8 @@ app.route('/book/:userpseudo/:albumid/supprimer').all(function (req, res, next) 
 				return;
 			}
 			res.locals.album = album;
+
+			res.locals.csrfToken = req.csrfToken();
 			next();
 		}).catch(function (err) {
 			next('route');
@@ -758,6 +757,7 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 		return;
 	});
 }).post(upload.single('image[src]'), function (req, res, next) {
+
 	if (!req.session || !req.session.current_user) {
 		res.status(403);
 		res.render('error403', { error: { message: 'Vous devez être connecté pour accéder à cette page' } });
@@ -771,8 +771,10 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 		return;
 	}
 
-	if (!req.files || !req.files['image[src]']) {
-		next();
+	if (!req.file) {
+		console.log('No file submitted');
+		res.render('user_album', { form_error: 'Vous devez renseigner une photo à charger' });
+		res.end();
 		return;
 	}
 
@@ -780,7 +782,7 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 		req.body.image = {};
 	}
 
-	var image_temp = req.files['image[src]'];
+	var image_temp = req.file;
 	if (!image_temp) {
 		var form_error = 'Aucun fichier n\'a été spécifié';
 	}
@@ -802,8 +804,16 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 		res.end();
 	}).catch(function (err) {
 		console.error(err);
-		res.render('user_album', { form_error: err });
-		res.end();
+
+		MSB_Model.getPhotos({ album_id: res.locals.album._id }, { uploaded_at: 1 }).then(function (photos) {
+			res.locals.album.photos = photos;
+
+			res.render('user_album', { form_error: err });
+			res.end();
+		}).catch(function (err) {
+			res.render('user_album');
+			res.end();
+		});
 	});
 }).get(function (req, res, next) {
 	MSB_Model.getPhotos({ album_id: res.locals.album._id }, { uploaded_at: 1 }).then(function (photos) {
