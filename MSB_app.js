@@ -36,6 +36,14 @@ var app = express();
 
 app.disable('x-powered-by');
 
+var site = require('./config/site.json');
+
+for (var key in site) {
+	if (app.locals[key] === undefined) {
+		app.locals[key] = site[key];
+	}
+}
+
 switch (app.get('env')) {
 	case 'production':
 		var app_config = require('./config/app-production.json');
@@ -61,34 +69,6 @@ app.locals.markdown_inline = new MarkDown('zero', { breaks: true }).enable([ 'ne
 app.locals.strftime = strftime;
 app.locals.isSecure = false;
 
-
-app.locals.title = 'My Sexy Book';
-app.locals.title_short = 'MSB';
-app.locals.slogan = 'La photo sexy et sociale';
-app.locals.sub_slogan = 'Trouvez un modèle parfait, un photographe créatif ou tout simplement de l\'inspiration';
-app.locals.contact_email = 'contact@mysexybook.photo';
-
-app.locals.sexes = [ 'male', 'female' ];
-app.locals.sexes_labels = {
-	'male': 'Homme',
-	'female': 'Femme'
-};
-
-app.locals.camera_sides = [ 'photographer', 'model' ];
-app.locals.camera_sides_labels = {
-	'photographer': 'Photographe',
-	'model': 'Modèle'
-};
-
-app.locals.photo_styles = [ 'portrait', 'fashion', 'glamour', 'lingerie', 'nude', 'erotic' ];
-app.locals.photo_styles_labels = {
-	'portrait': 'Portrait',
-	'fashion': 'Mode',
-	'glamour': 'Glamour',
-	'lingerie': 'Lingerie',
-	'nude': 'Nu artistique',
-	'erotic': 'Érotique'
-};
 
 var ACCOUNTS_TYPES = {
 	banned: 1<<0,

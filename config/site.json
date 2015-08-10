@@ -1,0 +1,39 @@
+{
+	"title": "My Sexy Book",
+	"title_short": "MSB",
+	"slogan": "La photo sexy et sociale",
+	"sub_slogan": "Trouvez un modèle parfait, un photographe créatif ou tout simplement de l'inspiration",
+	"contact_email": "contact@mysexybook.photo",
+	"sexes": [
+		"male",
+		"female"
+	],
+	"sexes_labels": {
+		"male": "Homme",
+		"female": "Femme"
+	},
+	"camera_sides": [
+		"photographer",
+		"model"
+	],
+	"camera_sides_labels": {
+		"photographer": "Photographe",
+		"model": "Modèle"
+	},
+	"photo_styles": [
+		"portrait",
+		"fashion",
+		"glamour",
+		"lingerie",
+		"nude",
+		"erotic"
+	],
+	"photo_styles_labels": {
+		"portrait": "Portrait",
+		"fashion": "Mode",
+		"glamour": "Glamour",
+		"lingerie": "Lingerie",
+		"nude": "Nu artistique",
+		"erotic": "Érotique"
+	}
+}
