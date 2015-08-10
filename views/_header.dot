@@ -16,7 +16,7 @@
 	<header id="header">
 		<div class="container">
 			<a href="{{= it.app.url }}/" id="logo">
-				<acronym id="logo-alternative-text" aria-hidden="true">{{= it.app.title_short }}</acronym>
+				<abbr id="logo-alternative-text" aria-hidden="true">{{= it.app.title_short }}</abbr>
 				<span id="logo-text">{{= it.app.title }}</span>
 			</a>
 			
