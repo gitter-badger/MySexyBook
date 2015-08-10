@@ -40,6 +40,7 @@
 	},
 	"scripts": {
 		"gulp": "gulp less ; gulp js",
+		"gulp-watch": "gulp watch",
 		"gulp-less": "gulp less",
 		"gulp-js": "gulp js",
 		"kill-old": "killall node || true ; killall mongod || true",
@@ -48,8 +49,10 @@
 
 		"pretest": "npm run-script gulp ; npm run-script kill-old ; npm run-script clear-logs",
 		"test": "npm install --dev ; npm update ; npm run-script start-mongo ; NODE_ENV=test node MSB_app.js",
+		"test-again": "killall node || true ; NODE_ENV=test node MSB_app.js",
 
 		"prestart": "npm run-script gulp ; npm run-script kill-old ; npm run-script clear-logs",
-		"start": "npm install --production ; npm update ; npm run-script start-mongo ; NODE_ENV=production node MSB_app.js"
+		"start": "npm install --production ; npm update ; npm run-script start-mongo ; NODE_ENV=production node MSB_app.js",
+		"start-again": "killall node || true ; NODE_ENV=production node MSB_app.js"
 	}
 }

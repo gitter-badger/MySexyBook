@@ -8,16 +8,28 @@
 			"shell_cmd": "npm run-script test"
 		},
 		{
+			"name": "Restart Node App (development env)",
+			"shell": true,
+			"working_dir": "${project_path:${folder}}",
+			"shell_cmd": "npm run-script test-again"
+		},
+		{
 			"name": "Compile all LESS files",
 			"shell": true,
 			"working_dir": "${project_path:${folder}}",
-			"shell_cmd": "lessc -x public/css/mysexybook-opening.less public/css/mysexybook-opening.min.css && lessc -x public/css/mysexybook.less public/css/mysexybook.min.css"
+			"shell_cmd": "npm run-script gulp-less"
 		},
 		{
 			"name": "Start Node App (prod env)",
 			"shell": true,
 			"working_dir": "${project_path:${folder}}",
 			"shell_cmd": "npm run-script start"
+		},
+		{
+			"name": "Restart Node App (prod env)",
+			"shell": true,
+			"working_dir": "${project_path:${folder}}",
+			"shell_cmd": "npm run-script start-again"
 		}
 	],
 	"folders":
