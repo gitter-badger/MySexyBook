@@ -817,6 +817,97 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 	});
 });
 
+app.route('/book/:userpseudo/:albumid/-:albumname/:photoid').all(function (req, res, next) {
+	console.log('photo page');
+	if (!validator.isMongoId(req.params.photoid)) {
+		console.error('Invalid photo id');
+		next('route');
+		return;
+	}
+
+	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
+		if (!user.account_validated && (
+			!req.session.current_user || 
+			(req.session.current_user && !user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
+		)) {
+			res.status(403);
+			res.render('error403', { error: { message: 'Ce compte n\'a pas encore été validé' } });
+			res.end();
+			return;
+		}
+
+		res.locals.user = user;
+
+		MSB_Model.getAlbum({
+			_id: req.params.albumid,
+			creator_id: res.locals.user._id
+		}).then(function (album) {
+			if (album.is_private && (
+				!req.session.current_user || 
+				(req.session.current_user && !res.locals.user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
+			)) {
+				res.status(403);
+				res.render('error403', { error: { message: 'Cet album est privé' } });
+				res.end();
+				return;
+			}
+			res.locals.album = album;
+
+			MSB_Model.getPhoto({
+				_id: req.params.photoid,
+				owner_id: res.locals.user._id
+			}).then(function (photo) {
+				// if (album.is_private && (
+				// 	!req.session.current_user || 
+				// 	(req.session.current_user && !res.locals.user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
+				// )) {
+				// 	res.status(403);
+				// 	res.render('error403', { error: { message: 'Cet album est privé' } });
+				// 	res.end();
+				// 	return;
+				// }
+				res.locals.photo = photo;
+
+				res.locals.csrfToken = req.csrfToken();
+				next();
+			}).catch(function (err) {
+				next('route');
+				return;
+			});
+		}).catch(function (err) {
+			next('route');
+			return;
+		});
+	}).catch(function () {
+		next('route');
+		return;
+	});
+}).post(function (req, res, next) {
+
+	if (!req.session || !req.session.current_user) {
+		res.status(403);
+		res.render('error403', { error: { message: 'Vous devez être connecté pour accéder à cette page' } });
+		res.end();
+		return;
+	}
+	if (!res.locals.album.creator_id.equals(req.session.current_user._id)) {
+		res.status(403);
+		res.render('error403', { error: { message: 'Cette photo ne vous appartient pas' } });
+		res.end();
+		return;
+	}
+}).get(function (req, res, next) {
+	MSB_Model.getPhotos({ album_id: res.locals.album._id }, { uploaded_at: 1 }).then(function (photos) {
+		res.locals.album.photos = photos;
+
+		res.render('user_photo');
+		res.end();
+	}).catch(function (err) {
+		res.render('user_photo');
+		res.end();
+	});
+});
+
 app.route('/recherche').all(function (req, res, next) {
 	db.collection('geo_counties').find({}).sort({ _id: 1 }).toArray().then(function (geo_counties) {
 		res.locals.geo_counties = geo_counties;

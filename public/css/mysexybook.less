@@ -328,210 +328,183 @@ a{
 		}
 	}
 }
-#user-album-page{
+#user-photo-page{
 	&::before{
 		content: none;
 	}
 	&::after{
 		content: none;
 	}
-	&.js.photo-viewer{
-		@viewer-sidebar-width: (@breakpoint-xs * .75);
-		@viewer-dock-height: 6em;
-		@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
-			@viewer-dock-height: 10em;
-		}
 
-		.container{
-			width: auto;
-			max-width: auto;
-			margin: 0;
-		}
+	@viewer-sidebar-width: (@breakpoint-xs * .75);
+	@viewer-dock-height: 6em;
+	@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
+		@viewer-dock-height: 10em;
+	}
 
-		#page{
-			&>.container{
-				position: fixed;
-				top: @header-height;
+	.container{
+		width: auto;
+		max-width: auto;
+		margin: 0;
+	}
+
+	#page{
+		&>.container{
+			position: fixed;
+			top: @header-height;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			padding: 0;
+
+			#current-photo{
+				position: absolute;
+				display: table-cell;
+				z-index: 20;
+				top: 0;
+				right: 0;
+				bottom: @viewer-dock-height;
+				left: 0;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				background-color: @background-primary-accent;
+
+				@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
+					right: @viewer-sidebar-width;
+				}
+
+				&>.photo{
+					position: relative;
+					display: inline-block;
+					// display: inline;
+					max-width: 100%;
+					max-height: 100%;
+					// overflow: visible;
+					// display: flex;
+					// justify-content: center;
+					// align-items: center;
+
+					&>picture{
+						display: inline-block;
+						// position: absolute;
+						// max-width: 100%;
+						// max-height: 100%;
+						// top: 50%;
+						// left: 50%;
+						// transform: translate(-50%, -50%) scale(2);
+						// transform: translate(0, -50%);
+						// max-height: 50%;
+						.box-shadow(0 0 .5em darken(@background-primary-accent, 30%));
+						object-fit: scale-down;
+						overflow: auto;
+
+						&>source, &>img{
+							max-width: 100%;
+							max-height: 100%;
+							object-fit: contain;
+						}
+					}
+
+					.photo-caption{
+						display: none;
+					}
+				}
+				
+				&:hover{
+					&~.album-info{
+						.translate(@viewer-sidebar-width, 0);
+						.box-shadow(none);
+						.transition(300ms);
+
+						@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
+							.translate(0,0);
+							.box-shadow(0 0 .5em darken(@background-primary-accent, 30%));
+						}
+					}
+				}
+			}
+			&>.album-info{
+				position: absolute;
+				z-index: 70;
+				top: 0;
+				right: 0;
+				bottom: @viewer-dock-height;
+				width: @viewer-sidebar-width;
+				margin: 0;
+				padding: .5em;
+				overflow-y: auto;
+				background-color: @background-primary;
+				.box-shadow(0 0 .5em darken(@background-primary-accent, 30%));
+
+				@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
+					z-index: 80;
+					bottom: 0;
+					padding: 1em;
+				}
+
+				#form-photo{
+					label[for]:first-child:not(:last-child){
+						width: 100%;
+
+						&+input, &+select, &+textarea{
+							width: 100%;
+
+							&~.field-indication{
+								bottom: 3em;
+								left: 0;
+							}
+						}
+					}
+				}
+			}
+			&>.album-thumbs{
+				position: absolute;
+				z-index: 80;
 				right: 0;
 				bottom: 0;
 				left: 0;
+				height: @viewer-dock-height;
+				margin: 0;
 				padding: 0;
+				white-space: nowrap;
+				overflow-x: auto;
+				background-color: @background-primary;
+				.box-shadow(0 0 .5em darken(@background-primary-accent, 30%));
 
-				&>.album-photos{
-					position: absolute;
-					z-index: 20;
-					top: 0;
-					right: 0;
-					bottom: @viewer-dock-height;
-					left: 0;
-					margin: 0;
-					padding: 0;
-					overflow: hidden;
-					background-color: @background-primary-accent;
-
-					@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
-						right: @viewer-sidebar-width;
-					}
-
-					&>li{
-						position: absolute;
-						z-index: 25;
-						top: 0em;
-						right: 0em;
-						bottom: 0em;
-						left: 0em;
-						width: 100%;
-						height: 100%;
-						padding: 0;
-						opacity: 0;
-						.transition(opacity 200ms);
-
-						@media screen and (min-width: @breakpoint-l) {
-							// top: 1em;
-							// right: 1em;
-							// bottom: 1em;
-							// left: 1em;
-							padding: 1em;
-						}
-
-						&:target{
-							z-index: 30;
-							opacity: 1;
-						}
-
-						&>.photo{
-							position: relative;
-							display: inline-block;
-							// display: inline;
-							width: 100%;
-							height: 100%;
-							overflow: visible;
-							// display: flex;
-							// justify-content: center;
-							// align-items: center;
-
-							&>picture{
-								// display: inline-block;
-								position: absolute;
-								// max-width: 100%;
-								// max-height: 100%;
-								top: 50%;
-								left: 50%;
-								transform: translate(-50%, -50%) scale(2);
-								// transform: translate(0, -50%);
-								// max-height: 50%;
-								.box-shadow(0 0 .5em darken(@background-primary-accent, 30%));
-								object-fit: scale-down;
-								overflow: auto;
-
-								&>source, &>img{
-									max-width: 100%;
-									max-height: 100%;
-									object-fit: contain;
-								}
-							}
-
-							.photo-caption{
-								display: none;
-							}
-						}
-					}
-					
-					&:hover{
-						&~.album-info{
-							.translate(@viewer-sidebar-width, 0);
-							.box-shadow(none);
-							.transition(300ms);
-
-							@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
-								.translate(0,0);
-								.box-shadow(0 0 .5em darken(@background-primary-accent, 30%));
-							}
-						}
-					}
-				}
-				&>.album-info{
-					position: absolute;
+				@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
 					z-index: 70;
-					top: 0;
-					right: 0;
-					bottom: @viewer-dock-height;
-					width: @viewer-sidebar-width;
-					margin: 0;
-					padding: .5em;
-					overflow-y: auto;
-					background-color: @background-primary;
-					.box-shadow(0 0 .5em darken(@background-primary-accent, 30%));
-
-					@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
-						z-index: 80;
-						bottom: 0;
-						padding: 1em;
-					}
-
-					#form-photo{
-						label[for]:first-child:not(:last-child){
-							width: 100%;
-
-							&+input, &+select, &+textarea{
-								width: 100%;
-
-								&~.field-indication{
-									bottom: 3em;
-									left: 0;
-								}
-							}
-						}
-					}
+					right: @viewer-sidebar-width;
 				}
-				&>.album-thumbs{
-					position: absolute;
-					z-index: 80;
-					right: 0;
-					bottom: 0;
-					left: 0;
+
+				&>li{
+					display: inline-block;
+					vertical-align: middle;
+					width: @viewer-dock-height;
 					height: @viewer-dock-height;
-					margin: 0;
-					padding: 0;
-					white-space: nowrap;
-					overflow-x: auto;
-					background-color: @background-primary;
-					.box-shadow(0 0 .5em darken(@background-primary-accent, 30%));
-
+					padding: .25em;
+					
 					@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
-						z-index: 70;
-						right: @viewer-sidebar-width;
-					}
-
-					&>li{
-						display: inline-block;
-						vertical-align: middle;
 						width: @viewer-dock-height;
 						height: @viewer-dock-height;
-						padding: .25em;
-						
-						@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
-							width: @viewer-dock-height;
-							height: @viewer-dock-height;
-							padding: .5em;
-						}
+						padding: .5em;
+					}
 
-						&>img{
-							display: block;
-							width: 100%;
-							height: 100%;
-							margin: 0;
-						}
+					&>img{
+						display: block;
+						width: 100%;
+						height: 100%;
+						margin: 0;
 					}
 				}
-				&>#form-photo{
-					display: none;
-				}
+			}
+			&>#form-photo{
+				display: none;
 			}
 		}
-		#footer{
-			display: none;
-		}
+	}
+	#footer{
+		display: none;
 	}
 }
 

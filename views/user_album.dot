@@ -10,7 +10,7 @@
 
 			{{? it.current_user && it.album.creator_id.equals(it.current_user._id) }}
 			<p>
-				<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id }}/supprimer" class="button" title="Supprimer définitivement l'album et les photos qu'il contient">Supprimer</a>
+				<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id }}/supprimer" clases="button" title="Supprimer définitivement l'album et les photos qu'il contient">Supprimer</a>
 				&nbsp;
 				<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id }}/modifier" class="button" title="Modifier les informations de cet album">Modifier</a>
 			</p>
@@ -27,21 +27,23 @@
 			<ul class="album-photos">
 			{{~ it.album.photos :photo }}
 				<li id="photo-{{= photo._id }}" data-photo-src="{{= photo.src }}">
-					<figure class="photo orientation-{{= photo.file_info.orientation }}" tabindex="0">
-						<picture>
-							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/512x512/' + photo.src }}" media="(max-width: 32em)" />
-							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/640x640/' + photo.src }}" media="(max-width: 40em)" />
-							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/800x800/' + photo.src }}" media="(max-width: 50em)" />
-							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/960x960/' + photo.src }}" media="(max-width: 60em)" />
-							<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/1280x1280/' + photo.src }}" media="(max-width: 80em)" />
-							<img srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/1920x1920/' + photo.src }}" alt="" />
-						</picture>
-						{{? photo.title }}
-						<figcaption class="photo-caption">
-							{{= it.sanitize(photo.title) }}
-						</figcaption>
-						{{?}}
-					</figure>
+					<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}/-{{= it.slug(it.album.title) }}/{{= photo._id }}">
+						<figure class="photo orientation-{{= photo.file_info.orientation }}" tabindex="0">
+							<picture>
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/512x512/' + photo.src }}" media="(max-width: 32em)" />
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/640x640/' + photo.src }}" media="(max-width: 40em)" />
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/800x800/' + photo.src }}" media="(max-width: 50em)" />
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/960x960/' + photo.src }}" media="(max-width: 60em)" />
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/1280x1280/' + photo.src }}" media="(max-width: 80em)" />
+								<img srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/1920x1920/' + photo.src }}" alt="" />
+							</picture>
+							{{? photo.title }}
+							<figcaption class="photo-caption">
+								{{= it.sanitize(photo.title) }}
+							</figcaption>
+							{{?}}
+						</figure>
+					</a>
 				</li>
 			{{~}}
 			</ul>

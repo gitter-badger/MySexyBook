@@ -5,8 +5,6 @@ if (album_elem) {
 	var viewer = {
 		album_elem: album_elem,
 		initialize: function () {
-			document.documentElement.classList.add('photo-viewer');
-
 			this.user = {
 				_id: this.album_elem.dataset.userId
 			};
@@ -101,10 +99,10 @@ if (album_elem) {
 
 					var photo_width = li.firstElementChild.clientWidth;
 					var photo_height = li.firstElementChild.clientHeight;
-				console.dir(photo_width);
-				console.dir(photo_height);
+				// console.dir(photo_width);
+				// console.dir(photo_height);
 
-					console.dir(photo_big);
+					// console.dir(photo_big);
 
 					if (photo_big) {
 						photo_big.style.maxWidth = photo_width + 'px';
@@ -112,7 +110,7 @@ if (album_elem) {
 					}
 
 					Array.prototype.forEach.call(photo_big.children, function (src) {
-						console.dir(src);
+						// console.dir(src);
 						if (src.style) {
 							src.style.maxWidth = photo_width + 'px';
 							src.style.maxHeight = photo_height + 'px';
@@ -123,5 +121,5 @@ if (album_elem) {
 		}
 	};
 
-	viewer.initialize();
+	// viewer.initialize();
 }
