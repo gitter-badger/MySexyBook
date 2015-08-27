@@ -818,7 +818,6 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 });
 
 app.route(['/book/:userpseudo/:albumid/-:albumname/:photoid', '/book/:userpseudo/:albumid/:photoid']).all(function (req, res, next) {
-	console.log('photo page');
 	if (!validator.isMongoId(req.params.photoid)) {
 		console.error('Invalid photo id');
 		next('route');
@@ -857,15 +856,6 @@ app.route(['/book/:userpseudo/:albumid/-:albumname/:photoid', '/book/:userpseudo
 				_id: req.params.photoid,
 				owner_id: res.locals.user._id
 			}).then(function (photo) {
-				// if (album.is_private && (
-				// 	!req.session.current_user || 
-				// 	(req.session.current_user && !res.locals.user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
-				// )) {
-				// 	res.status(403);
-				// 	res.render('error403', { error: { message: 'Cet album est privé' } });
-				// 	res.end();
-				// 	return;
-				// }
 				res.locals.photo = photo;
 
 				res.locals.csrfToken = req.csrfToken();
