@@ -118,7 +118,12 @@ app.engine('dot', function (view_path, data, callback) {
 		throw 'View not found';
 	}
 
-	return callback(null, dots[view_name](data));
+	try{
+		return callback(null, dots[view_name](data));
+	}
+	catch(e) {
+		console.error(e);
+	}
 });
 app.locals.dots = dots;
 app.set('view engine', 'dot');
