@@ -762,7 +762,6 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 	}
 
 	if (!req.file) {
-		console.log('No file submitted');
 		res.render('user_album', { form_error: 'Vous devez renseigner une photo à charger' });
 		res.end();
 		return;
@@ -790,7 +789,7 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 	}
 
 	MSB_Model.createPhoto(image_temp, res.locals.album._id, res.locals.user._id, req.body.image.title || '').then(function (photo) {
-		res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id + '#photo-' + photo._id);
+		res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id + '/-' + slug(res.locals.album.title) + '/' + photo._id);
 		res.end();
 	}).catch(function (err) {
 		console.error(err);
@@ -880,12 +879,34 @@ app.route(['/book/:userpseudo/:albumid/-:albumname/:photoid', '/book/:userpseudo
 		res.end();
 		return;
 	}
-	if (!res.locals.album.creator_id.equals(req.session.current_user._id)) {
+	if (!res.locals.photo.owner_id.equals(req.session.current_user._id)) {
 		res.status(403);
 		res.render('error403', { error: { message: 'Cette photo ne vous appartient pas' } });
 		res.end();
 		return;
 	}
+
+	if (!req.body.image) {
+		req.body.image = {};
+	}
+
+	if (req.body.image.title && !validator.isLength(req.body.image.title, 0, 60)) {
+		var form_error = 'La description de l\'image est trop longue (60 caractères max.)';
+	}
+
+	if (form_error) {
+		res.render('user_photo', { form_error: form_error });
+		res.end();
+		return;
+	}
+
+	MSB_Model.updatePhoto(res.locals.photo._id, req.body.image.title).then(function (photo) {
+		res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id + '/-' + slug(res.locals.album.title) + '/' + res.locals.photo._id);
+		res.end();
+	}).catch(function (err) {
+		console.error(err);
+		next();
+	});
 }).get(function (req, res, next) {
 	MSB_Model.getPhotos({ album_id: res.locals.album._id }, { uploaded_at: 1 }).then(function (photos) {
 		res.locals.album.photos = photos;

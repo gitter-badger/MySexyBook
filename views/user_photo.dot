@@ -37,7 +37,7 @@
 			</div>
 
 			{{? it.current_user && it.album.creator_id.equals(it.current_user._id) }}
-			<form action="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}/-{{= it.slug(it.album.title) }}/{{= it.photo._id}}?_csrf={{= it.csrfToken }}#form-photo" method="post" enctype="multipart/form-data" id="form-photo">
+			<form action="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}/-{{= it.slug(it.album.title) }}/{{= it.photo._id}}?_csrf={{= it.csrfToken }}#form-photo" method="post" id="form-photo">
 				{{? it.form_error }}
 					<p class="alert error">{{= it.form_error }}</p>
 				{{?}}
@@ -61,7 +61,7 @@
 			{{~ it.album.photos :photo }}
 				<li id="photo-{{= photo._id }}" data-photo-src="{{= photo.src }}">
 					<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}/-{{= it.slug(it.album.title) }}/{{= photo._id }}"{{? photo.title }} title="{{= photo.title }}"{{?}}>
-						<img srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/240x240x1/' + photo.src }}" alt="" />
+						<img srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/230x230x1/' + photo.src }}" alt="" />
 					</a>
 				</li>
 			{{~}}
