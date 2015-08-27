@@ -9,11 +9,11 @@
 			<p>Créé le <time datetime="{{= it.strftime('%Y-%m-%d') }}">{{= it.strftime('%d %B %Y') }}</time> par <em><a href="{{= it.app.url}}/book/{{= it.user.pseudo }}" rel="parent">{{= it.sanitize(it.user.pseudo) }}</a></em></p>
 
 			{{? it.current_user && it.album.creator_id.equals(it.current_user._id) }}
-			<p>
+			<div id="page-options">
 				<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id }}/supprimer" class="button" title="Supprimer définitivement l'album et les photos qu'il contient">Supprimer</a>
 				&nbsp;
 				<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id }}/modifier" class="button" title="Modifier les informations de cet album">Modifier</a>
-			</p>
+			</div>
 			{{?}}
 			
 			{{? it.album.description }}

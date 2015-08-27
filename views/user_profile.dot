@@ -17,7 +17,7 @@
 			
 			<div class="user-profile-content">
 				{{? it.current_user && it.user._id.equals(it.current_user._id) }}
-					<div class="right" id="page-options">
+					<div id="page-options">
 						<a href="{{= it.app.url }}/mon-profil" class="button">Éditer mon profil</a>
 					</div>
 				{{?}}
