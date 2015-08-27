@@ -736,6 +736,12 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 			}
 			res.locals.album = album;
 
+			if (!req.params.albumname) {
+				res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id + '/-' + slug(res.locals.album.title));
+				res.end();
+				return;
+			}
+
 			res.locals.csrfToken = req.csrfToken();
 			next();
 		}).catch(function (err) {
@@ -849,7 +855,14 @@ app.route(['/book/:userpseudo/:albumid/-:albumname/:photoid', '/book/:userpseudo
 				res.end();
 				return;
 			}
+
 			res.locals.album = album;
+
+			if (!req.params.albumname) {
+				res.redirect(app.locals.url + '/book/' + res.locals.user.pseudo + '/' + res.locals.album._id + '/-' + slug(res.locals.album.title) + '/' + req.params.photoid);
+				res.end();
+				return;
+			}
 
 			MSB_Model.getPhoto({
 				_id: req.params.photoid,
