@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr"{{? it.page_id }} id="{{= it.page_id }}-page"{{?}}>
+<html lang="fr"{{? it.page_id }} id="{{= it.page_id }}-page"{{?}}{{? it.page_class }} class="{{= it.page_class }}"{{?}}>
 <head>
 	<meta charset="UTF-8" />
 	<title>{{= it.app.title }}</title>
