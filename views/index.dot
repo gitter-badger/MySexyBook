@@ -16,7 +16,7 @@
 				<ul class="users-list" id="last-uploaded-photos">
 					{{~ it.last_photos :photo }}
 					<li class="user">
-						<a href="{{= it.app.url }}/book/{{= photo.owner.pseudo }}/{{= photo.album_id }}#photo-{{= photo._id }}">
+						<a href="{{= it.app.url }}/book/{{= photo.owner.pseudo }}/{{= photo.album_id }}/{{= photo._id }}">
 							<picture class="user-avatar">
 								<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/74x74x1/{{= photo.src }}" media="(max-width: 32em)" />
 								<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/99x99x1/{{= photo.src }}" media="(max-width: 40em)" />

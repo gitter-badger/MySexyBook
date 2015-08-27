@@ -817,7 +817,7 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 	});
 });
 
-app.route('/book/:userpseudo/:albumid/-:albumname/:photoid').all(function (req, res, next) {
+app.route(['/book/:userpseudo/:albumid/-:albumname/:photoid', '/book/:userpseudo/:albumid/:photoid']).all(function (req, res, next) {
 	console.log('photo page');
 	if (!validator.isMongoId(req.params.photoid)) {
 		console.error('Invalid photo id');
