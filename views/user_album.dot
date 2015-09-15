@@ -24,12 +24,12 @@
 		</div>
 		
 		{{? it.album.photos && it.album.photos.length }}
-			<ul class="album-photos">
+			<ul class="photos-list">
 			{{~ it.album.photos :photo }}
-				<li id="photo-{{= photo._id }}" data-photo-src="{{= photo.src }}">
+				<li class="photo" id="photo-{{= photo._id }}" data-photo-src="{{= photo.src }}">
 					<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}/-{{= it.slug(it.album.title) }}/{{= photo._id }}">
-						<figure class="photo orientation-{{= photo.file_info.orientation }}" tabindex="0">
-							<picture>
+						<figure>
+							<picture class="photo-thumb">
 								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/176x176x1/' + photo.src }}" media="(max-width: 25em)" />
 								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/152x152x1/' + photo.src }}" media="(max-width: 32em)" />
 								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/194x194x1/' + photo.src }}" media="(max-width: 40em)" />

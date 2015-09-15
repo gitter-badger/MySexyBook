@@ -17,20 +17,22 @@
 					{{~ it.last_photos :photo }}
 					<li class="photo">
 						<a href="{{= it.app.url }}/book/{{= photo.owner.pseudo }}/{{= photo.album_id }}/{{= photo._id }}">
-							<picture class="photo-thumb">
-								<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/182x182x1/{{= photo.src }}" media="(max-width: 25em)" />
-								<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/238x238x1/{{= photo.src }}" media="(max-width: 32em)" />
-								<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/195x195x1/{{= photo.src }}" media="(max-width: 40em)" />
-								<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/200x200x1/{{= photo.src }}" media="(max-width: 50em)" />
-								<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/134x134x1/{{= photo.src }}" media="(max-width: 60em)" />
-								<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/166x166x1/{{= photo.src }}" media="(max-width: 80em)" />
-								<img srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/230x230x1/{{= photo.src }}" alt="" />
-							</picture>
-							{{? photo.owner }}
-							<span class="photo-owner">
-								<span class="sr-only">Par</span> {{= photo.owner.pseudo }}
-							</span>
-							{{?}}
+							<figure>
+								<picture class="photo-thumb">
+									<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/182x182x1/{{= photo.src }}" media="(max-width: 25em)" />
+									<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/238x238x1/{{= photo.src }}" media="(max-width: 32em)" />
+									<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/195x195x1/{{= photo.src }}" media="(max-width: 40em)" />
+									<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/200x200x1/{{= photo.src }}" media="(max-width: 50em)" />
+									<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/134x134x1/{{= photo.src }}" media="(max-width: 60em)" />
+									<source srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/166x166x1/{{= photo.src }}" media="(max-width: 80em)" />
+									<img srcset="{{= it.app.url }}/photo/{{= photo.owner_id }}/{{= photo.album_id }}/230x230x1/{{= photo.src }}" alt="" />
+								</picture>
+								{{? photo.owner }}
+								<figcaption class="photo-owner">
+									<span class="sr-only">Par</span> {{= photo.owner.pseudo }}
+								</figcaption>
+								{{?}}
+							</figure>
 						</a>
 					</li>
 					{{~}}
@@ -45,16 +47,18 @@
 					{{~ it.last_users :user }}
 					<li class="user">
 						<a href="{{= it.app.url }}/book/{{= user.pseudo }}">
-							<picture class="user-avatar">
-								<source srcset="{{= it.app.url }}/avatar/182x182x1/{{= user._id }}" media="(max-width: 25em)" />
-								<source srcset="{{= it.app.url }}/avatar/238x238x1/{{= user._id }}" media="(max-width: 32em)" />
-								<source srcset="{{= it.app.url }}/avatar/195x195x1/{{= user._id }}" media="(max-width: 40em)" />
-								<source srcset="{{= it.app.url }}/avatar/200x200x1/{{= user._id }}" media="(max-width: 50em)" />
-								<source srcset="{{= it.app.url }}/avatar/134x134x1/{{= user._id }}" media="(max-width: 60em)" />
-								<source srcset="{{= it.app.url }}/avatar/166x166x1/{{= user._id }}" media="(max-width: 80em)" />
-								<img srcset="{{= it.app.url }}/avatar/230x230x1/{{= user._id }}" alt="" />
-							</picture>
-							<span class="user-pseudo">{{= user.pseudo }}</span>
+							<figure>
+								<picture class="user-avatar">
+									<source srcset="{{= it.app.url }}/avatar/182x182x1/{{= user._id }}" media="(max-width: 25em)" />
+									<source srcset="{{= it.app.url }}/avatar/238x238x1/{{= user._id }}" media="(max-width: 32em)" />
+									<source srcset="{{= it.app.url }}/avatar/195x195x1/{{= user._id }}" media="(max-width: 40em)" />
+									<source srcset="{{= it.app.url }}/avatar/200x200x1/{{= user._id }}" media="(max-width: 50em)" />
+									<source srcset="{{= it.app.url }}/avatar/134x134x1/{{= user._id }}" media="(max-width: 60em)" />
+									<source srcset="{{= it.app.url }}/avatar/166x166x1/{{= user._id }}" media="(max-width: 80em)" />
+									<img srcset="{{= it.app.url }}/avatar/230x230x1/{{= user._id }}" alt="" />
+								</picture>
+								<figcaption class="user-pseudo">{{= user.pseudo }}</figcaption>
+							</figure>
 						</a>
 					</li>
 					{{~}}

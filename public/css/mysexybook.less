@@ -294,7 +294,7 @@ a{
 		}
 	}
 
-	.users-list{
+	.users-list, .photos-list{
 		text-align: center;
 	}
 	fieldset{
@@ -730,7 +730,12 @@ img{
 			&:active{
 				background-color: @background-secondary-accent;
 			}
-			&>picture.user-avatar, &>picture.photo-thumb{
+			
+			&>figure{
+				margin: 0;
+			}
+
+			&>picture.user-avatar, &>figure>picture.photo-thumb{
 				position: relative;
 				display: block;
 				vertical-align: middle;
@@ -746,7 +751,7 @@ img{
 					height: 100%;
 				}
 			}
-			&>.user-pseudo, &>.photo-owner{
+			&>.user-pseudo, &>figure>.photo-owner, &>figure>.photo-caption{
 				display: block;
 				margin-top: .5em;
 			}
@@ -873,91 +878,6 @@ img{
 
 	&>.album+.album{
 		margin-top: 1em;
-	}
-}
-.album-photos{
-	margin: 0;
-	padding: 0;
-	list-style: none;
-
-	&:after{
-		content: '';
-		&:extend(.clearfix);
-	}
-
-	&>li{
-		float: left;
-		padding-top: 2em;
-		width: 50%;
-
-		@media screen and (min-width: @breakpoint-xs) {
-			width: 33.333%;
-		}
-		@media screen and (min-width: @breakpoint-s) {
-			width: 33.333%;
-		}
-		@media screen and (min-width: @breakpoint-m) {
-			width: 25%;
-		}
-		@media screen and (min-width: @breakpoint-l) {
-			width: 20%;
-		}
-		@media screen and (min-width: @breakpoint-xl) {
-			width: 20%;
-		}
-	}
-
-	.photo{
-		position: relative;
-		margin: 0;
-		min-height: 5em;
-		margin: .25em;
-
-		@media screen and (min-width: @breakpoint-l) {
-			margin: .5em;
-		}
-
-		&>picture{
-			position: relative;
-			display: block;
-			vertical-align: middle;
-			padding-top: 100%;
-
-			&>source, &>img{
-				position: absolute;
-				top: 0;
-				right: 0;
-				bottom: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-			}
-		}
-
-		&>.photo-caption{
-			position: absolute;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			padding: .25em .5em;
-			background-color: fade(@background-secondary, 30%);
-			color: fade(@color-secondary, 60%);
-			transition: .3s;
-			font-size: 1em;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-
-			@media screen and (min-width: @breakpoint-l) {
-				padding: .5em 1em;
-			}
-		}
-		&:hover, &:focus{
-			&>.photo-caption{
-				background-color: fade(@background-secondary, 80%);
-				color: @color-secondary;
-			}
-		}
 	}
 }
 
