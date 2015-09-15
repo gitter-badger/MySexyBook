@@ -72,8 +72,8 @@ MSB_Model.createUser = function (email, password, pseudo, sex, geo_county_id) {
 						}
 
 						Promise.all([
-							fsp.mkdir('uploads/originals/' + user._id, 775), 
-							fsp.mkdir('uploads/thumbs/' + user._id, 775)
+							fsp.mkdir('uploads/originals/' + user._id, 0775 & (~process.umask())), 
+							fsp.mkdir('uploads/thumbs/' + user._id, 0775 & (~process.umask()))
 						]).then(function () {
 							resolve(user);
 						}).catch(function (err) {
@@ -419,8 +419,8 @@ MSB_Model.createAlbum = function (creator_id, title, description, is_private) {
 				}
 
 				Promise.all([
-					fsp.mkdir('uploads/originals/' + new_album.creator_id + '/' + album._id, 775), 
-					fsp.mkdir('uploads/thumbs/' + new_album.creator_id + '/' + album._id, 775)
+					fsp.mkdir('uploads/originals/' + new_album.creator_id + '/' + album._id, 0775 & (~process.umask())), 
+					fsp.mkdir('uploads/thumbs/' + new_album.creator_id + '/' + album._id, 0775 & (~process.umask()))
 				]).then(function () {
 					resolve(album);
 				}).catch(function (err) {
@@ -573,6 +573,10 @@ MSB_Model.createPhoto = function (temp_img, album_id, owner_id, title) {
 			reject('Seules les images au format JPEG et PNG sont autorisées');
 		}
 
+		if (!temp_img.extension) {
+			temp_img.extension = temp_img.originalname.split('.').pop()
+		}
+
 		var id = new pmongo.ObjectId();
 
 		var new_photo = {
@@ -600,6 +604,8 @@ MSB_Model.createPhoto = function (temp_img, album_id, owner_id, title) {
 					exif[m[1]] = m[2];
 				}
 				console.dir(exif);
+
+				new_photo.exif = exif;
 			});
 
 			image.size(function (err, info) {
@@ -636,7 +642,7 @@ MSB_Model.createPhoto = function (temp_img, album_id, owner_id, title) {
 
 				new_photo.file_info = info;
 
-				fsp.writeFile(newPath, image_raw_data).then(function () {
+				fsp.writeFile(newPath, image_raw_data, { mode: 0775  & (~process.umask()) }).then(function () {
 					return MSB_Model.db.collection('photos').insert(new_photo).then(function (photo) {
 						if (!photo) {
 							reject('Impossible d\'enregistrer la photo dans la base de données');
