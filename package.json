@@ -47,12 +47,12 @@
 		"clear-logs": "find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete",
 		"start-mongo": "mongod --fork --logpath ./mongod.log --dbpath ~/data/db",
 
-		"pretest": "npm run-script gulp ; npm run-script kill-old ; npm run-script clear-logs",
-		"test": "npm install --dev ; npm update ; npm run-script start-mongo ; NODE_ENV=test node MSB_app.js",
+		"pretest": "npm run-script kill-old ; npm run-script clear-logs",
+		"test": "npm update ; npm run-script start-mongo ; NODE_ENV=test node MSB_app.js ; npm run-script gulp-watch",
 		"test-again": "killall node || true ; NODE_ENV=test node MSB_app.js",
 
 		"prestart": "npm run-script gulp ; npm run-script kill-old ; npm run-script clear-logs",
-		"start": "npm install --production ; npm update ; npm run-script start-mongo ; NODE_ENV=production node MSB_app.js",
+		"start": "npm update ; npm install --production ; npm run-script start-mongo ; NODE_ENV=production node MSB_app.js",
 		"start-again": "killall node || true ; NODE_ENV=production node MSB_app.js"
 	}
 }
