@@ -682,7 +682,7 @@ img{
 .album-description{
 	margin-left: 0;
 }
-.users-list{
+.users-list, .photos-list{
 	margin: 0 -.5em;
 	padding: 0;
 	list-style: none;
@@ -692,12 +692,15 @@ img{
 		&:extend(.clearfix);
 	}
 
-	&>.user{
+	&>.user, &>.photo{
 		display: inline-block;
 		vertical-align: middle;
 		padding: .25em;
-		width: 33.333%;
+		width: 50%;
 
+		@media screen and (min-width: @breakpoint-s) {
+			width: 33.333%;
+		}
 		@media screen and (min-width: @breakpoint-l) {
 			padding: .5em;
 			width: 16.666%;
@@ -727,7 +730,7 @@ img{
 			&:active{
 				background-color: @background-secondary-accent;
 			}
-			&>picture.user-avatar{
+			&>picture.user-avatar, &>picture.photo-thumb{
 				position: relative;
 				display: block;
 				vertical-align: middle;
@@ -743,7 +746,7 @@ img{
 					height: 100%;
 				}
 			}
-			&>.user-pseudo{
+			&>.user-pseudo, &>.photo-owner{
 				display: block;
 				margin-top: .5em;
 			}
@@ -877,20 +880,55 @@ img{
 	padding: 0;
 	list-style: none;
 
+	&:after{
+		content: '';
+		&:extend(.clearfix);
+	}
+
 	&>li{
+		float: left;
 		padding-top: 2em;
+		width: 50%;
+
+		@media screen and (min-width: @breakpoint-xs) {
+			width: 33.333%;
+		}
+		@media screen and (min-width: @breakpoint-s) {
+			width: 33.333%;
+		}
+		@media screen and (min-width: @breakpoint-m) {
+			width: 25%;
+		}
+		@media screen and (min-width: @breakpoint-l) {
+			width: 20%;
+		}
+		@media screen and (min-width: @breakpoint-xl) {
+			width: 20%;
+		}
 	}
 
 	.photo{
 		position: relative;
 		margin: 0;
 		min-height: 5em;
+		margin: .25em;
+
+		@media screen and (min-width: @breakpoint-l) {
+			margin: .5em;
+		}
 
 		&>picture{
+			position: relative;
 			display: block;
+			vertical-align: middle;
+			padding-top: 100%;
 
 			&>source, &>img{
-				display: block;
+				position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
 				width: 100%;
 				height: 100%;
 			}
@@ -901,17 +939,17 @@ img{
 			right: 0;
 			bottom: 0;
 			left: 0;
-			padding: .5em;
+			padding: .25em .5em;
 			background-color: fade(@background-secondary, 30%);
 			color: fade(@color-secondary, 60%);
 			transition: .3s;
+			font-size: 1em;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 
 			@media screen and (min-width: @breakpoint-l) {
-				padding: 1em;
-			}
-
-			&>h2{
-				margin: 0;
+				padding: .5em 1em;
 			}
 		}
 		&:hover, &:focus{

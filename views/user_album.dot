@@ -30,12 +30,13 @@
 					<a href="{{= it.app.url }}/book/{{= it.user.pseudo }}/{{= it.album._id}}/-{{= it.slug(it.album.title) }}/{{= photo._id }}">
 						<figure class="photo orientation-{{= photo.file_info.orientation }}" tabindex="0">
 							<picture>
-								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/512x512/' + photo.src }}" media="(max-width: 32em)" />
-								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/640x640/' + photo.src }}" media="(max-width: 40em)" />
-								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/800x800/' + photo.src }}" media="(max-width: 50em)" />
-								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/960x960/' + photo.src }}" media="(max-width: 60em)" />
-								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/1280x1280/' + photo.src }}" media="(max-width: 80em)" />
-								<img srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/1920x1920/' + photo.src }}" alt="" />
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/176x176x1/' + photo.src }}" media="(max-width: 25em)" />
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/152x152x1/' + photo.src }}" media="(max-width: 32em)" />
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/194x194x1/' + photo.src }}" media="(max-width: 40em)" />
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/148x148x1/' + photo.src }}" media="(max-width: 50em)" />
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/138x138x1/' + photo.src }}" media="(max-width: 60em)" />
+								<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/170x170x1/' + photo.src }}" media="(max-width: 80em)" />
+								<img srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + it.album._id + '/234x234x1/' + photo.src }}" alt="" />
 							</picture>
 							{{? photo.title }}
 							<figcaption class="photo-caption">

@@ -6,9 +6,6 @@
 		<div class="user-profile">
 			<div class="user-profile-avatar">
 				<picture class="user-avatar">
-					<source srcset="{{= it.app.url }}/avatar/350x350x1/{{= it.user._id }}" media="(max-width: 32em)" />
-					<source srcset="{{= it.app.url }}/avatar/350x350x1/{{= it.user._id }}" media="(max-width: 40em)" />
-					<source srcset="{{= it.app.url }}/avatar/350x350x1/{{= it.user._id }}" media="(max-width: 50em)" />
 					<source srcset="{{= it.app.url }}/avatar/230x230x1/{{= it.user._id }}" media="(max-width: 60em)" />
 					<source srcset="{{= it.app.url }}/avatar/278x278x1/{{= it.user._id }}" media="(max-width: 80em)" />
 					<img srcset="{{= it.app.url }}/avatar/384x384x1/{{= it.user._id }}" alt="" />
@@ -91,9 +88,10 @@
 									{{~ album.photos.slice(0, 5) :photo }}
 									<span class="album-preview-thumb">
 										<picture class="thumb">
-											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/74x74x1/' + photo.src }}" media="(max-width: 32em)" />
-											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/99x99x1/' + photo.src }}" media="(max-width: 40em)" />
-											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/102x102x1/' + photo.src }}" media="(max-width: 50em)" />
+											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/64x64x1/' + photo.src }}" media="(max-width: 25em)" />
+											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/86x86x1/' + photo.src }}" media="(max-width: 32em)" />
+											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/112x112x1/' + photo.src }}" media="(max-width: 40em)" />
+											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/115x115x1/' + photo.src }}" media="(max-width: 50em)" />
 											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/134x134x1/' + photo.src }}" media="(max-width: 60em)" />
 											<source srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/166x166x1/' + photo.src }}" media="(max-width: 80em)" />
 											<img srcset="{{= it.app.url }}/photo/{{= it.user._id + '/' + album._id + '/230x230x1/' + photo.src }}" alt="" />
