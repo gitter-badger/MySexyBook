@@ -17,15 +17,31 @@
 		</div>
 
 		<aside class="photo-info">
-			<h1>Photo</h1>
-
 			{{? it.photo.title }}
-			<p class="photo-caption">
+			<h1 class="photo-caption">
 				{{= it.sanitize(it.photo.title) }}
-			</p>
+			</h1>
+			{{??}}
+			<h1 class="photo-caption italic">Photo</h1>
 			{{?}}
 
-			<p>Ajoutée le <time datetime="{{= it.strftime('%Y-%m-%d', it.photo.uploaded_at) }}">{{= it.strftime('%d %B %Y', it.photo.uploaded_at) }}</time> par <em><a href="{{= it.app.url}}/book/{{= it.user.pseudo }}" rel="parent">{{= it.sanitize(it.user.pseudo) }}</a></em></p>
+			<p>
+				Ajoutée le <time datetime="{{= it.strftime('%Y-%m-%d', it.photo.uploaded_at) }}">{{= it.strftime('%d %B %Y', it.photo.uploaded_at) }}</time><br>
+				Par <em><a href="{{= it.app.url}}/book/{{= it.user.pseudo }}" rel="parent">{{= it.sanitize(it.user.pseudo) }}</a></em>
+			</p>
+
+			{{? it.photo.exif && Object.keys(it.photo.exif).length }}
+			<aside id="photo-exif">
+				<h2>EXIF</h2>
+				{{ console.log(it.photo.exif); }}
+				{{ for (var exif_name in it.photo.exif) { }}
+					{{ if (!it.photo.exif.hasOwnProperty(exif_name) ) { continue; } }}
+					{{ var exif_value = it.photo.exif[exif_name]; }}
+					{{ console.log(exif_name+' = '+exif_value); }}
+				<p>{{= exif_name }} : {{= exif_value }}</p>
+				{{ } }}
+			</aside>
+			{{?}}
 
 			<div class="album-info">
 				<h1 class="album-title">{{= it.sanitize(it.album.title) }} {{? it.album.is_private }}{{?}}</h1>
