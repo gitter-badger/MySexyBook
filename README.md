@@ -21,11 +21,16 @@
 ```
 lessc -x public/css/mysexybook.less public/css/mysexybook.min.css
 ```
-
-#### Start servers
+#### Start servers (one time only)
 
 ```
 npm run-script test
+```
+
+And to restart them (without checking NPM podules)
+
+```
+npm run-script test-again
 ```
 
 ### In production (using forever)
