@@ -1362,10 +1362,21 @@ app.route('/').get(function (req, res) {
 			MSB_Model.getUsers({ account_validated: true }, { register_date: -1 }, 6).then(function (last_users) {
 				res.locals.last_users = last_users;
 			}),
-			MSB_Model.getPhotos({ 
-				"is_private": { $ne: true }
-			}, { uploaded_at: -1 }, 6).then(function (last_photos) {
-				res.locals.last_photos = last_photos;
+			MSB_Model.getAlbums({
+				"is_private": true
+			}).then(function (albums) {
+				var avoidAlbums = [];
+				
+				albums.forEach(function (album) {
+					avoidAlbums.push(album._id);
+				});
+				
+				return MSB_Model.getPhotos({
+					"album_id": { $nin: avoidAlbums },
+					"is_private": { $ne: true }
+				}, { uploaded_at: -1 }, 6).then(function (last_photos) {
+					res.locals.last_photos = last_photos;
+				})
 			}),
 			MSB_Model.getGeoCounties({}, { _id: 1 }).then(function (geo_counties) {
 				res.locals.geo_counties = geo_counties;
