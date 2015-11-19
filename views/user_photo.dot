@@ -37,7 +37,6 @@
 				{{ for (var exif_name in it.photo.exif) { }}
 					{{ if (!it.photo.exif.hasOwnProperty(exif_name) ) { continue; } }}
 					{{ var exif_value = it.photo.exif[exif_name]; }}
-					{{ console.log(exif_name+' = '+exif_value); }}
 				<p>{{= exif_name }} : {{= exif_value }}</p>
 				{{ } }}
 			</aside>
