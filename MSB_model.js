@@ -72,7 +72,7 @@ MSB_Model.createUser = function (email, password, pseudo, sex, geo_county_id) {
 						}
 
 						Promise.all([
-							fsp.mkdir('uploads/originals/' + user._id, 0775 & (~process.umask())), 
+							fsp.mkdir('uploads/originals/' + user._id, 0775 & (~process.umask())),
 							fsp.mkdir('uploads/thumbs/' + user._id, 0775 & (~process.umask()))
 						]).then(function () {
 							resolve(user);
@@ -419,7 +419,7 @@ MSB_Model.createAlbum = function (creator_id, title, description, is_private) {
 				}
 
 				Promise.all([
-					fsp.mkdir('uploads/originals/' + new_album.creator_id + '/' + album._id, 0775 & (~process.umask())), 
+					fsp.mkdir('uploads/originals/' + new_album.creator_id + '/' + album._id, 0775 & (~process.umask())),
 					fsp.mkdir('uploads/thumbs/' + new_album.creator_id + '/' + album._id, 0775 & (~process.umask()))
 				]).then(function () {
 					resolve(album);

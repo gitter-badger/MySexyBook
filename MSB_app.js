@@ -492,7 +492,7 @@ app.use(function (err, req, res, next) {
 app.route('/book/:userpseudo').all(function (req, res, next) {
 	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
 		if (!user.account_validated && (
-			!req.session.current_user || 
+			!req.session.current_user ||
 			(req.session.current_user && !user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
 		)) {
 			res.status(403);
@@ -710,7 +710,7 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 
 	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
 		if (!user.account_validated && (
-			!req.session.current_user || 
+			!req.session.current_user ||
 			(req.session.current_user && !user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
 		)) {
 			res.status(403);
@@ -726,7 +726,7 @@ app.route(['/book/:userpseudo/:albumid', '/book/:userpseudo/:albumid/-:albumname
 			creator_id: res.locals.user._id
 		}).then(function (album) {
 			if (album.is_private && (
-				!req.session.current_user || 
+				!req.session.current_user ||
 				(req.session.current_user && !res.locals.user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
 			)) {
 				res.status(403);
@@ -831,7 +831,7 @@ app.route(['/book/:userpseudo/:albumid/-:albumname/:photoid', '/book/:userpseudo
 
 	MSB_Model.getUser({ pseudo: req.params.userpseudo }).then(function (user) {
 		if (!user.account_validated && (
-			!req.session.current_user || 
+			!req.session.current_user ||
 			(req.session.current_user && !user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
 		)) {
 			res.status(403);
@@ -847,7 +847,7 @@ app.route(['/book/:userpseudo/:albumid/-:albumname/:photoid', '/book/:userpseudo
 			creator_id: res.locals.user._id
 		}).then(function (album) {
 			if (album.is_private && (
-				!req.session.current_user || 
+				!req.session.current_user ||
 				(req.session.current_user && !res.locals.user._id.equals(req.session.current_user._id) && !req.session.current_user.is_admin)
 			)) {
 				res.status(403);
@@ -1293,7 +1293,7 @@ app.route('/db_reset/:table').all(function (req, res, next) {
 				});
 			break;
 			
-			case 'geo_counties': 
+			case 'geo_counties':
 				db.collection('geo_counties').remove({}).then(function () {
 					var csv = require('csv');
 
