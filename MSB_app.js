@@ -1359,7 +1359,9 @@ app.route('/').get(function (req, res) {
 	}
 	else {
 		var home_promises = [
-			MSB_Model.getUsers({ account_validated: true }, { register_date: -1 }, 6).then(function (last_users) {
+			MSB_Model.getUsers({
+				account_validated: true
+			}, { register_date: -1 }, 6).then(function (last_users) {
 				res.locals.last_users = last_users;
 			}),
 			MSB_Model.getAlbums({
