@@ -15,12 +15,12 @@
 				
 				<div>
 					<label for="login-user-email">Adresse e-mail</label>
-					<input type="email" name="user[email]" id="login-user-email" required size="12" autocapitalize="off" autocorrect="off" data-emailcompleter value="{{? it.req.body && it.req.body.user && it.req.body.user.email }}{{= it.req.body.user.email }}{{?}}" />
+					<input type="email" name="user[email]" id="login-user-email" required size="12" autocorrect="off" autocapitalize="off" spellcheck="false" data-emailcompleter value="{{? it.req.body && it.req.body.user && it.req.body.user.email }}{{= it.req.body.user.email }}{{?}}" />
 				</div>
 
 				<div>
 					<label for="login-user-password">Mot de passe</label>
-					<input type="password" name="user[password]" id="login-user-password" required size="12" pattern="(.*){8,}" />
+					<input type="password" name="user[password]" id="login-user-password" required size="12" pattern="(.*){8,}" autocorrect="off" autocapitalize="off" spellcheck="false" />
 				</div>
 			</fieldset>
 

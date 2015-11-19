@@ -21,7 +21,7 @@
 				<div>
 					<label for="search-user-sex-any">Sexe</label>
 					{{~ it.app.sexes :sex_id }}
-						{{ var sex_label = it.app.sexes_labels[sex_id]; }}
+						{{ var sex_label = it.sexes_labels[sex_id]; }}
 					<label>
 						<input type="radio" name="user[sex]" id="search-user-sex-{{= sex_id }}" required value="{{= sex_id }}" {{= (!it.search_filters || !it.search_filters.sex || it.search_filters.sex === sex_id ? 'checked="checked"' : '') }} />
 						<span class="radio-label">{{= sex_label }}</span>

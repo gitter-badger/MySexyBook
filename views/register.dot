@@ -15,12 +15,12 @@
 
 				<div>
 					<label for="register-user-email">Adresse e-mail</label>
-					<input type="email" name="user[email]" id="register-user-email" required size="12" autocapitalize="off" autocorrect="off" data-emailcompleter value="{{= (it.req.body.user && it.req.body.user.email) ? it.req.body.user.email : '' }}" value="{{? it.req.body && it.req.body.user && it.req.body.user.email }}{{= it.req.body.user.email }}{{?}}" />
+					<input type="email" name="user[email]" id="register-user-email" required size="12" autocorrect="off" autocapitalize="off" spellcheck="false" data-emailcompleter value="{{= (it.req.body.user && it.req.body.user.email) ? it.req.body.user.email : '' }}" value="{{? it.req.body && it.req.body.user && it.req.body.user.email }}{{= it.req.body.user.email }}{{?}}" />
 				</div>
 
 				<div>
 					<label for="register-user-password">Mot de passe</label>
-					<input type="password" name="user[password]" id="register-user-password" required size="12" pattern="(.*){8,}" />
+					<input type="password" name="user[password]" id="register-user-password" required size="12" pattern="(.*){8,}" autocorrect="off" autocapitalize="off" spellcheck="false" />
 					<span class="field-indication">8 caractères (libres) minimum</span>
 				</div>
 			</fieldset>
@@ -30,7 +30,7 @@
 
 				<div>
 					<label for="register-user-pseudo">Pseudo</label>
-					<input type="text" name="user[pseudo]" id="register-user-pseudo" required size="12" pattern="[a-zA-Z0-9]{4,30}" maxlength="30" value="{{? it.req.body && it.req.body.user && it.req.body.user.pseudo }}{{= it.req.body.user.pseudo }}{{?}}" />
+					<input type="text" name="user[pseudo]" id="register-user-pseudo" required size="12" pattern="[a-zA-Z0-9]{4,30}" maxlength="30" autocorrect="off" autocapitalize="off" spellcheck="false" value="{{? it.req.body && it.req.body.user && it.req.body.user.pseudo }}{{= it.req.body.user.pseudo }}{{?}}" />
 					<span class="field-indication">Caractères aplhanumériques uniquement</span>
 				</div>
 
