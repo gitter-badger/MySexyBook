@@ -603,7 +603,6 @@ MSB_Model.createPhoto = function (temp_img, album_id, owner_id, title) {
 				while (m = re.exec(info)) {
 					exif[m[1]] = m[2];
 				}
-				console.dir(exif);
 
 				new_photo.exif = exif;
 			});
