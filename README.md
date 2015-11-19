@@ -24,13 +24,13 @@ lessc -x public/css/mysexybook.less public/css/mysexybook.min.css
 #### Start servers (one time only)
 
 ```
-npm run-script test
+NODE_ENV=development npm start
 ```
 
 And to restart them (without checking NPM podules)
 
 ```
-npm run-script test-again
+NODE_ENV=development npm restart
 ```
 
 ### In production (using forever)
@@ -40,7 +40,7 @@ If you haven't already compiled the LESS files to CSS, check a few lines higherâ
 #### Start servers (using forever)
 
 ```
-NODE_ENV=production forever start ./ -c "npm run-script start"
+NODE_ENV=production forever start ./ -c "npm start"
 ```
 
 #### Start servers (one time only)
@@ -48,7 +48,7 @@ NODE_ENV=production forever start ./ -c "npm run-script start"
 If you prefer starting the server once (just to test it, maybe), you can use the npm script directly
 
 ```
-npm run-script start
+npm start
 ```
 
 ## License

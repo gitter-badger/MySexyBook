@@ -45,18 +45,18 @@ for (var key in site) {
 }
 
 switch (app.get('env')) {
-	case 'production':
-		var app_config = require('./config/app-production.json');
-		app.locals.url = 'http://mysexybook.photo';
-		app.locals.domain = 'mysexybook.photo';
-	break;
-
 	case 'development':
 	case 'test':
-	default:
 		var app_config = require('./config/app-development.json');
 		app.locals.url = 'http://127.0.0.1:' + pkg.config.port;
 		app.locals.domain = '127.0.0.1';
+	break;
+	
+	case 'production':
+	default:
+		var app_config = require('./config/app-production.json');
+		app.locals.url = 'http://mysexybook.photo';
+		app.locals.domain = 'mysexybook.photo';
 	break;
 }
 
