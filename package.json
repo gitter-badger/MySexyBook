@@ -50,7 +50,7 @@
 		"stop": "npm run-script kill-old ; npm run-script clear-logs",
 		
 		"prestart": "npm run-script gulp ; npm run-script stop",
-		"start": "npm update ; npm install --production ; npm run-script start-mongo ; node MSB_app.js",
+		"start": "npm update ; npm install ; npm run-script start-mongo ; node MSB_app.js",
 		
 		"restart": "killall node || true ; node MSB_app.js"
 	}
