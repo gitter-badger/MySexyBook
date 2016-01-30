@@ -55,7 +55,7 @@ switch (app.get('env')) {
 	case 'production':
 	default:
 		var app_config = require('./config/app-production.json');
-		app.locals.url = 'http://mysexybook.photo';
+		app.locals.url = 'https://mysexybook.photo';
 		app.locals.domain = 'mysexybook.photo';
 	break;
 }
