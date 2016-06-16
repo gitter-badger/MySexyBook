@@ -22,6 +22,19 @@ class="{{ $page_class }}"
 
 	<meta name="theme-color" content="#820043">
     <script src="{{ url('assets/js/libs/picturefill.js') }}" async></script>
+
+    <meta name="robots" content="index,follow">
+
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:title" content="My Sexy Book">
+    {{-- <meta property="og:image" content="{{ url('/assets/img/opening-bg.jpg') }}"> --}}
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@My_Sexy_Book">
+    <meta name="twitter:url" content="{{ url('/') }}">
+    <meta name="twitter:title" content="My Sexy Book">
+    {{-- <meta name="twitter:description" content="Ouverture bientôt…"> --}}
+    {{-- <meta name="twitter:image" content="{{ url('/assets/img/opening-bg.jpg') }}"> --}}
 </head>
 <body>
 	<header id="header">
