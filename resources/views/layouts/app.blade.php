@@ -9,7 +9,12 @@ class="{{ $page_class }}"
 >
 <head>
 	<meta charset="UTF-8" />
-	<title>{{ config('app.name') }}</title>
+	<title>
+        @if (!empty($page_title))
+        {{ $page_title }} |
+        @endif
+        My Sexy Book
+    </title>
 
 	<!--[if lt IE 9]><script src="{{ url('assets/js/libs/html5shiv.js') }}"></script><![endif]-->
 	<meta name="viewport" content="width=device-width, user-scalable=no">
@@ -23,7 +28,7 @@ class="{{ $page_class }}"
 		<div class="container">
 			<a href="{{ url('/') }}" id="logo">
 				<abbr id="logo-alternative-text" aria-hidden="true">MSD</abbr>
-				<span id="logo-text">{{ config('app.name') }}</span>
+				<span id="logo-text">My Sexy Book</span>
 			</a>
 			
 			@if ($current_user = Auth::user())
