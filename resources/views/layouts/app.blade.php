@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr"
+<html lang="{{ config('app.locale') }}"
 @if (!empty($page_id))
 id="{{ $page_id }}-page"
 @endif
@@ -30,7 +30,7 @@ class="{{ $page_class }}"
 				<abbr id="logo-alternative-text" aria-hidden="true">MSD</abbr>
 				<span id="logo-text">My Sexy Book</span>
 			</a>
-			
+
 			@if ($current_user = Auth::user())
 			<nav id="header-menu">
 				<a href="{{ url('/book/'.$current_user->pseudo) }}">Mon book</a>
@@ -44,15 +44,15 @@ class="{{ $page_class }}"
 			@endif
 		</div>
 	</header>
-    
+
     @yield('content')
-    
+
     <footer id="footer">
         <div class="container">
             <p>My Sexy Book — {{ strftime('%Y') }}</p>
         </div>
     </footer>
-    
+
     <link href="{{ url('assets/js/mysexybook.js') }}" rel="stylesheet">
     @if (!empty($js_files))
         @foreach ($js_files as $file_name)
