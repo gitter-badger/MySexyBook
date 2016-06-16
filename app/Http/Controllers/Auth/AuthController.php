@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace MySexyBook\Http\Controllers\Auth;
 
-use App\User;
+use MySexyBook\User;
 use Validator;
-use App\Http\Controllers\Controller;
+use MySexyBook\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 

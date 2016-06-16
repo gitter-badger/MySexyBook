@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace MySexyBook;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 

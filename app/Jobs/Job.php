@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace MySexyBook\Jobs;
 
 use Illuminate\Bus\Queueable;
 

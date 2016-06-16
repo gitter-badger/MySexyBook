@@ -7,6 +7,20 @@
 * Composer
 * Laravel (`composer global require "laravel/installer"`)
 
+## Building resources
+
+### Locally
+
+```
+gulp && gulp watch
+```
+
+### In production
+
+```
+gulp --production
+```
+
 ## Running the site
 
 ### Locally

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace MySexyBook\Providers;
 
 use Illuminate\Support\ServiceProvider;
 

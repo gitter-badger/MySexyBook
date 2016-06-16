@@ -12,5 +12,9 @@ var elixir = require('laravel-elixir');
  */
 
 elixir(function(mix) {
-    mix.sass('app.scss');
+    mix
+    .less('mysexybook.less', 'public/assets/css/mysexybook.css')
+    .less('mysexybook-opening.less', 'public/assets/css/mysexybook-opening.css')
+    .scriptsIn('resources/assets/js', 'public/assets/js/mysexybook.js')
+    .copy('resources/assets/js/libs', 'public/assets/js/libs');
 });
