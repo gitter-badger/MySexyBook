@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'https://mysexybook.photo'),
 
     /*
     |--------------------------------------------------------------------------
@@ -157,6 +157,7 @@ return [
         MySexyBook\Providers\AuthServiceProvider::class,
         MySexyBook\Providers\EventServiceProvider::class,
         MySexyBook\Providers\RouteServiceProvider::class,
+        MySexyBook\Providers\SecureRoutingServiceProvider::class,
 
     ],
 
