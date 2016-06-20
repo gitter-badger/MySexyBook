@@ -1,57 +1,11 @@
 {
-	"private": true,
-	"name": "mysexybook",
-	"description": "Site de mise en relation entre photographes et modèles, spécialisé dans le domaine du charme",
-	"version": "0.0.0",
-	"main": "MSB_app.js",
-	"author": "Corentin Hatte <contact@corentin-hatte.eu>",
-	"dependencies": {
-		"gulp": "3.9.*",
-		"gulp-less": "3.0.*",
-		"gulp-cssmin": "0.1.*",
-		"gulp-concat": "2.6.*",
-		"gulp-uglify": "1.5.*",
-		"fs-promise": "0.3.*",
-		"mime-types": "2.1.*",
-		"strftime": "0.9.*",
-		"markdown-it": "5.0.*",
-		"express": "4.13.*",
-		"cookie-parser": "1.4.*",
-		"express-session": "1.12.*",
-		"csurf": "1.8.*",
-		"connect-mongo": "1.1.*",
-		"body-parser": "1.14.*",
-		"multer": "1.1.*",
-		"slug": "0.9.*",
-		"dot": "1.0.*",
-		"validator": "4.4.*",
-		"sanitize-caja": "0.1.*",
-		"promise": "7.1.*",
-		"promised-mongo": "1.2.*",
-		"gm": "1.21.*",
-		"csv": "0.4.*"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/viki53/MySexyBook"
-	},
-	"config" : {
-		"port" : 6996
-	},
-	"scripts": {
-		"gulp": "gulp less ; gulp js",
-		"gulp-watch": "gulp watch",
-		"gulp-less": "gulp less",
-		"gulp-js": "gulp js",
-		"kill-old": "killall node || true ; killall mongod || true",
-		"clear-logs": "find ./ -type f -name 'mongod.log*' -delete ; find ./ -type f -name 'npm-debug.log*' -delete",
-		"start-mongo": "mongod --fork --logpath ./mongod.log --dbpath ~/data/db",
-
-		"stop": "npm run-script kill-old ; npm run-script clear-logs",
-		
-		"prestart": "npm run-script gulp ; npm run-script stop",
-		"start": "npm update ; npm install ; npm run-script start-mongo ; node MSB_app.js",
-		
-		"restart": "killall node || true ; node MSB_app.js"
-	}
+  "private": true,
+  "scripts": {
+    "prod": "gulp --production",
+    "dev": "gulp watch"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "laravel-elixir": "^5.0.0"
+  }
 }

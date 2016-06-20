@@ -1,27 +1,20 @@
-var gulp = require('gulp');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var less = require('gulp-less');
-var cssmin = require('gulp-cssmin');
+var elixir = require('laravel-elixir');
 
-gulp.task('less', function() {
-	return gulp.src('public/css/mysexybook.less')
-		.pipe(less())
-		.pipe(concat('mysexybook.min.css'))
-		.pipe(cssmin())
-		.pipe(gulp.dest('public/css/'));
+/*
+ |--------------------------------------------------------------------------
+ | Elixir Asset Management
+ |--------------------------------------------------------------------------
+ |
+ | Elixir provides a clean, fluent API for defining some basic Gulp tasks
+ | for your Laravel application. By default, we are compiling the Sass
+ | file for our application, as well as publishing vendor resources.
+ |
+ */
+
+elixir(function(mix) {
+    mix
+    .less('mysexybook.less', 'public/assets/css/mysexybook.css')
+    .less('mysexybook-opening.less', 'public/assets/css/mysexybook-opening.css')
+    .scriptsIn('resources/assets/js', 'public/assets/js/mysexybook.js')
+    .copy('resources/assets/js/libs', 'public/assets/js/libs');
 });
-
-gulp.task('js', function() {
-	return gulp.src(['public/js/prototypes.js', 'public/js/mysexybook.js'])
-		.pipe(concat('mysexybook.min.js'))
-		.pipe(uglify({preserveComments: 'some'}))
-		.pipe(gulp.dest('public/js/'));
-});
-
-gulp.task('watch', function() {
-	gulp.watch('public/css/*.less', ['less']);
-	gulp.watch(['public/js/prototypes.js', 'public/js/mysexybook.js'], ['js']);
-});
-
-gulp.task('default', ['watch']);

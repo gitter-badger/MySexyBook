@@ -1,59 +1,42 @@
 # My Sexy Book
 
-![Home page — FR](public/img/screenshots/home-desktop.png)
+![Home page — FR](public/assets/img/screenshots/home-desktop.png)
 
 ## Requirements
 
-* [`Node.js`](nodejs.org) + `npm`
-* [`MongoDB`](https://www.mongodb.org/)
-* [`GraphicsMagick`](http://www.graphicsmagick.org/)
-* [`forever`](https://github.com/foreverjs/forever) (Node module)
-* [`LESS.js`](http://lesscss.org/) (Node module)
+* Composer
+* Laravel (`composer global require "laravel/installer"`)
 
-[![Dependency Status](https://www.versioneye.com/user/projects/5566d82b6138360018270100/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5566d82b6138360018270100)
+## Building resources
+
+### Locally
+
+```
+gulp && gulp watch
+```
+
+### In production
+
+```
+gulp --production
+```
 
 ## Running the site
 
 ### Locally
 
-#### Compile LESS files
-
-```
-lessc -x public/css/mysexybook.less public/css/mysexybook.min.css
-```
-#### Start servers (one time only)
-
-```
-NODE_ENV=development npm start
+```shell
+php -S localhost:6969 -t public/
 ```
 
-And to restart them (without checking NPM podules)
+### In production
 
-```
-NODE_ENV=development npm restart
-```
-
-### In production (using forever)
-
-If you haven't already compiled the LESS files to CSS, check a few lines higher…
-
-#### Start servers (using forever)
-
-```
-NODE_ENV=production forever start ./ -c "npm start"
-```
-
-#### Start servers (one time only)
-
-If you prefer starting the server once (just to test it, maybe), you can use the npm script directly
-
-```
-npm start
-```
 
 ## License
 
-All source code is proprietary, except for external resources (such as `npm` modules).
+License
+
+All source code is proprietary, except for external resources (such as `npm` or `composer` modules).
 
 You may test it, hack it, but not modify it, sell it or share it without permission.
 
