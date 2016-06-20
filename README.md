@@ -30,3 +30,14 @@ php -S localhost:6969 -t public/
 ```
 
 ### In production
+
+
+## License
+
+License
+
+All source code is proprietary, except for external resources (such as `npm` or `composer` modules).
+
+You may test it, hack it, but not modify it, sell it or share it without permission.
+
+Other resources (images, data, etc.) belong to their respective owners.
