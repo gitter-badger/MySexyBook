@@ -21,3 +21,6 @@ bootstrap/cache/
 # Generated assets
 public/assets/css
 public/assets/js
+
+# Secret keys
+_keys

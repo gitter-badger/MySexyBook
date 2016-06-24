@@ -9,8 +9,8 @@ update:
 	php artisan up
 
 install:
-	npm install
 	composer install
+	npm install
 
 build-assets:
 	gulp
