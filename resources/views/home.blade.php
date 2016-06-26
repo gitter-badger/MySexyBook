@@ -1,17 +1,16 @@
-@extends('layouts.app')
+@extends('layouts.app', ['page_id' => 'home'])
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-            <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
+<main id="page">
+	<header id="home-landing">
+		<div class="container">
+			<h1>La photo sexy et sociale</h1>
 
-                <div class="panel-body">
-                    You are logged in!
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+			<h2>Trouvez un modèle parfait, un photographe créatif ou tout simplement de l'inspiration</h2>
+		</div>
+	</header>
+
+	<article id="home-content">
+	</article>
+</main>
 @endsection

@@ -1,12 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ config('app.locale') }}"
-@if (!empty($page_id))
-id="{{ $page_id }}-page"
-@endif
-@if (!empty($page_class))
-class="{{ $page_class }}"
-@endif
->
+<html lang="{{ config('app.locale') }}" {!! !empty($page_id) ? ' id="'.$page_id.'-page"' : '' !!}{!! !empty($page_class) ? ' class="'.$page_class.'"' : '' !!}>
 <head>
 	<meta charset="UTF-8" />
 	<title>
@@ -47,12 +40,12 @@ class="{{ $page_class }}"
 			@if ($current_user = Auth::user())
 			<nav id="header-menu">
 				<a href="{{ url('/book/'.$current_user->pseudo) }}">Mon book</a>
-				<a href="{{ url('/deconnexion') }}">Déconnexion</a>
+				<a href="{{ url('/logout') }}">Déconnexion</a>
 			</nav>
 			@else
 			<nav id="header-menu">
-				<a href="{{ url('/connexion') }}">Connexion</a>
-				<a href="{{ url('/inscription') }}">Inscription</a>
+				<a href="{{ url('/login') }}">Connexion</a>
+				<a href="{{ url('/register') }}">Inscription</a>
 			</nav>
 			@endif
 		</div>

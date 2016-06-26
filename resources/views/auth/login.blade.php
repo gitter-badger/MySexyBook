@@ -1,66 +1,54 @@
-@extends('layouts.app')
+@extends('layouts.app', ['page_id' => 'login'])
 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Login</div>
-                <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/login') }}">
-                        {{ csrf_field() }}
+<main id="page">
+    <div class="container">
+        <h1>Connexion</h1>
 
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
+        <form action="{{ url('/login') }}" method="post">
+            {{ csrf_field() }}
 
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}">
+            <fieldset>
+                <legend>Identifiants</legend>
 
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <label for="password" class="col-md-4 control-label">Password</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password">
-
-                                @if ($errors->has('password'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="remember"> Remember Me
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-btn fa-sign-in"></i> Login
-                                </button>
-
-                                <a class="btn btn-link" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
-                            </div>
-                        </div>
-                    </form>
+                <div>
+                    <label for="login-email">Adresse e-mail</label>
+                    <input type="email" name="email" id="login-email" required size="12" autocorrect="off" autocapitalize="off" spellcheck="false" data-emailcompleter value="{{ old('email') }}" />
                 </div>
+                @if ($errors->has('email'))
+                <p class="alert error">{{ $errors->first('email') }}</p>
+                @endif
+
+                <div>
+                    <label for="login-password">Mot de passe</label>
+                    <input type="password" name="password" id="login-password" required size="12" pattern="(.*){8,}" autocorrect="off" autocapitalize="off" spellcheck="false" />
+                </div>
+                @if ($errors->has('password'))
+                <p class="alert error">{{ $errors->first('password') }}</p>
+                @endif
+
+                <p>
+                    <a href="{{ url('/password/reset') }}">Mot de passe oublié&nbsp;?</a>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <legend>Rester connecté</legend>
+
+                <div>
+                    <label>
+                        <input type="checkbox" name="remember" id="login-remember" value="yes" aria-labelledby="login-remember-label login-remember-explanation" />
+                        <span class="checkbox-label" id="login-remember-label">Je souhaite rester connecté</span>
+                    </label>
+                </div>
+
+                <p class="alert info" id="login-remember-explanation">En cochant cette case, un cookie sera créé sur votre ordinateur pour vous permettre de rester connecté jusqu'à votre prochaine visite</p>
+            </fieldset>
+
+            <div>
+                <button type="submit">Connexion</button>
             </div>
-        </div>
+        </form>
     </div>
-</div>
+</main>
 @endsection
