@@ -168,7 +168,7 @@ a{
 			background-color: @background-secondary-accent;
 			background-image: none;
 		}
-		
+
 	}
 }
 #logo{
@@ -200,7 +200,7 @@ a{
 		padding-bottom: .5em;
 		padding-left: .5em;
 		background-color: @background-primary;
-		
+
 		@media screen and (min-width: @breakpoint-l) {
 			padding-right: 1em;
 			padding-bottom: 1em;
@@ -243,7 +243,7 @@ a{
 			background-repeat: no-repeat;
 			background-position: center;
 			background-size: cover;
-			
+
 			@media screen and (max-width: @breakpoint-xl) {
 				background-image: url(../img/home-bg-xl.jpg);
 			}
@@ -259,7 +259,7 @@ a{
 			@media screen and (max-width: @breakpoint-xs) {
 				background-image: url(../img/home-bg-xs.jpg);
 			}
-			
+
 			@media screen and (orientation: portrait) {
 				min-height: calc(~"40vh - "@header-height);
 				padding: 15vh 0;
@@ -269,7 +269,7 @@ a{
 				margin: 0;
 				font-size: 4em;
 				font-size: 6.5vh;
-				
+
 				@media screen and (max-width: @breakpoint-l) and (orientation: portrait) {
 					font-size: 8vw;
 				}
@@ -279,14 +279,14 @@ a{
 				font-weight: normal;
 				font-size: 1.135em;
 				font-size: 2vh;
-				
+
 				@media screen and (max-width: @breakpoint-l) and (orientation: portrait) {
 					font-size: 2.5vw;
 				}
 			}
 			h1+h2{
 				margin-top: 3vh;
-				
+
 				@media screen and (max-width: @breakpoint-l) and (orientation: portrait) {
 					margin-top: 3vw;
 				}
@@ -314,14 +314,9 @@ a{
 		content: none;
 	}
 }
-#login-page{
-	#page{
-		&>.container{
-			max-width: @breakpoint-m;
-		}
-	}
-}
-#register-page{
+#login-page,
+#register-page,
+#resetpwd-page{
 	#page{
 		&>.container{
 			max-width: @breakpoint-m;
@@ -393,7 +388,7 @@ a{
 						}
 					}
 				}
-				
+
 				&:hover{
 					&~.photo-info{
 						.translate(@viewer-sidebar-width, 0);
@@ -466,7 +461,7 @@ a{
 					width: @viewer-dock-height;
 					height: @viewer-dock-height;
 					padding: .25em;
-					
+
 					@media screen and (min-width: @breakpoint-l) and (orientation: landscape) {
 						width: @viewer-dock-height;
 						height: @viewer-dock-height;
@@ -496,7 +491,7 @@ a{
 	z-index: 99;
 	bottom: 1em;
 	left: 1em;
-	
+
 	@media screen and (min-width: @breakpoint-l) {
 		position: absolute;
 		position: sticky;
@@ -504,7 +499,7 @@ a{
 		right: 1em;
 		bottom: auto;
 		left: auto;
-	}	
+	}
 }
 
 blockquote{
@@ -519,7 +514,7 @@ fieldset{
 	margin: 1em 0;
 	background-color: @background-primary-accent;
 	border: none;
-	
+
 	&>legend{
 		padding: .5em;
 		background-color: @background-secondary;
@@ -629,7 +624,7 @@ input, select, textarea{
 label[for]:first-child:not(:last-child){
 	width: 100%;
 	font-weight: bold;
-	
+
 	@media screen and (min-width: @breakpoint-l) {
 		width: 25%;
 		font-weight: normal;
@@ -637,7 +632,7 @@ label[for]:first-child:not(:last-child){
 
 	&+input, &+select, &+textarea{
 		width: 100%;
-		
+
 		@media screen and (min-width: @breakpoint-l) {
 			width: 75%;
 
@@ -686,7 +681,7 @@ img{
 	margin: 0 -.5em;
 	padding: 0;
 	list-style: none;
-	
+
 	&:after{
 		content: '';
 		&:extend(.clearfix);
@@ -730,7 +725,7 @@ img{
 			&:active{
 				background-color: @background-secondary-accent;
 			}
-			
+
 			&>figure{
 				margin: 0;
 			}
