@@ -71,6 +71,7 @@
 			<section>
 				<h2>Rechercher un profil</h2>
 
+				@include('shared.search_user_form')
 			</section>
 		</div>
 	</article>
