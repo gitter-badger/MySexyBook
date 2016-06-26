@@ -1,5 +1,7 @@
 # My Sexy Book
 
+[![Join the chat at https://gitter.im/viki53/MySexyBook](https://badges.gitter.im/viki53/MySexyBook.svg)](https://gitter.im/viki53/MySexyBook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ![Home page — FR](public/assets/img/screenshots/home-desktop.png)
 
 ## Requirements
