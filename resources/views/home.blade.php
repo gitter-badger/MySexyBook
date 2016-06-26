@@ -10,7 +10,6 @@
 		</div>
 	</header>
 
-
 	<article id="home-content">
 		<div class="container">
 			@if(!empty($last_photos))
